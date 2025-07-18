@@ -415,9 +415,9 @@ class TrainingEnvironment {
 
         let turning = 0;
         if (steeringOutput > 0.1) {
-            turning = 2.5; // kart.turnSpeed;
+            turning = 0.4; // kart.turnSpeed;
         } else if (steeringOutput < -0.1) {
-            turning = -2.5; // -kart.turnSpeed;
+            turning = -0.4; // -kart.turnSpeed;
         }
 
         // Apply force (simplified from Kart.js applyForce)
