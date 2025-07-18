@@ -14,7 +14,7 @@ class Kart extends THREE.Group {
         this.maxSpeed = 20;
         this.accelerationForce = 30;
         this.friction = 0.9;
-        this.turnSpeed = 2.5;
+        this.turnSpeed = 0.4;
         this.mass = 1;
         
         this.isAccelerating = false;
@@ -145,7 +145,10 @@ class Kart extends THREE.Group {
         forward.applyQuaternion(this.quaternion);
         
         this.acceleration.add(forward.multiplyScalar(acceleration));
-        this.angularVelocity += turning * (this.velocity.length() / this.maxSpeed);
+        const minTurnSpeed = 0.1; // Minimum speed to allow turning
+        if (this.velocity.length() > minTurnSpeed) {
+            this.angularVelocity += turning * (this.velocity.length() / this.maxSpeed);
+        }
     }
     
     accelerate(active) {
