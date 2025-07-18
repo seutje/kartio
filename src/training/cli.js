@@ -23,6 +23,8 @@ if (typeof global.document === 'undefined') {
     global.document = {
         addEventListener: () => {},
         getElementById: () => ({
+            addEventListener: () => {},
+            removeEventListener: () => {},
             getContext: () => ({}),
             classList: { add: () => {}, remove: () => {} },
             textContent: ''
@@ -410,4 +412,4 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { TrainingEnvironment };
+module.exports = { TrainingEnvironment }
