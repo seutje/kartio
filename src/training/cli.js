@@ -33,6 +33,7 @@ if (typeof global.AudioManager === 'undefined') {
 const { NeuralNetwork } = require('../js/NeuralNetwork')
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
+const { Track } = require('../js/Track')
 const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
@@ -73,6 +74,12 @@ class TrainingEnvironment {
         this.modelsDir = path.join(__dirname, '../../models');
         this.ensureModelsDir();
         this.trackData = this.loadTrackData(trackType);
+        this.scene = new THREE.Scene()
+        this.track = new Track(trackType, this.scene)
+        this.track.trackData = this.trackData
+        this.track.createTrack()
+        this.track.createCheckpoints()
+        this.track.createStartPositions()
     }
     
     ensureModelsDir() {
@@ -145,14 +152,7 @@ class TrainingEnvironment {
     
     async simulateRace(network) {
         return new Promise((resolve) => {
-            const checkpoints = this.trackData.checkpoints.map(cp => new THREE.Vector3(cp.x, cp.y, cp.z));
-            const obstacles = this.trackData.obstacles.map(obs => {
-                const geometry = new THREE.BoxGeometry(obs.width, obs.height, obs.depth)
-                const material = new THREE.MeshLambertMaterial()
-                const mesh = new THREE.Mesh(geometry, material)
-                mesh.position.set(obs.x, obs.y, obs.z)
-                return mesh
-            })
+            const checkpoints = this.track.checkpoints.map(cp => cp.position)
 
             // Position kart at the first checkpoint, facing the second
             const startCheckpoint = checkpoints[0];
@@ -175,12 +175,9 @@ class TrainingEnvironment {
             kart.nextCheckpoint = 0
             kart.progress = 0
 
-            const track = {
-                checkpoints: checkpoints,
-                obstacles: obstacles
-            };
+            const track = this.track
 
-            kart.currentTrack = { checkpoints: checkpoints.map(cp => ({ position: cp })) }
+            kart.currentTrack = track
             
             let fitness = 0;
             let time = 0;
@@ -247,7 +244,7 @@ class TrainingEnvironment {
         };
 
         const nextCheckpointIndex = kart.nextCheckpoint % track.checkpoints.length;
-        const nextCheckpoint = track.checkpoints[nextCheckpointIndex];
+        const nextCheckpoint = track.checkpoints[nextCheckpointIndex].position;
         if (nextCheckpoint) {
             sensors.checkpoint = nextCheckpoint.distanceTo(kart.position) / 50;
             const toCheckpoint = nextCheckpoint.clone().sub(kart.position).normalize();
@@ -287,7 +284,7 @@ class TrainingEnvironment {
         kart.applyForce(acceleration, turning)
         kart.updatePhysics(deltaTime)
 
-        const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
+        const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length].position;
         const dx = nextCheckpoint.x - kart.position.x;
         const dz = nextCheckpoint.z - kart.position.z;
         const distance = Math.sqrt(dx * dx + dz * dz);
