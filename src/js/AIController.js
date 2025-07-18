@@ -43,7 +43,7 @@ class AIController {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const brainData = await response.json();
-            return NeuralNetwork.deserialize(brainData);
+            return NeuralNetwork.deserialize(JSON.parse(brainData.network));
         } catch (error) {
             console.error(`Could not load brain from ${brainPath}:`, error);
             throw error;
