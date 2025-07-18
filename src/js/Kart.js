@@ -35,6 +35,7 @@ class Kart extends THREE.Group {
         this.isPlayer = false;
         this.isAI = false;
         this.aiController = null;
+        this.currentTrack = null;
         
         this.createMesh();
         this.addToScene();
@@ -271,4 +272,8 @@ class Kart extends THREE.Group {
         right.applyQuaternion(this.quaternion);
         return right;
     }
+}
+
+if (typeof module !== "undefined") {
+    module.exports = { Kart }
 }

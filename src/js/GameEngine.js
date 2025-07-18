@@ -95,6 +95,7 @@ class GameEngine {
         
         for (let i = 0; i < 4; i++) {
             const kart = new Kart(colors[i], this.scene);
+            kart.currentTrack = this.currentTrack;
             kart.position.copy(startPositions[i]);
             kart.rotation.y = Math.PI / 2;
             
@@ -269,4 +270,8 @@ class GameEngine {
                 break;
         }
     }
+}
+
+if (typeof module !== "undefined") {
+    module.exports = { GameEngine }
 }

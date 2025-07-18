@@ -146,3 +146,7 @@ class NeuralNetwork {
         return network;
     }
 }
+
+if (typeof module !== "undefined") {
+    module.exports = { NeuralNetwork }
+}

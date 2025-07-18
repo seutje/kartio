@@ -177,3 +177,7 @@ class AIController {
         return controller;
     }
 }
+
+if (typeof module !== "undefined") {
+    module.exports = { AIController }
+}
