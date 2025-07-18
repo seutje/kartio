@@ -11,10 +11,10 @@ class Kart extends THREE.Group {
         this.acceleration = new THREE.Vector3();
         this.angularVelocity = 0;
         
-        this.maxSpeed = 20;
-        this.accelerationForce = 30;
+        this.maxSpeed = 100;
+        this.accelerationForce = 50;
         this.friction = 0.9;
-        this.turnSpeed = 0.4;
+        this.turnSpeed = 0.8;
         this.mass = 1;
         
         this.isAccelerating = false;
