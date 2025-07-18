@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { NeuralNetwork } = require('../js/NeuralNetwork');
-const { Kart } = require('../js/Kart')
-const { GameEngine } = require('../js/GameEngine')
-const DEBUG_Cli = false;
+const fs = require('fs')
+const path = require('path')
 
 const THREE = require('three')
 global.THREE = THREE
+
+const { NeuralNetwork } = require('../js/NeuralNetwork')
+const { Kart } = require('../js/Kart')
+const { GameEngine } = require('../js/GameEngine')
+const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
     global.window = {
@@ -20,7 +21,12 @@ if (typeof global.window === 'undefined') {
 
 if (typeof global.document === 'undefined') {
     global.document = {
-        getElementById: () => ({ getContext: () => ({}) })
+        addEventListener: () => {},
+        getElementById: () => ({
+            getContext: () => ({}),
+            classList: { add: () => {}, remove: () => {} },
+            textContent: ''
+        })
     }
 }
 
