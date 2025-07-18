@@ -1,5 +1,8 @@
+const DEBUG_GameEngine = false;
+
 class GameEngine {
     constructor() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Initializing...');
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ 
@@ -28,10 +31,12 @@ class GameEngine {
     }
 
     async initialize() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Initializing tracks...');
         await this.setupTracks();
     }
     
     setupRenderer() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Setting up renderer.');
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0x87CEEB);
         this.renderer.shadowMap.enabled = true;
@@ -40,6 +45,7 @@ class GameEngine {
     }
     
     setupLighting() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Setting up lighting.');
         const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
         this.scene.add(ambientLight);
         
@@ -58,12 +64,14 @@ class GameEngine {
     }
     
     setupControls() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Setting up controls.');
         window.addEventListener('resize', () => this.onWindowResize());
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
         document.addEventListener('keyup', (e) => this.onKeyUp(e));
     }
     
     async setupTracks() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Loading track data...');
         this.tracks = [
             new Track('circuit', this.scene),
             new Track('desert', this.scene),
@@ -78,6 +86,7 @@ class GameEngine {
     }
     
     async startGame() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Starting game...');
         if (this.gameStarted) return;
         
         await this.setupTracks();
@@ -92,12 +101,14 @@ class GameEngine {
     }
     
     startAutoplay() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
         this.isAutoplay = true;
         this.setupRace(true);
         this.start();
     }
     
     setupRace(autoplay = false) {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Setting up race...');
         this.karts = [];
         
         const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
@@ -124,15 +135,18 @@ class GameEngine {
     }
     
     start() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Starting animation loop.');
         this.isRunning = true;
         this.animate();
     }
     
     stop() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Stopping animation loop.');
         this.isRunning = false;
     }
     
     animate() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Animating frame.');
         if (!this.isRunning) return;
         
         requestAnimationFrame(() => this.animate());
@@ -143,6 +157,7 @@ class GameEngine {
     }
     
     update(deltaTime) {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Updating...');
         this.updateStats();
         
         this.karts.forEach(kart => {
@@ -160,6 +175,7 @@ class GameEngine {
     }
     
     updateCamera() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Updating camera position.');
         const targetKart = this.karts[0];
         const idealOffset = new THREE.Vector3(0, 8, 15);
         idealOffset.applyQuaternion(targetKart.quaternion);
@@ -170,6 +186,7 @@ class GameEngine {
     }
     
     checkCollisions() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Checking collisions.');
         for (let i = 0; i < this.karts.length; i++) {
             for (let j = i + 1; j < this.karts.length; j++) {
                 const kart1 = this.karts[i];
@@ -184,6 +201,7 @@ class GameEngine {
     }
     
     updateStats() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Updating stats.');
         this.stats.frameCount++;
         const currentTime = performance.now();
         
@@ -195,6 +213,7 @@ class GameEngine {
     }
     
     updateUI() {
+        if (DEBUG || DEBUG_GameEngine) console.log('GameEngine: Updating UI.');
         document.getElementById('fps').textContent = this.stats.fps;
         document.getElementById('position').textContent = this.getPlayerPosition();
         document.getElementById('lap').textContent = this.getPlayerLap();

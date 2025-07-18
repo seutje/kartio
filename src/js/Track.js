@@ -1,5 +1,8 @@
+const DEBUG_Track = false;
+
 class Track {
     constructor(type, scene) {
+        if (DEBUG || DEBUG_Track) console.log(`Track: Creating track of type ${type}`);
         this.type = type;
         this.scene = scene;
         this.checkpoints = [];
@@ -10,6 +13,7 @@ class Track {
     }
 
     async loadTrackData() {
+        if (DEBUG || DEBUG_Track) console.log(`Track: Loading track data for ${this.type}.`);
         try {
             const response = await fetch(`src/tracks/${this.type}.json`);
             this.trackData = await response.json();
@@ -23,6 +27,7 @@ class Track {
     }
     
     createTrack() {
+        if (DEBUG || DEBUG_Track) console.log('Track: Creating track geometry and environment.');
         const { trackGeometry, environment, obstacles, decorations } = this.trackData;
         
         this.scene.background = new THREE.Color(parseInt(environment.skyColor));
@@ -59,6 +64,7 @@ class Track {
     }
     
     createCheckpoints() {
+        if (DEBUG || DEBUG_Track) console.log('Track: Creating checkpoints.');
         this.trackData.checkpoints.forEach((cp, index) => {
             const checkpoint = {
                 position: new THREE.Vector3(cp.x, cp.y, cp.z),
@@ -85,6 +91,7 @@ class Track {
     }
     
     createPowerups() {
+        if (DEBUG || DEBUG_Track) console.log('Track: Creating powerup spawns.');
         const powerupTypes = ['boost', 'missile', 'mine'];
         this.trackData.powerupSpawns.forEach(spawn => {
             let type = spawn.type;
@@ -97,6 +104,7 @@ class Track {
     }
     
     createStartPositions() {
+        if (DEBUG || DEBUG_Track) console.log('Track: Creating start positions.');
         this.startPositions = this.trackData.startPositions.map(pos => new THREE.Vector3(pos.x, pos.y, pos.z));
     }
     

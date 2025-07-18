@@ -1,5 +1,8 @@
+const DEBUG_Kart = false;
+
 class Kart extends THREE.Group {
     constructor(color, scene) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Creating kart with color ${color}`);
         super();
         this.scene = scene;
         this.color = color;
@@ -42,6 +45,7 @@ class Kart extends THREE.Group {
     }
     
     createMesh() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Creating mesh.');
         const bodyGeometry = new THREE.BoxGeometry(2, 1, 4);
         const bodyMaterial = new THREE.MeshLambertMaterial({ color: this.color });
         this.body = new THREE.Mesh(bodyGeometry, bodyMaterial);
@@ -77,10 +81,12 @@ class Kart extends THREE.Group {
     }
     
     addToScene() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Adding to scene.');
         this.scene.add(this);
     }
     
     update(deltaTime) {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Updating kart.');
         this.handleInput();
         this.updatePhysics(deltaTime);
         this.updatePowerups(deltaTime);
@@ -91,6 +97,7 @@ class Kart extends THREE.Group {
     
     handleInput() {
         if (this.isAI) return;
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Handling input.');
         
         let acceleration = 0;
         let turning = 0;
@@ -111,6 +118,7 @@ class Kart extends THREE.Group {
     }
     
     updatePhysics(deltaTime) {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Updating physics.');
         if (this.isStopped) {
             this.velocity.multiplyScalar(0.95);
             return;
@@ -132,6 +140,7 @@ class Kart extends THREE.Group {
     }
     
     applyForce(acceleration, turning) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Applying force - acceleration: ${acceleration}, turning: ${turning}`);
         const forward = new THREE.Vector3(0, 0, -1);
         forward.applyQuaternion(this.quaternion);
         
@@ -140,22 +149,27 @@ class Kart extends THREE.Group {
     }
     
     accelerate(active) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Accelerate set to ${active}`);
         this.isAccelerating = active;
     }
     
     brake(active) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Brake set to ${active}`);
         this.isBraking = active;
     }
     
     turnLeft(active) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Turn left set to ${active}`);
         this.isTurningLeft = active;
     }
     
     turnRight(active) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Turn right set to ${active}`);
         this.isTurningRight = active;
     }
     
     usePowerup() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Using powerup.');
         if (!this.currentPowerup || this.powerupCooldown > 0) return;
         
         switch (this.currentPowerup) {
@@ -175,6 +189,7 @@ class Kart extends THREE.Group {
     }
     
     activateBoost() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Activating boost.');
         this.maxSpeed *= 1.5;
         this.accelerationForce *= 1.5;
         
@@ -185,16 +200,19 @@ class Kart extends THREE.Group {
     }
     
     fireMissile() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Firing missile.');
         const missile = new Missile(this.position.clone(), this.rotation.y, this.scene);
         missile.owner = this;
     }
     
     dropMine() {
+        if (DEBUG || DEBUG_Kart) console.log('Kart: Dropping mine.');
         const mine = new Mine(this.position.clone(), this.scene);
         mine.owner = this;
     }
     
     collectPowerup(type) {
+        if (DEBUG || DEBUG_Kart) console.log(`Kart: Collecting powerup of type ${type}`);
         this.currentPowerup = type;
     }
     
