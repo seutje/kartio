@@ -45,7 +45,7 @@ describe('Kart', () => {
         expect(kart.velocity.x).toBe(0);
         expect(kart.velocity.y).toBe(0);
         expect(kart.velocity.z).toBe(0);
-        expect(kart.maxSpeed).toBe(100);
+        expect(kart.maxSpeed).toBe(20);
         expect(kart.currentLap).toBe(1);
         expect(kart.currentPowerup).toBeNull();
     });

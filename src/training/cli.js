@@ -36,6 +36,7 @@ const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
 const { Track } = require('../js/Track')
 const { AIController } = require('../js/AIController')
+const { Powerup } = require('../js/Powerup')
 const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
@@ -81,6 +82,7 @@ class TrainingEnvironment {
         this.track.trackData = this.trackData
         this.track.createTrack()
         this.track.createCheckpoints()
+        this.track.createPowerups()
         this.track.createStartPositions()
     }
     
