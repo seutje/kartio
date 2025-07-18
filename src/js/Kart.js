@@ -40,8 +40,10 @@ class Kart extends THREE.Group {
         this.aiController = null;
         this.currentTrack = null;
         
-        this.createMesh();
-        this.addToScene();
+        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+            this.createMesh();
+            this.addToScene();
+        }
     }
     
     createMesh() {
@@ -277,6 +279,7 @@ class Kart extends THREE.Group {
     }
     
     updateVisuals(deltaTime) {
+        if (typeof global !== 'undefined' && global.NO_GRAPHICS) return
         this.wheels.forEach(wheel => {
             wheel.rotation.x += this.velocity.length() * deltaTime * 2;
         });
