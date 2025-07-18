@@ -26,16 +26,16 @@
     { "x": 0, "y": 1, "z": 0, "type": "random" }
   ],
   "environment": {
-    "skyColor": 0xB0E0E6,
-    "groundColor": 0xFFFFFF,
-    "ambientLight": 0x404040,
-    "directionalLight": 0xffffff
+    "skyColor": "0xB0E0E6",
+    "groundColor": "0xFFFFFF",
+    "ambientLight": "0x404040",
+    "directionalLight": "0xffffff"
   },
   "trackGeometry": {
     "width": 200,
     "height": 200,
-    "borderColor": 0xE0E0E0,
-    "roadColor": 0xFFFFFF
+    "borderColor": "0xE0E0E0",
+    "roadColor": "0xFFFFFF"
   },
   "obstacles": [
     { "type": "snow_bank", "x": -25, "y": 1.5, "z": -25, "width": 6, "height": 3, "depth": 6 },

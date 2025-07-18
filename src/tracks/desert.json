@@ -24,16 +24,16 @@
     { "x": -25, "y": 1, "z": -25, "type": "random" }
   ],
   "environment": {
-    "skyColor": 0x87CEEB,
-    "groundColor": 0xD2691E,
-    "ambientLight": 0x404040,
-    "directionalLight": 0xffffff
+    "skyColor": "0x87CEEB",
+    "groundColor": "0xD2691E",
+    "ambientLight": "0x404040",
+    "directionalLight": "0xffffff"
   },
   "trackGeometry": {
     "width": 200,
     "height": 200,
-    "borderColor": 0x8B4513,
-    "roadColor": 0xD2691E
+    "borderColor": "0x8B4513",
+    "roadColor": "0xD2691E"
   },
   "obstacles": [
     { "type": "sand_dune", "x": -40, "y": 2, "z": -30, "width": 8, "height": 4, "depth": 8 },

@@ -23,16 +23,16 @@
     { "x": -20, "y": 1, "z": -20, "type": "random" }
   ],
   "environment": {
-    "skyColor": 0x87CEEB,
-    "groundColor": 0x444444,
-    "ambientLight": 0x404040,
-    "directionalLight": 0xffffff
+    "skyColor": "0x87CEEB",
+    "groundColor": "0x444444",
+    "ambientLight": "0x404040",
+    "directionalLight": "0xffffff"
   },
   "trackGeometry": {
     "width": 200,
     "height": 200,
-    "borderColor": 0xff0000,
-    "roadColor": 0x333333
+    "borderColor": "0xff0000",
+    "roadColor": "0x333333"
   },
   "obstacles": [
     { "type": "barrier", "x": -50, "y": 1, "z": 0, "width": 1, "height": 2, "depth": 200 },
@@ -41,6 +41,6 @@
     { "type": "barrier", "x": 0, "y": 1, "z": 50, "width": 200, "height": 2, "depth": 1 }
   ],
   "decorations": [
-    { "type": "marking", "x": 0, "y": 0.01, "z": 0, "width": 2, "height": 0.01, "depth": 10, "color": 0xffffff }
+    { "type": "marking", "x": 0, "y": 0.01, "z": 0, "width": 2, "height": 0.01, "depth": 10, "color": "0xffffff" }
   ]
 }
