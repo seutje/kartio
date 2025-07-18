@@ -1,7 +1,7 @@
 {
   "name": "Circuit Track",
   "type": "circuit",
-  "description": "A classic racing circuit with smooth asphalt and red barriers",
+  "description": "A classic circular circuit with smooth asphalt, red barriers, and numerous checkpoints",
   "difficulty": "medium",
   "lapCount": 3,
   "startPositions": [
@@ -12,9 +12,13 @@
   ],
   "checkpoints": [
     { "x": 0, "y": 0, "z": -40, "radius": 5 },
+    { "x": 28.28, "y": 0, "z": -28.28, "radius": 5 },
     { "x": 40, "y": 0, "z": 0, "radius": 5 },
+    { "x": 28.28, "y": 0, "z": 28.28, "radius": 5 },
     { "x": 0, "y": 0, "z": 40, "radius": 5 },
-    { "x": -40, "y": 0, "z": 0, "radius": 5 }
+    { "x": -28.28, "y": 0, "z": 28.28, "radius": 5 },
+    { "x": -40, "y": 0, "z": 0, "radius": 5 },
+    { "x": -28.28, "y": 0, "z": -28.28, "radius": 5 }
   ],
   "powerupSpawns": [
     { "x": 20, "y": 1, "z": 20, "type": "random" },
