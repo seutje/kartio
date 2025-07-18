@@ -6,6 +6,23 @@ const path = require('path')
 const THREE = require('three')
 global.THREE = THREE
 
+// In a Node environment Three.js cannot create a real WebGL context.
+// Provide a minimal renderer so GameEngine can be instantiated during training.
+if (typeof window === 'undefined') {
+    THREE.WebGLRenderer = class {
+        constructor() {
+            this.domElement = {
+                addEventListener: () => {},
+                removeEventListener: () => {}
+            }
+            this.shadowMap = {}
+        }
+        setSize() {}
+        setClearColor() {}
+        render() {}
+    }
+}
+
 const { NeuralNetwork } = require('../js/NeuralNetwork')
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
