@@ -34,9 +34,10 @@ const { NeuralNetwork } = require('../js/NeuralNetwork')
 global.NeuralNetwork = NeuralNetwork
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
+const { Powerup } = require('../js/Powerup')
+global.Powerup = Powerup
 const { Track } = require('../js/Track')
 const { AIController } = require('../js/AIController')
-const { Powerup } = require('../js/Powerup')
 const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
