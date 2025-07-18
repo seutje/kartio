@@ -97,14 +97,13 @@ class Kart extends THREE.Group {
         
         if (this.isAccelerating) {
             acceleration = this.accelerationForce;
-        }
-        if (this.isBraking) {
+        } else if (this.isBraking) {
             acceleration = -this.accelerationForce * 0.5;
         }
+        
         if (this.isTurningLeft) {
             turning = this.turnSpeed;
-        }
-        if (this.isTurningRight) {
+        } else if (this.isTurningRight) {
             turning = -this.turnSpeed;
         }
         

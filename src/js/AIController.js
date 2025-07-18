@@ -94,32 +94,25 @@ class AIController {
     }
     
     applyOutputs(outputs, deltaTime) {
-        const acceleration = outputs[0];
-        const steering = outputs[1];
-        
-        if (acceleration > 0.1) {
-            this.kart.accelerate(true);
-        } else {
-            this.kart.accelerate(false);
+        const accelerationOutput = outputs[0];
+        const steeringOutput = outputs[1];
+
+        let acceleration = 0;
+        if (accelerationOutput > 0.1) {
+            acceleration = this.kart.accelerationForce;
+        } else if (accelerationOutput < -0.1) {
+            acceleration = -this.kart.accelerationForce * 0.5;
         }
-        
-        if (acceleration < -0.1) {
-            this.kart.brake(true);
-        } else {
-            this.kart.brake(false);
+
+        let turning = 0;
+        if (steeringOutput > 0.1) {
+            turning = this.kart.turnSpeed;
+        } else if (steeringOutput < -0.1) {
+            turning = -this.kart.turnSpeed;
         }
-        
-        if (steering > 0.1) {
-            this.kart.turnLeft(true);
-            this.kart.turnRight(false);
-        } else if (steering < -0.1) {
-            this.kart.turnRight(true);
-            this.kart.turnLeft(false);
-        } else {
-            this.kart.turnLeft(false);
-            this.kart.turnRight(false);
-        }
-        
+
+        this.kart.applyForce(acceleration, turning);
+
         if (this.kart.currentPowerup && Math.random() < 0.01) {
             this.kart.usePowerup();
         }
