@@ -179,7 +179,6 @@ class GameEngine {
         });
         
         this.updateCamera();
-        this.checkCollisions();
         this.updateUI();
     }
     
@@ -202,8 +201,8 @@ class GameEngine {
                 const kart2 = this.karts[j];
                 
                 if (kart1.position.distanceTo(kart2.position) < 3) {
-                    kart1.handleCollision();
-                    kart2.handleCollision();
+                    kart1.handleCollision(kart2);
+                    kart2.handleCollision(kart1);
                 }
             }
         }

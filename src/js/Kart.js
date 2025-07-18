@@ -216,17 +216,23 @@ class Kart extends THREE.Group {
         this.currentPowerup = type;
     }
     
-    handleCollision() {
-        if (this.isInvulnerable) return;
-        
-        this.velocity.multiplyScalar(0.5);
-        this.isStopped = true;
-        this.stopTime = 2;
-        this.isInvulnerable = true;
-        this.invulnerabilityTime = 2;
-        
-        this.body.material.transparent = true;
-        this.body.material.opacity = 0.5;
+    handleCollision(otherKart) {
+        // Calculate the direction of impact
+        const collisionNormal = new THREE.Vector3().subVectors(this.position, otherKart.position).normalize();
+
+        // Calculate relative velocity
+        const relativeVelocity = new THREE.Vector3().subVectors(this.velocity, otherKart.velocity);
+
+        // Calculate impulse scalar
+        const impulseScalar = -1 * relativeVelocity.dot(collisionNormal) / (1 / this.mass + 1 / otherKart.mass);
+
+        // Apply impulse to both karts
+        this.velocity.add(collisionNormal.clone().multiplyScalar(impulseScalar / this.mass));
+        otherKart.velocity.sub(collisionNormal.clone().multiplyScalar(impulseScalar / otherKart.mass));
+
+        // Reduce speed slightly after collision
+        this.velocity.multiplyScalar(0.8);
+        otherKart.velocity.multiplyScalar(0.8);
     }
     
     updatePowerups(deltaTime) {
