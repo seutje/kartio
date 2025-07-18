@@ -1,12 +1,23 @@
 const DEBUG_AIController = false;
 
 class AIController {
-    constructor(kart, track) {
+    constructor(kart, track, trackName, isTraining = false) {
         if (DEBUG_AIController) console.log('AIController: Initializing for kart', kart.color);
 
         this.kart = kart;
         this.track = track;
-        this.network = new NeuralNetwork(8, 10, 2);
+        this.trackName = trackName;
+
+        if (isTraining) {
+            this.network = new NeuralNetwork(8, 10, 2);
+        } else {
+            this.loadBrain().then(network => {
+                this.network = network;
+            }).catch(() => {
+                console.warn(`Failed to load brain for ${trackName}. Using a random brain.`);
+                this.network = new NeuralNetwork(8, 10, 2);
+            });
+        }
         
         this.fitness = 0;
         this.lastCheckpoint = 0;
@@ -23,6 +34,21 @@ class AIController {
             lapProgress: 0,
             opponentDistance: 0
         };
+    }
+
+    async loadBrain() {
+        const brainPath = `./models/${this.trackName}_best.json`;
+        try {
+            const response = await fetch(brainPath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const brainData = await response.json();
+            return NeuralNetwork.deserialize(brainData);
+        } catch (error) {
+            console.error(`Could not load brain from ${brainPath}:`, error);
+            throw error;
+        }
     }
     
     update(deltaTime, karts) {
@@ -151,7 +177,7 @@ class AIController {
     }
     
     copy() {
-        const copy = new AIController(this.kart, this.track);
+        const copy = new AIController(this.kart, this.track, this.trackName);
         copy.network = this.network.copy();
         return copy;
     }
@@ -160,8 +186,8 @@ class AIController {
         this.network.mutate(rate);
     }
     
-    static crossover(parent1, parent2, kart, track) {
-        const child = new AIController(kart, track);
+    static crossover(parent1, parent2, kart, track, trackName, isTraining) {
+        const child = new AIController(kart, track, trackName, isTraining);
         child.network = NeuralNetwork.crossover(parent1.network, parent2.network);
         return child;
     }
@@ -170,8 +196,8 @@ class AIController {
         return this.network.serialize();
     }
     
-    static deserialize(data, kart, track) {
-        const controller = new AIController(kart, track);
+    static deserialize(data, kart, track, trackName, isTraining) {
+        const controller = new AIController(kart, track, trackName, isTraining);
         controller.network = NeuralNetwork.deserialize(data);
         return controller;
     }

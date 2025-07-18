@@ -58,7 +58,8 @@ class TrainingEnvironment {
             const network = new NeuralNetwork(8, 10, 2);
             this.population.push({
                 network: network,
-                fitness: 0
+                fitness: 0,
+                isTraining: true
             });
         }
     }
@@ -197,7 +198,8 @@ class TrainingEnvironment {
             
             newPopulation.push({
                 network: child,
-                fitness: 0
+                fitness: 0,
+                isTraining: true
             });
         }
         
