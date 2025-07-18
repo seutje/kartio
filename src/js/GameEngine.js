@@ -71,11 +71,13 @@ class GameEngine {
     
     startGame() {
         if (this.gameStarted) return;
-        
+
+        this.stop();
+        this.isAutoplay = false;
         this.gameStarted = true;
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('stats').classList.remove('hidden');
-        
+
         this.audioManager.init();
         this.setupRace();
         this.start();
