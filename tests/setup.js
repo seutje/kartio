@@ -9,6 +9,12 @@ global.THREE = {
             this.y = y;
             this.z = z;
         }
+        set(x = 0, y = 0, z = 0) {
+            this.x = x
+            this.y = y
+            this.z = z
+            return this
+        }
         clone() { return new Vector3(this.x, this.y, this.z); }
         add(v) { return this; }
         multiplyScalar(s) { return this; }
@@ -45,16 +51,20 @@ global.THREE = {
     Raycaster: class Raycaster {}
 };
 
+global.Vector3 = global.THREE.Vector3
+
 global.performance = {
     now: () => Date.now()
 };
 
 global.window = {
     AudioContext: class AudioContext {
-        createBuffer() { return {}; }
-        createBufferSource() { return { start: () => {}, stop: () => {} }; }
-        createGain() { return { connect: () => {}, gain: { value: 1 } }; }
-        currentTime: 0
+        constructor() {
+            this.currentTime = 0
+        }
+        createBuffer() { return {} }
+        createBufferSource() { return { start: () => {}, stop: () => {} } }
+        createGain() { return { connect: () => {}, gain: { value: 1 } } }
     },
     addEventListener: () => {},
     removeEventListener: () => {}

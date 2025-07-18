@@ -185,3 +185,7 @@ class Mine {
         this.scene.remove(this.mesh);
     }
 }
+
+if (typeof module !== "undefined") {
+    module.exports = { Powerup }
+}

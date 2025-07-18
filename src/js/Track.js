@@ -245,3 +245,7 @@ class Track {
         });
     }
 }
+
+if (typeof module !== "undefined") {
+    module.exports = { Track }
+}

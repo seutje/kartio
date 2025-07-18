@@ -22,7 +22,7 @@ describe('Kart', () => {
             BoxGeometry: jest.fn(),
             MeshLambertMaterial: jest.fn(),
             Mesh: jest.fn().mockImplementation(() => ({
-                position: { x: 0, y: 0, z: 0 },
+                position: { x: 0, y: 0, z: 0, set: jest.fn() },
                 rotation: { x: 0, y: 0, z: 0 },
                 castShadow: false,
                 receiveShadow: false,
@@ -82,11 +82,12 @@ describe('Kart', () => {
     });
     
     test('should update progress correctly', () => {
-        kart.nextCheckpoint = 2;
-        kart.currentLap = 1;
-        kart.checkpoints = [{}, {}, {}, {}];
-        
-        kart.updateProgress();
+        kart.nextCheckpoint = 2
+        kart.currentLap = 1
+        const checkpoint = () => ({ position: { distanceTo: jest.fn(() => 10) } })
+        kart.currentTrack = { checkpoints: [checkpoint(), checkpoint(), checkpoint(), checkpoint()] }
+
+        kart.updateProgress()
         expect(kart.progress).toBe(0.5);
     });
 });
@@ -146,9 +147,11 @@ describe('NeuralNetwork', () => {
     });
 });
 
+const { Powerup } = require('../src/js/Powerup')
+
 describe('Powerup', () => {
-    let powerup;
-    let mockScene;
+    let powerup
+    let mockScene
     
     beforeEach(() => {
         mockScene = {
@@ -160,7 +163,7 @@ describe('Powerup', () => {
             BoxGeometry: jest.fn(),
             MeshLambertMaterial: jest.fn(),
             Mesh: jest.fn().mockImplementation(() => ({
-                position: { x: 0, y: 0, z: 0 },
+                position: { x: 0, y: 0, z: 0, copy: jest.fn(), set: jest.fn() },
                 rotation: { x: 0, y: 0, z: 0 },
                 material: {}
             }))
