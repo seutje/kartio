@@ -23,6 +23,13 @@ if (typeof window === 'undefined') {
     }
 }
 
+if (typeof global.AudioManager === 'undefined') {
+    global.AudioManager = class {
+        async init() {}
+        resume() {}
+    }
+}
+
 const { NeuralNetwork } = require('../js/NeuralNetwork')
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
