@@ -73,6 +73,14 @@ class GameEngine {
         if (this.gameStarted) return;
 
         this.stop();
+
+        this.karts.forEach(kart => {
+            if (kart.parent) {
+                this.scene.remove(kart);
+            }
+        });
+        this.karts = [];
+        this.clock = new THREE.Clock();
         this.isAutoplay = false;
         this.gameStarted = true;
         document.getElementById('startScreen').classList.add('hidden');
