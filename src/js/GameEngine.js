@@ -176,8 +176,13 @@ class GameEngine {
                 kart.aiController.update(deltaTime, this.karts);
                 kart.update(deltaTime);
             }
+
+            this.currentTrack.checkObstacleCollisions(kart)
+            this.currentTrack.checkPowerupCollisions(kart)
         });
-        
+
+        this.currentTrack.update(deltaTime)
+
         this.updateCamera();
         this.updateUI();
     }

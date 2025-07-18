@@ -125,6 +125,28 @@ class Track {
             }
         });
     }
+
+    checkObstacleCollisions(kart) {
+        const kartBox = new THREE.Box3().setFromObject(kart)
+        this.obstacles.forEach(obstacle => {
+            const obstacleBox = new THREE.Box3().setFromObject(obstacle)
+            if (kartBox.intersectsBox(obstacleBox)) {
+                const obstacleCenter = new THREE.Vector3()
+                obstacleBox.getCenter(obstacleCenter)
+
+                const delta = kart.position.clone().sub(obstacleCenter)
+                let normal
+                if (Math.abs(delta.x) > Math.abs(delta.z)) {
+                    normal = new THREE.Vector3(Math.sign(delta.x), 0, 0)
+                } else {
+                    normal = new THREE.Vector3(0, 0, Math.sign(delta.z))
+                }
+
+                const velocityAlongNormal = normal.clone().multiplyScalar(2 * kart.velocity.dot(normal))
+                kart.velocity.sub(velocityAlongNormal).multiplyScalar(0.8)
+            }
+        })
+    }
 }
 
 if (typeof module !== "undefined") {
