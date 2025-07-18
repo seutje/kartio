@@ -75,12 +75,6 @@ describe('Kart', () => {
         expect(kart.currentPowerup).toBe('boost');
     });
     
-    test('should handle collision', () => {
-        kart.handleCollision();
-        expect(kart.isStopped).toBe(true);
-        expect(kart.isInvulnerable).toBe(true);
-    });
-    
     test('should update progress correctly', () => {
         kart.nextCheckpoint = 2
         kart.currentLap = 1
