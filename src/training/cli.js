@@ -201,12 +201,21 @@ class TrainingEnvironment {
         
         this.modelsDir = path.join(__dirname, '../../models');
         this.ensureModelsDir();
+        this.trackData = this.loadTrackData(trackType);
     }
     
     ensureModelsDir() {
         if (!fs.existsSync(this.modelsDir)) {
             fs.mkdirSync(this.modelsDir, { recursive: true });
         }
+    }
+
+    loadTrackData(trackType) {
+        const trackPath = path.join(__dirname, `../tracks/${trackType}.json`);
+        if (!fs.existsSync(trackPath)) {
+            throw new Error(`Track data not found for ${trackType} at ${trackPath}`);
+        }
+        return JSON.parse(fs.readFileSync(trackPath, 'utf8'));
     }
     
     async init() {
@@ -265,12 +274,30 @@ class TrainingEnvironment {
     
     async simulateRace(network) {
         return new Promise((resolve) => {
+            const checkpoints = this.trackData.checkpoints.map(cp => new THREE.Vector3(cp.x, cp.y, cp.z));
+            const obstacles = this.trackData.obstacles.map(obs => ({
+                position: new THREE.Vector3(obs.x, obs.y, obs.z),
+                width: obs.width,
+                height: obs.height,
+                depth: obs.depth
+            }));
+
+            // Position kart at the first checkpoint, facing the second
+            const startCheckpoint = checkpoints[0];
+            const secondCheckpoint = checkpoints[1 % checkpoints.length];
+
+            const initialPosition = startCheckpoint.clone();
+            const direction = secondCheckpoint.clone().sub(startCheckpoint).normalize();
+
+            // Calculate initial rotation (yaw) based on the direction vector
+            const initialRotationY = Math.atan2(direction.x, direction.z);
+
             const kart = {
-                position: new THREE.Vector3(0, 0, -45),
-                velocity: new THREE.Vector3(0, 0, -0.1), // Give a small initial forward velocity
-                rotation: { y: 0 },
-                quaternion: new THREE.Quaternion(), // Add quaternion for rotation
-                maxSpeed: 20, // From Kart.js
+                position: initialPosition,
+                velocity: direction.clone().multiplyScalar(0.1), // Small initial forward velocity in the correct direction
+                rotation: { y: initialRotationY },
+                quaternion: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY), // Set initial quaternion
+                maxSpeed: 20,
                 currentLap: 1,
                 nextCheckpoint: 0,
                 progress: 0,
@@ -287,19 +314,8 @@ class TrainingEnvironment {
             };
             
             const track = {
-                checkpoints: [
-                    { position: new THREE.Vector3(0, 0, -40) },
-                    { position: new THREE.Vector3(40, 0, 0) },
-                    { position: new THREE.Vector3(0, 0, 40) },
-                    { position: new THREE.Vector3(-40, 0, 0) }
-                ],
-                obstacles: [
-                    // Simplified obstacles for simulation (e.g., barriers)
-                    { position: new THREE.Vector3(0, 0, -20), width: 2, height: 1, depth: 10 },
-                    { position: new THREE.Vector3(0, 0, 20), width: 2, height: 1, depth: 10 },
-                    { position: new THREE.Vector3(-20, 0, 0), width: 10, height: 1, depth: 2 },
-                    { position: new THREE.Vector3(20, 0, 0), width: 10, height: 1, depth: 2 }
-                ]
+                checkpoints: checkpoints,
+                obstacles: obstacles
             };
             
             let fitness = 0;
@@ -366,10 +382,11 @@ class TrainingEnvironment {
             opponentDistance: 0 // No opponents in training simulation
         };
 
-        const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
+        const nextCheckpointIndex = kart.nextCheckpoint % track.checkpoints.length;
+        const nextCheckpoint = track.checkpoints[nextCheckpointIndex];
         if (nextCheckpoint) {
-            sensors.checkpoint = nextCheckpoint.position.distanceTo(kart.position) / 50;
-            const toCheckpoint = nextCheckpoint.position.clone().sub(kart.position).normalize();
+            sensors.checkpoint = nextCheckpoint.distanceTo(kart.position) / 50;
+            const toCheckpoint = nextCheckpoint.clone().sub(kart.position).normalize();
             sensors.angle = forwardVector.dot(toCheckpoint);
         }
         
@@ -422,8 +439,8 @@ class TrainingEnvironment {
         kart.position.add(kart.velocity.clone().multiplyScalar(deltaTime));
         
         const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
-        const dx = nextCheckpoint.position.x - kart.position.x;
-        const dz = nextCheckpoint.position.z - kart.position.z;
+        const dx = nextCheckpoint.x - kart.position.x;
+        const dz = nextCheckpoint.z - kart.position.z;
         const distance = Math.sqrt(dx * dx + dz * dz);
         
         if (distance < 20) {
