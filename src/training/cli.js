@@ -1,13 +1,60 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { NeuralNetwork } = require('../js/NeuralNetwork');
-const { Kart } = require('../js/Kart')
-const DEBUG_Cli = false;
+const fs = require('fs')
+const path = require('path')
 
 const THREE = require('three')
 global.THREE = THREE
+
+// In a Node environment Three.js cannot create a real WebGL context.
+// Provide a minimal renderer so GameEngine can be instantiated during training.
+if (typeof window === 'undefined') {
+    THREE.WebGLRenderer = class {
+        constructor() {
+            this.domElement = {
+                addEventListener: () => {},
+                removeEventListener: () => {}
+            }
+            this.shadowMap = {}
+        }
+        setSize() {}
+        setClearColor() {}
+        render() {}
+    }
+}
+
+if (typeof global.AudioManager === 'undefined') {
+    global.AudioManager = class {
+        async init() {}
+        resume() {}
+    }
+}
+
+const { NeuralNetwork } = require('../js/NeuralNetwork')
+const { Kart } = require('../js/Kart')
+const { GameEngine } = require('../js/GameEngine')
+const DEBUG_Cli = false
+
+if (typeof global.window === 'undefined') {
+    global.window = {
+        innerWidth: 800,
+        innerHeight: 600,
+        addEventListener: () => {}
+    }
+}
+
+if (typeof global.document === 'undefined') {
+    global.document = {
+        addEventListener: () => {},
+        getElementById: () => ({
+            addEventListener: () => {},
+            removeEventListener: () => {},
+            getContext: () => ({}),
+            classList: { add: () => {}, remove: () => {} },
+            textContent: ''
+        })
+    }
+}
 
 class TrainingEnvironment {
     constructor(trackType) {
@@ -16,7 +63,9 @@ class TrainingEnvironment {
         this.generations = parseInt(process.argv[2]) || 50;
         this.mutationRate = 0.1;
         this.eliteCount = 5;
-        
+
+        this.gameEngine = new GameEngine()
+
         this.population = [];
         this.generation = 0;
         this.bestFitness = 0;
@@ -387,4 +436,4 @@ if (require.main === module) {
     main();
 }
 
-module.exports = { TrainingEnvironment };
+module.exports = { TrainingEnvironment }
