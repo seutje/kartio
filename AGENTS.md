@@ -5,6 +5,7 @@
 - `npm test` - Run all Jest tests
 - `npm test Kart.test.js` - Run single test file
 - `npm train [gens] [track]` - Train AI models
+- When modifying `src/training/cli.js`, run `npm run train 1` before committing
 
 ## Code Style
 - **Imports**: Use CommonJS (`require/module.exports`)
