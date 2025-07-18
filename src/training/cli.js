@@ -3,12 +3,11 @@
 const fs = require('fs');
 const path = require('path');
 const { NeuralNetwork } = require('../js/NeuralNetwork');
+const { Kart } = require('../js/Kart')
 const DEBUG_Cli = false;
 
 const THREE = require('three')
 global.THREE = THREE
-
-const { Kart } = require('../js/Kart')
 
 class TrainingEnvironment {
     constructor(trackType) {
