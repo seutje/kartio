@@ -98,16 +98,16 @@ class TrainingEnvironment {
                 ]
             };
             
-            let fitness = 0;
-            let time = 0;
-            const maxTime = 30;
-            const deltaTime = 0.016;
+            let fitness = 0
+            let time = 0
+            const maxTime = 30
+            const deltaTime = 0.016
             
             while (time < maxTime && kart.currentLap <= 3) {
-                const inputs = this.getInputs(kart, track);
-                const outputs = network.forward(inputs);
+                const inputs = this.getInputs(kart, track, time)
+                const outputs = network.forward(inputs)
                 
-                this.updateKart(kart, outputs, deltaTime);
+                this.updateKart(kart, track, outputs, deltaTime)
                 
                 fitness = this.calculateFitness(kart);
                 
@@ -123,7 +123,7 @@ class TrainingEnvironment {
         });
     }
     
-    getInputs(kart, track) {
+    getInputs(kart, track, time) {
         const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
         const dx = nextCheckpoint.position.x - kart.position.x;
         const dz = nextCheckpoint.position.z - kart.position.z;
@@ -142,7 +142,7 @@ class TrainingEnvironment {
         ];
     }
     
-    updateKart(kart, outputs, deltaTime) {
+    updateKart(kart, track, outputs, deltaTime) {
         const acceleration = outputs[0];
         const steering = outputs[1];
         
