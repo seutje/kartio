@@ -1,5 +1,10 @@
 const DEBUG_Track = false;
 
+let Powerup = (typeof globalThis !== 'undefined' && globalThis.Powerup) ? globalThis.Powerup : undefined
+if (typeof module !== 'undefined' && module.exports) {
+    Powerup = require('./Powerup').Powerup
+}
+
 class Track {
     constructor(type, scene) {
         if (DEBUG_Track) console.log(`Track: Creating track of type ${type}`);
