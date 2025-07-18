@@ -22,6 +22,7 @@ class AIController {
         this.lastCheckpoint = 0;
         this.lastProgress = 0;
         this.stuckTimer = 0;
+        this.timeElapsed = 0;
         
         this.sensors = {
             forward: 0,
@@ -57,7 +58,8 @@ class AIController {
         const outputs = this.network.forward(inputs);
         
         this.applyOutputs(outputs, deltaTime);
-        this.updateFitness();
+        this.timeElapsed += deltaTime;
+        this.updateFitness(deltaTime);
         this.checkStuck(deltaTime);
     }
     
@@ -149,12 +151,18 @@ class AIController {
         }
     }
     
-    updateFitness() {
+    updateFitness(deltaTime) {
         const progress = this.kart.progress;
         const checkpointBonus = (this.kart.nextCheckpoint - this.lastCheckpoint) * 100;
         
         this.fitness = progress * 1000 + checkpointBonus;
         
+        // Time penalty: penalize for taking too long
+        this.fitness -= deltaTime * 5; // Adjust this value as needed
+
+        // Speed bonus: reward for higher speeds
+        this.fitness += this.kart.velocity.length() * 2; // Adjust this value as needed
+
         if (progress > this.lastProgress) {
             this.fitness += 10;
         }
