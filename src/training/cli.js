@@ -34,6 +34,13 @@ class Vector3 {
         return this;
     }
 
+    subVectors(a, b) {
+        this.x = a.x - b.x
+        this.y = a.y - b.y
+        this.z = a.z - b.z
+        return this
+    }
+
     multiplyScalar(s) {
         this.x *= s;
         this.y *= s;
@@ -59,6 +66,13 @@ class Vector3 {
 
     clone() {
         return new Vector3(this.x, this.y, this.z);
+    }
+
+    copy(v) {
+        this.x = v.x
+        this.y = v.y
+        this.z = v.z
+        return this
     }
 
     negate() {
@@ -180,12 +194,56 @@ class Raycaster {
     }
 }
 
+class Group {
+    constructor() {
+        this.children = []
+        this.position = new Vector3()
+        this.rotation = { x: 0, y: 0, z: 0 }
+        this.quaternion = new Quaternion()
+    }
+    add(obj) {
+        this.children.push(obj)
+    }
+}
+
+class Mesh {
+    constructor(geometry, material) {
+        this.geometry = geometry
+        this.material = material
+        this.position = new Vector3()
+        this.rotation = { x: 0, y: 0, z: 0 }
+        this.castShadow = false
+        this.receiveShadow = false
+    }
+    add() {}
+}
+
+class BoxGeometry {}
+class CylinderGeometry {}
+class SphereGeometry {}
+class MeshLambertMaterial {
+    constructor(params = {}) {
+        this.color = params.color
+        this.opacity = 1
+    }
+}
+
 // Mock THREE object for compatibility
 const THREE = {
-    Vector3: Vector3,
-    Quaternion: Quaternion,
-    Raycaster: Raycaster
-};
+    Vector3,
+    Quaternion,
+    Raycaster,
+    Group,
+    Mesh,
+    BoxGeometry,
+    CylinderGeometry,
+    SphereGeometry,
+    MeshLambertMaterial
+}
+
+global.THREE = THREE
+
+const { Kart } = require('../js/Kart')
 
 class TrainingEnvironment {
     constructor(trackType) {
@@ -292,31 +350,23 @@ class TrainingEnvironment {
             // Calculate initial rotation (yaw) based on the direction vector
             const initialRotationY = Math.atan2(direction.x, direction.z);
 
-            const kart = {
-                position: initialPosition,
-                velocity: direction.clone().multiplyScalar(0.1), // Small initial forward velocity in the correct direction
-                rotation: { y: initialRotationY },
-                quaternion: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY), // Set initial quaternion
-                maxSpeed: 20,
-                currentLap: 1,
-                nextCheckpoint: 0,
-                progress: 0,
-                getForwardVector: function() {
-                    const forward = new THREE.Vector3(0, 0, -1);
-                    forward.applyQuaternion(this.quaternion);
-                    return forward;
-                },
-                getRightVector: function() {
-                    const right = new THREE.Vector3(1, 0, 0);
-                    right.applyQuaternion(this.quaternion);
-                    return right;
-                }
-            };
-            
+            const scene = { add: () => {} }
+            const kart = new Kart(0xff0000, scene)
+            kart.isAI = true
+            kart.position.copy(initialPosition)
+            kart.velocity.copy(direction.clone().multiplyScalar(0.1))
+            kart.rotation.y = initialRotationY
+            kart.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY)
+            kart.currentLap = 1
+            kart.nextCheckpoint = 0
+            kart.progress = 0
+
             const track = {
                 checkpoints: checkpoints,
                 obstacles: obstacles
             };
+
+            kart.currentTrack = { checkpoints: checkpoints.map(cp => ({ position: cp })) }
             
             let fitness = 0;
             let time = 0;
@@ -420,24 +470,9 @@ class TrainingEnvironment {
             turning = -0.4; // -kart.turnSpeed;
         }
 
-        // Apply force (simplified from Kart.js applyForce)
-        const forward = new THREE.Vector3(0, 0, -1);
-        forward.applyQuaternion(kart.quaternion);
-        kart.velocity.add(forward.multiplyScalar(acceleration * deltaTime));
-        kart.rotation.y += turning * (kart.velocity.length() / kart.maxSpeed) * deltaTime;
-        kart.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), kart.rotation.y); // Update quaternion
+        kart.applyForce(acceleration, turning)
+        kart.updatePhysics(deltaTime)
 
-        // Apply friction (simplified from Kart.js updatePhysics)
-        kart.velocity.multiplyScalar(0.95); // kart.friction
-
-        // Limit speed
-        const speed = kart.velocity.length();
-        if (speed > kart.maxSpeed) {
-            kart.velocity.normalize().multiplyScalar(kart.maxSpeed);
-        }
-        
-        kart.position.add(kart.velocity.clone().multiplyScalar(deltaTime));
-        
         const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
         const dx = nextCheckpoint.x - kart.position.x;
         const dz = nextCheckpoint.z - kart.position.z;
