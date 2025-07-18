@@ -239,21 +239,25 @@ class GameEngine {
         switch (event.code) {
             case 'KeyW':
             case 'KeyZ':
-                playerKart.accelerate(true);
-                break;
+            case 'ArrowUp':
+                playerKart.accelerate(true)
+                break
             case 'KeyS':
-                playerKart.brake(true);
-                break;
+            case 'ArrowDown':
+                playerKart.brake(true)
+                break
             case 'KeyA':
             case 'KeyQ':
-                playerKart.turnLeft(true);
-                break;
+            case 'ArrowLeft':
+                playerKart.turnLeft(true)
+                break
             case 'KeyD':
-                playerKart.turnRight(true);
-                break;
+            case 'ArrowRight':
+                playerKart.turnRight(true)
+                break
             case 'Space':
-                playerKart.usePowerup();
-                break;
+                playerKart.usePowerup()
+                break
         }
     }
     
@@ -266,18 +270,22 @@ class GameEngine {
         switch (event.code) {
             case 'KeyW':
             case 'KeyZ':
-                playerKart.accelerate(false);
-                break;
+            case 'ArrowUp':
+                playerKart.accelerate(false)
+                break
             case 'KeyS':
-                playerKart.brake(false);
-                break;
+            case 'ArrowDown':
+                playerKart.brake(false)
+                break
             case 'KeyA':
             case 'KeyQ':
-                playerKart.turnLeft(false);
-                break;
+            case 'ArrowLeft':
+                playerKart.turnLeft(false)
+                break
             case 'KeyD':
-                playerKart.turnRight(false);
-                break;
+            case 'ArrowRight':
+                playerKart.turnRight(false)
+                break
         }
     }
 }
