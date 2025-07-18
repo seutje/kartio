@@ -4,10 +4,25 @@ const fs = require('fs');
 const path = require('path');
 const { NeuralNetwork } = require('../js/NeuralNetwork');
 const { Kart } = require('../js/Kart')
+const { GameEngine } = require('../js/GameEngine')
 const DEBUG_Cli = false;
 
 const THREE = require('three')
 global.THREE = THREE
+
+if (typeof global.window === 'undefined') {
+    global.window = {
+        innerWidth: 800,
+        innerHeight: 600,
+        addEventListener: () => {}
+    }
+}
+
+if (typeof global.document === 'undefined') {
+    global.document = {
+        getElementById: () => ({ getContext: () => ({}) })
+    }
+}
 
 class TrainingEnvironment {
     constructor(trackType) {
@@ -16,7 +31,9 @@ class TrainingEnvironment {
         this.generations = parseInt(process.argv[2]) || 50;
         this.mutationRate = 0.1;
         this.eliteCount = 5;
-        
+
+        this.gameEngine = new GameEngine()
+
         this.population = [];
         this.generation = 0;
         this.bestFitness = 0;
