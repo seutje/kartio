@@ -126,7 +126,7 @@ class GameEngine {
                 kart.isPlayer = true;
             } else {
                 kart.isAI = true;
-                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.name, autoplay);
+                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, autoplay);
             }
             
             this.karts.push(kart);
