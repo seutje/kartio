@@ -23,6 +23,8 @@ class AIController {
         this.lastProgress = 0;
         this.stuckTimer = 0;
         this.timeElapsed = 0;
+        this.lastLap = 0;
+        this.timeSinceLastCheckpoint = 0;
         
         this.sensors = {
             forward: 0,
@@ -59,6 +61,7 @@ class AIController {
         
         this.applyOutputs(outputs, deltaTime);
         this.timeElapsed += deltaTime;
+        this.timeSinceLastCheckpoint += deltaTime;
         this.updateFitness(deltaTime);
         this.checkStuck(deltaTime);
     }
@@ -153,18 +156,35 @@ class AIController {
     
     updateFitness(deltaTime) {
         const progress = this.kart.progress;
-        const checkpointBonus = (this.kart.nextCheckpoint - this.lastCheckpoint) * 100;
         
-        this.fitness = progress * 1000 + checkpointBonus;
+        // Base fitness on overall progress
+        this.fitness = progress * 100;
+
+        // Checkpoint bonus: only add if a new checkpoint has been reached
+        if (this.kart.nextCheckpoint !== this.lastCheckpoint) {
+            this.fitness += 10; // Bonus for reaching a new checkpoint
+            this.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
+        } else {
+            // Penalty for not reaching a new checkpoint within a certain time
+            if (this.timeSinceLastCheckpoint > 5) { // 5 seconds without new checkpoint
+                this.fitness -= 200; // Significant penalty
+            }
+        }
         
         // Time penalty: penalize for taking too long
-        this.fitness -= deltaTime * 5; // Adjust this value as needed
+        this.fitness -= deltaTime * 50; // Increased penalty
 
         // Speed bonus: reward for higher speeds
-        this.fitness += this.kart.velocity.length() * 2; // Adjust this value as needed
+        this.fitness += this.kart.velocity.length() * 1; // Increased bonus
 
         if (progress > this.lastProgress) {
-            this.fitness += 10;
+            this.fitness += 1;
+        }
+
+        // Lap completion bonus: significant reward for completing a lap
+        if (this.kart.currentLap > (this.lastLap || 0)) {
+            this.fitness += 500; // Very large bonus for completing a lap
+            this.lastLap = this.kart.currentLap;
         }
         
         this.lastProgress = progress;
@@ -174,8 +194,8 @@ class AIController {
     checkStuck(deltaTime) {
         if (this.kart.velocity.length() < 0.5) {
             this.stuckTimer += deltaTime;
-            if (this.stuckTimer > 3) {
-                this.fitness -= 100;
+            if (this.stuckTimer > 1) {
+                this.fitness -= 1000;
                 this.stuckTimer = 0;
             }
         } else {

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { NeuralNetwork } = require('../js/NeuralNetwork');
+const DEBUG_Cli = false;
 
 class TrainingEnvironment {
     constructor(trackType) {
@@ -84,7 +85,7 @@ class TrainingEnvironment {
         return new Promise((resolve) => {
             const kart = {
                 position: { x: 0, y: 0, z: -45 },
-                velocity: { x: 0, y: 0, z: 0 },
+                velocity: { x: 0, y: 0, z: -0.1 }, // Give a small initial forward velocity
                 rotation: { y: 0 },
                 currentLap: 1,
                 nextCheckpoint: 0,
@@ -100,21 +101,39 @@ class TrainingEnvironment {
                 ]
             };
             
-            let fitness = 0
-            let time = 0
-            const maxTime = 30
-            const deltaTime = 0.016
+            let fitness = 0;
+            let time = 0;
+            const maxTime = 120;
+            const deltaTime = 0.016;
+
+            // Initialize additional kart properties for fitness calculation
+            kart.lastProgress = 0;
+            kart.lastCheckpoint = 0;
+            kart.timeSinceLastCheckpoint = 0;
+            kart.lastLap = 0;
+            kart.stuckTimer = 0;
             
             while (time < maxTime && kart.currentLap <= 3) {
-                const inputs = this.getInputs(kart, track, time)
-                const outputs = network.forward(inputs)
+                const inputs = this.getInputs(kart, track, time);
+                const outputs = network.forward(inputs);
                 
-                this.updateKart(kart, track, outputs, deltaTime)
+                this.updateKart(kart, track, outputs, deltaTime);
                 
-                fitness = this.calculateFitness(kart);
+                const currentStepFitness = this.calculateFitness(kart, deltaTime); // Calculate fitness for this step
+                fitness += currentStepFitness; // Accumulate fitness
                 
+                // Debugging: Log kart state and fitness
+                if (DEBUG_Cli && network === this.population[0].network) {
+                    console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Step Fitness: ${currentStepFitness.toFixed(2)}, Total Fitness: ${fitness.toFixed(2)}`);
+                }
+
+                // Update lastProgress and lastCheckpoint for the next iteration's fitness calculation
+                kart.lastProgress = kart.progress;
+                kart.lastCheckpoint = kart.nextCheckpoint;
+                kart.lastLap = kart.currentLap;
+
                 if (kart.currentLap > 3) {
-                    fitness += 1000;
+                    fitness += 1000; // Bonus for finishing all laps
                     break;
                 }
                 
@@ -154,7 +173,7 @@ class TrainingEnvironment {
         kart.velocity.x *= 0.95;
         kart.velocity.z *= 0.95;
         
-        kart.rotation.y += steering * 2 * deltaTime;
+        kart.rotation.y += steering * 5 * deltaTime; // Increased steering sensitivity
         
         kart.position.x += kart.velocity.x * deltaTime;
         kart.position.z += kart.velocity.z * deltaTime;
@@ -164,7 +183,7 @@ class TrainingEnvironment {
         const dz = nextCheckpoint.position.z - kart.position.z;
         const distance = Math.sqrt(dx * dx + dz * dz);
         
-        if (distance < 5) {
+        if (distance < 20) {
             kart.nextCheckpoint++;
             if (kart.nextCheckpoint % track.checkpoints.length === 0) {
                 kart.currentLap++;
@@ -174,8 +193,24 @@ class TrainingEnvironment {
         kart.progress = (kart.currentLap - 1) + (kart.nextCheckpoint % track.checkpoints.length) / track.checkpoints.length;
     }
     
-    calculateFitness(kart) {
-        return kart.progress * 1000 + (kart.currentLap - 1) * 400;
+    calculateFitness(kart, deltaTime) {
+        const progress = kart.progress;
+        let currentFitness = 0;
+
+        // Base fitness on overall progress
+        currentFitness += progress * 100;
+
+        // Checkpoint bonus: only add if a new checkpoint has been reached
+        if (kart.nextCheckpoint !== kart.lastCheckpoint) {
+            currentFitness += 10; // Bonus for reaching a new checkpoint
+        }
+
+        // Lap completion bonus: significant reward for completing a lap
+        if (kart.currentLap > (kart.lastLap || 0)) {
+            currentFitness += 500; // Very large bonus for completing a lap
+        }
+
+        return currentFitness;
     }
     
     evolvePopulation() {
@@ -184,7 +219,7 @@ class TrainingEnvironment {
         for (let i = 0; i < this.eliteCount; i++) {
             const elite = {
                 network: this.population[i].network.copy(),
-                fitness: 0
+                fitness: this.population[i].fitness // Preserve fitness for elites
             };
             newPopulation.push(elite);
         }
