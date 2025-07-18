@@ -114,10 +114,12 @@ class GameEngine {
         const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
         const startPositions = this.currentTrack.getStartPositions();
         
+        const spawnOffset = 2; // Small gap between karts
         for (let i = 0; i < 4; i++) {
             const kart = new Kart(colors[i], this.scene);
             kart.currentTrack = this.currentTrack;
             kart.position.copy(startPositions[i]);
+            kart.position.x += (i - 1.5) * spawnOffset; // Adjust x-position for spacing
             kart.rotation.y = Math.PI / 2;
             
             if (i === 0 && !autoplay) {
