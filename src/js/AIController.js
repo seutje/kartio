@@ -1,4 +1,3 @@
-const { NeuralNetwork } = require('./NeuralNetwork')
 const DEBUG_AIController = false;
 
 class AIController {

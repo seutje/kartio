@@ -31,6 +31,7 @@ if (typeof global.AudioManager === 'undefined') {
 }
 
 const { NeuralNetwork } = require('../js/NeuralNetwork')
+global.NeuralNetwork = NeuralNetwork
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
 const { Track } = require('../js/Track')
