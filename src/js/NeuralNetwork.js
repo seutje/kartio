@@ -140,12 +140,11 @@ class NeuralNetwork {
     }
     
     static deserialize(data) {
-        const obj = JSON.parse(data);
-        const network = new NeuralNetwork(obj.weights1.length, obj.weights2.length, obj.bias2.length);
-        network.weights1 = obj.weights1;
-        network.weights2 = obj.weights2;
-        network.bias1 = obj.bias1;
-        network.bias2 = obj.bias2;
+        const network = new NeuralNetwork(data.weights1.length, data.weights2.length, data.bias2.length);
+        network.weights1 = data.weights1;
+        network.weights2 = data.weights2;
+        network.bias1 = data.bias1;
+        network.bias2 = data.bias2;
         return network;
     }
 }
