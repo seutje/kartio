@@ -5,187 +5,10 @@ const path = require('path');
 const { NeuralNetwork } = require('../js/NeuralNetwork');
 const DEBUG_Cli = false;
 
-// Simplified THREE.Vector3 for Node.js environment
-class Vector3 {
-    constructor(x = 0, y = 0, z = 0) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
+const THREE = require('three')
+global.THREE = THREE
 
-    set(x, y, z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        return this;
-    }
-
-    add(v) {
-        this.x += v.x;
-        this.y += v.y;
-        this.z += v.z;
-        return this;
-    }
-
-    sub(v) {
-        this.x -= v.x;
-        this.y -= v.y;
-        this.z -= v.z;
-        return this;
-    }
-
-    multiplyScalar(s) {
-        this.x *= s;
-        this.y *= s;
-        this.z *= s;
-        return this;
-    }
-
-    divideScalar(s) {
-        return this.multiplyScalar(1 / s);
-    }
-
-    length() {
-        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-    }
-
-    normalize() {
-        return this.divideScalar(this.length() || 1);
-    }
-
-    dot(v) {
-        return this.x * v.x + this.y * v.y + this.z * v.z;
-    }
-
-    clone() {
-        return new Vector3(this.x, this.y, this.z);
-    }
-
-    negate() {
-        this.x = -this.x;
-        this.y = -this.y;
-        this.z = -this.z;
-        return this;
-    }
-
-    distanceTo(v) {
-        const dx = this.x - v.x;
-        const dy = this.y - v.y;
-        const dz = this.z - v.z;
-        return Math.sqrt(dx * dx + dy * dy + dz * dz);
-    }
-
-    applyQuaternion(q) {
-        // Simplified quaternion application for rotation around Y-axis only
-        const angle = q.angleY;
-        const cos = Math.cos(angle);
-        const sin = Math.sin(angle);
-
-        const x = this.x * cos - this.z * sin;
-        const z = this.x * sin + this.z * cos;
-
-        this.x = x;
-        this.z = z;
-        return this;
-    }
-}
-
-// Simplified THREE.Quaternion for Node.js environment (for Y-axis rotation)
-class Quaternion {
-    constructor(angleY = 0) {
-        this.angleY = angleY;
-    }
-
-    setFromAxisAngle(axis, angle) {
-        // Assuming axis is (0, 1, 0) for Y-axis rotation
-        this.angleY = angle;
-        return this;
-    }
-}
-
-// Simplified THREE.Raycaster for Node.js environment
-class Raycaster {
-    constructor(origin, direction, near = 0, far = Infinity) {
-        this.ray = {
-            origin: origin,
-            direction: direction
-        };
-        this.near = near;
-        this.far = far;
-    }
-
-    intersectObjects(objects) {
-        const intersects = [];
-        for (const object of objects) {
-            // Simplified intersection: check if ray intersects with a bounding box
-            // For this simulation, we assume obstacles are simple boxes
-            const intersectionDistance = this.intersectBox(object);
-            if (intersectionDistance !== null && intersectionDistance >= this.near && intersectionDistance <= this.far) {
-                intersects.push({
-                    distance: intersectionDistance,
-                    object: object // Include object for potential future use
-                });
-            }
-        }
-        // Sort by distance, closest first
-        intersects.sort((a, b) => a.distance - b.distance);
-        return intersects;
-    }
-
-    // Basic AABB intersection for a ray
-    intersectBox(box) {
-        // Assuming box has properties: position (Vector3), width, height, depth
-        // This is a very simplified intersection test for demonstration
-        // A more robust implementation would involve proper ray-AABB intersection algorithms
-        const { origin, direction } = this.ray;
-        const { position, width, height, depth } = box;
-
-        const min = new Vector3(position.x - width / 2, position.y - height / 2, position.z - depth / 2);
-        const max = new Vector3(position.x + width / 2, position.y + height / 2, position.z + depth / 2);
-
-        // Check if the ray origin is inside the box
-        if (origin.x >= min.x && origin.x <= max.x &&
-            origin.y >= min.y && origin.y <= max.y &&
-            origin.z >= min.z && origin.z <= max.z) {
-            return 0; // Ray origin is inside the box
-        }
-
-        let tmin = (min.x - origin.x) / direction.x;
-        let tmax = (max.x - origin.x) / direction.x;
-
-        if (tmin > tmax) [tmin, tmax] = [tmax, tmin];
-
-        let tymin = (min.y - origin.y) / direction.y;
-        let tymax = (max.y - origin.y) / direction.y;
-
-        if (tymin > tymax) [tymin, tymax] = [tymax, tymin];
-
-        if (tmin > tymax || tymin > tmax) return null;
-
-        if (tymin > tmin) tmin = tymin;
-        if (tymax < tmax) tmax = tymax;
-
-        let tzmin = (min.z - origin.z) / direction.z;
-        let tzmax = (max.z - origin.z) / direction.z;
-
-        if (tzmin > tzmax) [tzmin, tzmax] = [tzmax, tzmin];
-
-        if (tmin > tzmax || tzmin > tmax) return null;
-
-        if (tzmin > tmin) tmin = tzmin;
-        if (tzmax < tmax) tmax = tzmax;
-
-        // Return the entry point distance
-        return tmin >= 0 ? tmin : tmax;
-    }
-}
-
-// Mock THREE object for compatibility
-const THREE = {
-    Vector3: Vector3,
-    Quaternion: Quaternion,
-    Raycaster: Raycaster
-};
+const { Kart } = require('../js/Kart')
 
 class TrainingEnvironment {
     constructor(trackType) {
@@ -275,12 +98,13 @@ class TrainingEnvironment {
     async simulateRace(network) {
         return new Promise((resolve) => {
             const checkpoints = this.trackData.checkpoints.map(cp => new THREE.Vector3(cp.x, cp.y, cp.z));
-            const obstacles = this.trackData.obstacles.map(obs => ({
-                position: new THREE.Vector3(obs.x, obs.y, obs.z),
-                width: obs.width,
-                height: obs.height,
-                depth: obs.depth
-            }));
+            const obstacles = this.trackData.obstacles.map(obs => {
+                const geometry = new THREE.BoxGeometry(obs.width, obs.height, obs.depth)
+                const material = new THREE.MeshLambertMaterial()
+                const mesh = new THREE.Mesh(geometry, material)
+                mesh.position.set(obs.x, obs.y, obs.z)
+                return mesh
+            })
 
             // Position kart at the first checkpoint, facing the second
             const startCheckpoint = checkpoints[0];
@@ -292,31 +116,23 @@ class TrainingEnvironment {
             // Calculate initial rotation (yaw) based on the direction vector
             const initialRotationY = Math.atan2(direction.x, direction.z);
 
-            const kart = {
-                position: initialPosition,
-                velocity: direction.clone().multiplyScalar(0.1), // Small initial forward velocity in the correct direction
-                rotation: { y: initialRotationY },
-                quaternion: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY), // Set initial quaternion
-                maxSpeed: 20,
-                currentLap: 1,
-                nextCheckpoint: 0,
-                progress: 0,
-                getForwardVector: function() {
-                    const forward = new THREE.Vector3(0, 0, -1);
-                    forward.applyQuaternion(this.quaternion);
-                    return forward;
-                },
-                getRightVector: function() {
-                    const right = new THREE.Vector3(1, 0, 0);
-                    right.applyQuaternion(this.quaternion);
-                    return right;
-                }
-            };
-            
+            const scene = { add: () => {} }
+            const kart = new Kart(0xff0000, scene)
+            kart.isAI = true
+            kart.position.copy(initialPosition)
+            kart.velocity.copy(direction.clone().multiplyScalar(0.1))
+            kart.rotation.y = initialRotationY
+            kart.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY)
+            kart.currentLap = 1
+            kart.nextCheckpoint = 0
+            kart.progress = 0
+
             const track = {
                 checkpoints: checkpoints,
                 obstacles: obstacles
             };
+
+            kart.currentTrack = { checkpoints: checkpoints.map(cp => ({ position: cp })) }
             
             let fitness = 0;
             let time = 0;
@@ -420,24 +236,9 @@ class TrainingEnvironment {
             turning = -0.4; // -kart.turnSpeed;
         }
 
-        // Apply force (simplified from Kart.js applyForce)
-        const forward = new THREE.Vector3(0, 0, -1);
-        forward.applyQuaternion(kart.quaternion);
-        kart.velocity.add(forward.multiplyScalar(acceleration * deltaTime));
-        kart.rotation.y += turning * (kart.velocity.length() / kart.maxSpeed) * deltaTime;
-        kart.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), kart.rotation.y); // Update quaternion
+        kart.applyForce(acceleration, turning)
+        kart.updatePhysics(deltaTime)
 
-        // Apply friction (simplified from Kart.js updatePhysics)
-        kart.velocity.multiplyScalar(0.95); // kart.friction
-
-        // Limit speed
-        const speed = kart.velocity.length();
-        if (speed > kart.maxSpeed) {
-            kart.velocity.normalize().multiplyScalar(kart.maxSpeed);
-        }
-        
-        kart.position.add(kart.velocity.clone().multiplyScalar(deltaTime));
-        
         const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length];
         const dx = nextCheckpoint.x - kart.position.x;
         const dz = nextCheckpoint.z - kart.position.z;
