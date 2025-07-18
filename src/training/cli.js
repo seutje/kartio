@@ -5,6 +5,7 @@ const path = require('path')
 
 const THREE = require('three')
 global.THREE = THREE
+global.NO_GRAPHICS = true
 
 // In a Node environment Three.js cannot create a real WebGL context.
 // Provide a minimal renderer so GameEngine can be instantiated during training.

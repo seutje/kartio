@@ -7,9 +7,11 @@ class Powerup {
         this.position = position;
         this.scene = scene;
         this.collected = false;
-        
-        this.createMesh();
-        this.addToScene();
+
+        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+            this.createMesh();
+            this.addToScene();
+        }
     }
     
     createMesh() {
@@ -47,7 +49,8 @@ class Powerup {
     
     update(deltaTime) {
         if (this.collected) return;
-        
+        if (typeof global !== 'undefined' && global.NO_GRAPHICS) return;
+
         this.mesh.rotation.y += deltaTime * 2;
         this.mesh.position.y = 1 + Math.sin(performance.now() * 0.005) * 0.2;
     }
@@ -96,6 +99,8 @@ class Missile {
     
     update(deltaTime) {
         if (!this.active) return;
+        if (typeof global !== 'undefined' && global.NO_GRAPHICS) return;
+        if (typeof global !== 'undefined' && global.NO_GRAPHICS) return;
         
         this.lifetime -= deltaTime;
         if (this.lifetime <= 0) {
@@ -136,9 +141,10 @@ class Mine {
         this.owner = null;
         this.active = true;
         this.lifetime = 30;
-        
-        this.createMesh();
-        this.addToScene();
+        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+            this.createMesh();
+            this.addToScene();
+        }
     }
     
     createMesh() {

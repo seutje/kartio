@@ -11,7 +11,7 @@ class Kart extends THREE.Group {
         this.acceleration = new THREE.Vector3();
         this.angularVelocity = 0;
         
-        this.maxSpeed = 100;
+        this.maxSpeed = 20;
         this.accelerationForce = 50;
         this.friction = 0.9;
         this.turnSpeed = 0.8;
@@ -40,8 +40,10 @@ class Kart extends THREE.Group {
         this.aiController = null;
         this.currentTrack = null;
         
-        this.createMesh();
-        this.addToScene();
+        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+            this.createMesh();
+            this.addToScene();
+        }
     }
     
     createMesh() {
@@ -277,6 +279,7 @@ class Kart extends THREE.Group {
     }
     
     updateVisuals(deltaTime) {
+        if (typeof global !== 'undefined' && global.NO_GRAPHICS) return
         this.wheels.forEach(wheel => {
             wheel.rotation.x += this.velocity.length() * deltaTime * 2;
         });

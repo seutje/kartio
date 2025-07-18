@@ -34,38 +34,40 @@ class Track {
     createTrack() {
         if (DEBUG_Track) console.log('Track: Creating track geometry and environment.');
         const { trackGeometry, environment, obstacles, decorations } = this.trackData;
-        
-        this.scene.background = new THREE.Color(parseInt(environment.skyColor));
-        
-        const groundGeometry = new THREE.PlaneGeometry(trackGeometry.width, trackGeometry.height);
-        const groundMaterial = new THREE.MeshLambertMaterial({ color: parseInt(environment.groundColor) });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.receiveShadow = true;
-        this.scene.add(ground);
-        
-        obstacles.forEach(obstacleData => {
-            if (obstacleData.type === 'barrier') {
-                const barrierGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
-                const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
-                const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
-                barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
-                barrier.castShadow = true;
-                this.scene.add(barrier);
-                this.obstacles.push(barrier);
-            }
-        });
 
-        decorations.forEach(decorationData => {
-            if (decorationData.type === 'marking') {
-                const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth);
-                const markingMaterial = new THREE.MeshLambertMaterial({ color: parseInt(decorationData.color) });
-                const marking = new THREE.Mesh(markingGeometry, markingMaterial);
-                marking.rotation.x = -Math.PI / 2;
-                marking.position.set(decorationData.x, decorationData.y, decorationData.z);
-                this.scene.add(marking);
-            }
-        });
+        if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+            this.scene.background = new THREE.Color(parseInt(environment.skyColor));
+
+            const groundGeometry = new THREE.PlaneGeometry(trackGeometry.width, trackGeometry.height);
+            const groundMaterial = new THREE.MeshLambertMaterial({ color: parseInt(environment.groundColor) });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            this.scene.add(ground);
+
+            obstacles.forEach(obstacleData => {
+                if (obstacleData.type === 'barrier') {
+                    const barrierGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
+                    const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
+                    const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
+                    barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
+                    barrier.castShadow = true;
+                    this.scene.add(barrier);
+                    this.obstacles.push(barrier);
+                }
+            });
+
+            decorations.forEach(decorationData => {
+                if (decorationData.type === 'marking') {
+                    const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth);
+                    const markingMaterial = new THREE.MeshLambertMaterial({ color: parseInt(decorationData.color) });
+                    const marking = new THREE.Mesh(markingGeometry, markingMaterial);
+                    marking.rotation.x = -Math.PI / 2;
+                    marking.position.set(decorationData.x, decorationData.y, decorationData.z);
+                    this.scene.add(marking);
+                }
+            });
+        }
     }
     
     createCheckpoints() {
@@ -78,20 +80,21 @@ class Track {
                 passed: false
             };
             this.checkpoints.push(checkpoint);
-            
-            const geometry = new THREE.RingGeometry(cp.radius - 1, cp.radius, 16);
-            const material = new THREE.MeshBasicMaterial({ 
-                color: 0x00ff00,
-                transparent: true,
-                opacity: 0.5,
-                side: THREE.DoubleSide
-            });
-            
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.rotation.x = -Math.PI / 2;
-            mesh.position.copy(checkpoint.position);
-            mesh.position.y += 0.1;
-            this.scene.add(mesh);
+            if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+                const geometry = new THREE.RingGeometry(cp.radius - 1, cp.radius, 16);
+                const material = new THREE.MeshBasicMaterial({
+                    color: 0x00ff00,
+                    transparent: true,
+                    opacity: 0.5,
+                    side: THREE.DoubleSide
+                });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.rotation.x = -Math.PI / 2;
+                mesh.position.copy(checkpoint.position);
+                mesh.position.y += 0.1;
+                this.scene.add(mesh);
+            }
         });
     }
     
