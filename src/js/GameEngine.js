@@ -97,6 +97,7 @@ class GameEngine {
         
         this.audioManager.init();
         this.setupRace();
+        this.drawRacePath(); // Call the new function to draw the path
         this.start();
     }
     
@@ -114,13 +115,19 @@ class GameEngine {
         const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
         const startPositions = this.currentTrack.getStartPositions();
         
-        const spawnOffset = 2; // Small gap between karts
+        const spawnOffset = 4; // Increased gap for side-by-side spawning
+        const firstCheckpoint = this.currentTrack.checkpoints[0].position;
+        const secondCheckpoint = this.currentTrack.checkpoints[1].position;
         for (let i = 0; i < 4; i++) {
             const kart = new Kart(colors[i], this.scene);
             kart.currentTrack = this.currentTrack;
-            kart.position.copy(startPositions[i]);
+            kart.position.copy(firstCheckpoint); // Place on first checkpoint
             kart.position.x += (i - 1.5) * spawnOffset; // Adjust x-position for spacing
-            kart.rotation.y = Math.PI / 2;
+            // Calculate direction from first to second checkpoint
+            const direction = new THREE.Vector3().subVectors(secondCheckpoint, firstCheckpoint).normalize();
+            // Calculate rotation to face the second checkpoint
+            const angle = Math.atan2(direction.x, direction.z) + Math.PI;
+            kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
                 kart.isPlayer = true;
@@ -245,6 +252,39 @@ class GameEngine {
         this.renderer.render(this.scene, this.camera);
     }
     
+    drawRacePath() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Drawing race path.');
+        const checkpoints = this.currentTrack.checkpoints;
+        const pathMaterial = new THREE.LineBasicMaterial({ color: 0xffa500, linewidth: 3 }); // Orange line
+        const arrowColor = 0x0000ff; // Blue arrow
+
+        for (let i = 0; i < checkpoints.length; i++) {
+            const startPoint = checkpoints[i].position.clone();
+            const endPoint = checkpoints[(i + 1) % checkpoints.length].position.clone();
+
+            // Adjust y-coordinate to be slightly above the ground
+            startPoint.y += 0.5;
+            endPoint.y += 0.5;
+
+            // Draw line segment
+            const points = [startPoint, endPoint];
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.Line(geometry, pathMaterial);
+            this.scene.add(line);
+
+            // Add arrow helper
+            const dir = new THREE.Vector3().subVectors(endPoint, startPoint).normalize();
+            const origin = startPoint.clone();
+            const length = startPoint.distanceTo(endPoint) * 0.5; // Arrow in the middle of the segment
+            const hex = arrowColor;
+            const headLength = 1;
+            const headWidth = 0.5;
+
+            const arrowHelper = new THREE.ArrowHelper(dir, origin.lerp(endPoint, 0.5), length, hex, headLength, headWidth);
+            this.scene.add(arrowHelper);
+        }
+    }
+
     onWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
