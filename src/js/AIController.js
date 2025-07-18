@@ -8,14 +8,13 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        if (isTraining) {
-            this.network = new NeuralNetwork(8, 10, 2);
-        } else {
+        this.network = new NeuralNetwork(8, 10, 2); // Initialize with a random brain
+
+        if (!isTraining) {
             this.loadBrain().then(network => {
                 this.network = network;
             }).catch(() => {
                 console.warn(`Failed to load brain for ${trackName}. Using a random brain.`);
-                this.network = new NeuralNetwork(8, 10, 2);
             });
         }
         
