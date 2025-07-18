@@ -25,7 +25,10 @@ class GameEngine {
         this.setupRenderer();
         this.setupLighting();
         this.setupControls();
-        this.setupTracks();
+    }
+
+    async initialize() {
+        await this.setupTracks();
     }
     
     setupRenderer() {
@@ -60,18 +63,25 @@ class GameEngine {
         document.addEventListener('keyup', (e) => this.onKeyUp(e));
     }
     
-    setupTracks() {
+    async setupTracks() {
         this.tracks = [
             new Track('circuit', this.scene),
             new Track('desert', this.scene),
             new Track('snow', this.scene)
         ];
+
+        for (const track of this.tracks) {
+            await track.loadTrackData();
+        }
+
         this.currentTrack = this.tracks[0];
     }
     
-    startGame() {
+    async startGame() {
         if (this.gameStarted) return;
         
+        await this.setupTracks();
+
         this.gameStarted = true;
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('stats').classList.remove('hidden');
