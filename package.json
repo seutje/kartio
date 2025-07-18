@@ -1,0 +1,22 @@
+{
+  "name": "kartio",
+  "version": "1.0.0",
+  "description": "A 3D Mario Kart clone built with Three.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest",
+    "train": "node src/training/cli.js"
+  },
+  "keywords": ["game", "threejs", "racing", "ai", "neural-network"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "synaptic": "^1.1.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.5"
+  }
+}
