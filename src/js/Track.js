@@ -25,10 +25,10 @@ class Track {
     createTrack() {
         const { trackGeometry, environment, obstacles, decorations } = this.trackData;
         
-        this.scene.background = new THREE.Color(environment.skyColor);
+        this.scene.background = new THREE.Color(parseInt(environment.skyColor));
         
         const groundGeometry = new THREE.PlaneGeometry(trackGeometry.width, trackGeometry.height);
-        const groundMaterial = new THREE.MeshLambertMaterial({ color: environment.groundColor });
+        const groundMaterial = new THREE.MeshLambertMaterial({ color: parseInt(environment.groundColor) });
         const ground = new THREE.Mesh(groundGeometry, groundMaterial);
         ground.rotation.x = -Math.PI / 2;
         ground.receiveShadow = true;
@@ -37,7 +37,7 @@ class Track {
         obstacles.forEach(obstacleData => {
             if (obstacleData.type === 'barrier') {
                 const barrierGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
-                const barrierMaterial = new THREE.MeshLambertMaterial({ color: trackGeometry.borderColor });
+                const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
                 const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
                 barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
                 barrier.castShadow = true;
@@ -49,7 +49,7 @@ class Track {
         decorations.forEach(decorationData => {
             if (decorationData.type === 'marking') {
                 const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth);
-                const markingMaterial = new THREE.MeshLambertMaterial({ color: decorationData.color });
+                const markingMaterial = new THREE.MeshLambertMaterial({ color: parseInt(decorationData.color) });
                 const marking = new THREE.Mesh(markingGeometry, markingMaterial);
                 marking.rotation.x = -Math.PI / 2;
                 marking.position.set(decorationData.x, decorationData.y, decorationData.z);
