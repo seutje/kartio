@@ -2,7 +2,7 @@ const DEBUG_AudioManager = false;
 
 class AudioManager {
     constructor() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Initializing...');
+        if (DEBUG_AudioManager) console.log('AudioManager: Initializing...');
         this.audioContext = null;
         this.buffers = {};
         this.sounds = {};
@@ -12,7 +12,7 @@ class AudioManager {
     }
     
     async init() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Initializing audio context.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Initializing audio context.');
         if (this.initialized) return;
         
         try {
@@ -36,7 +36,7 @@ class AudioManager {
     }
     
     async loadSounds() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Loading sounds.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Loading sounds.');
         const soundUrls = {
             engine: this.createEngineSound(),
             boost: this.createBoostSound(),
@@ -52,7 +52,7 @@ class AudioManager {
     }
     
     createEngineSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating engine sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating engine sound.');
         const bufferSize = this.audioContext.sampleRate * 2;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -66,7 +66,7 @@ class AudioManager {
     }
     
     createBoostSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating boost sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating boost sound.');
         const bufferSize = this.audioContext.sampleRate * 0.5;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -81,7 +81,7 @@ class AudioManager {
     }
     
     createCollisionSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating collision sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating collision sound.');
         const bufferSize = this.audioContext.sampleRate * 0.3;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -96,7 +96,7 @@ class AudioManager {
     }
     
     createPowerupSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating powerup sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating powerup sound.');
         const bufferSize = this.audioContext.sampleRate * 0.5;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -111,7 +111,7 @@ class AudioManager {
     }
     
     createMissileSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating missile sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating missile sound.');
         const bufferSize = this.audioContext.sampleRate * 1;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -126,7 +126,7 @@ class AudioManager {
     }
     
     createMineSound() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating mine sound.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating mine sound.');
         const bufferSize = this.audioContext.sampleRate * 0.8;
         const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
         const data = buffer.getChannelData(0);
@@ -141,7 +141,7 @@ class AudioManager {
     }
     
     createMusic() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Creating music.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating music.');
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
         
@@ -157,7 +157,7 @@ class AudioManager {
     }
     
     playSound(name, loop = false) {
-        if (DEBUG || DEBUG_AudioManager) console.log(`AudioManager: Playing sound ${name}.`);
+        if (DEBUG_AudioManager) console.log(`AudioManager: Playing sound ${name}.`);
         if (!this.initialized || !this.buffers[name]) return;
         
         const source = this.audioContext.createBufferSource();
@@ -171,7 +171,7 @@ class AudioManager {
     }
     
     playMusic() {
-        if (DEBUG || DEBUG_AudioManager) console.log('AudioManager: Playing music.');
+        if (DEBUG_AudioManager) console.log('AudioManager: Playing music.');
         if (!this.initialized) return;
         
         const music = this.createMusic();
@@ -187,7 +187,7 @@ class AudioManager {
     }
     
     stopSound(name) {
-        if (DEBUG || DEBUG_AudioManager) console.log(`AudioManager: Stopping sound ${name}.`);
+        if (DEBUG_AudioManager) console.log(`AudioManager: Stopping sound ${name}.`);
         if (this.sounds[name]) {
             this.sounds[name].stop();
             delete this.sounds[name];
@@ -195,7 +195,7 @@ class AudioManager {
     }
     
     setMusicVolume(volume) {
-        if (DEBUG || DEBUG_AudioManager) console.log(`AudioManager: Setting music volume to ${volume}.`);
+        if (DEBUG_AudioManager) console.log(`AudioManager: Setting music volume to ${volume}.`);
         if (this.musicGain) {
             this.musicGain.gain.value = volume;
         }

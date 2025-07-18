@@ -2,7 +2,7 @@ const DEBUG_Powerup = false;
 
 class Powerup {
     constructor(type, position, scene) {
-        if (DEBUG || DEBUG_Powerup) console.log(`Powerup: Creating ${type} at position`, position);
+        if (DEBUG_Powerup) console.log(`Powerup: Creating ${type} at position`, position);
         this.type = type;
         this.position = position;
         this.scene = scene;
@@ -41,7 +41,7 @@ class Powerup {
     }
     
     addToScene() {
-        if (DEBUG || DEBUG_Powerup) console.log('Powerup: Adding mesh to scene.');
+        if (DEBUG_Powerup) console.log('Powerup: Adding mesh to scene.');
         this.scene.add(this.mesh);
     }
     

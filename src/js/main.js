@@ -1,5 +1,3 @@
-const DEBUG = false; // Global debug flag
-
 let gameEngine;
 
 async function init() {

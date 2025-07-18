@@ -2,7 +2,7 @@ const DEBUG_NeuralNetwork = false;
 
 class NeuralNetwork {
     constructor(inputSize, hiddenSize, outputSize) {
-        if (DEBUG || DEBUG_NeuralNetwork) console.log(`NeuralNetwork: Creating with inputSize: ${inputSize}, hiddenSize: ${hiddenSize}, outputSize: ${outputSize}`);
+        if (DEBUG_NeuralNetwork) console.log(`NeuralNetwork: Creating with inputSize: ${inputSize}, hiddenSize: ${hiddenSize}, outputSize: ${outputSize}`);
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;

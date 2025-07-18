@@ -2,7 +2,7 @@ const DEBUG_AIController = false;
 
 class AIController {
     constructor(kart, track) {
-        if (DEBUG || DEBUG_AIController) console.log('AIController: Initializing for kart', kart.color);
+        if (DEBUG_AIController) console.log('AIController: Initializing for kart', kart.color);
 
         this.kart = kart;
         this.track = track;
@@ -26,7 +26,7 @@ class AIController {
     }
     
     update(deltaTime, karts) {
-        if (DEBUG || DEBUG_AIController) console.log('AIController: Updating AI for kart.');
+        if (DEBUG_AIController) console.log('AIController: Updating AI for kart.');
         this.updateSensors(karts);
         const inputs = this.getInputs();
         const outputs = this.network.forward(inputs);
@@ -37,7 +37,7 @@ class AIController {
     }
     
     updateSensors(karts) {
-        if (DEBUG || DEBUG_AIController) console.log('AIController: Updating sensors.');
+        if (DEBUG_AIController) console.log('AIController: Updating sensors.');
         const forward = this.kart.getForwardVector();
         const right = this.kart.getRightVector();
         
