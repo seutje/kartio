@@ -70,6 +70,7 @@ class TrainingEnvironment {
             
             if (fitness > this.bestFitness) {
                 this.bestFitness = fitness;
+                this.saveBestModel();
             }
         });
         
@@ -231,6 +232,22 @@ class TrainingEnvironment {
         
         fs.writeFileSync(filepath, JSON.stringify(modelData, null, 2));
         console.log(`Model saved: ${filename}`);
+    }
+
+    saveBestModel() {
+        const bestNetwork = this.population[0].network;
+        const modelData = {
+            generation: this.generation,
+            fitness: this.bestFitness,
+            network: bestNetwork.serialize(),
+            timestamp: new Date().toISOString()
+        };
+
+        const filename = `${this.trackType}_best.json`;
+        const filepath = path.join(this.modelsDir, filename);
+
+        fs.writeFileSync(filepath, JSON.stringify(modelData, null, 2));
+        console.log(`Best model saved: ${filename}`);
     }
 }
 
