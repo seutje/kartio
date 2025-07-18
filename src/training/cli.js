@@ -31,9 +31,11 @@ if (typeof global.AudioManager === 'undefined') {
 }
 
 const { NeuralNetwork } = require('../js/NeuralNetwork')
+global.NeuralNetwork = NeuralNetwork
 const { Kart } = require('../js/Kart')
 const { GameEngine } = require('../js/GameEngine')
 const { Track } = require('../js/Track')
+const { AIController } = require('../js/AIController')
 const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
@@ -178,6 +180,8 @@ class TrainingEnvironment {
             const track = this.track
 
             kart.currentTrack = track
+            const ai = new AIController(kart, track, this.trackType, true)
+            ai.network = network
             
             let fitness = 0;
             let time = 0;
@@ -192,10 +196,9 @@ class TrainingEnvironment {
             kart.stuckTimer = 0;
             
             while (time < maxTime && kart.currentLap <= 3) {
-                const inputs = this.getInputs(kart, track, time);
-                const outputs = network.forward(inputs);
-                
-                this.updateKart(kart, track, outputs, deltaTime);
+                ai.update(deltaTime, [])
+                kart.updatePhysics(deltaTime)
+                kart.updateProgress()
                 
                 const currentStepFitness = this.calculateFitness(kart, deltaTime); // Calculate fitness for this step
                 fitness += currentStepFitness; // Accumulate fitness
@@ -220,83 +223,6 @@ class TrainingEnvironment {
             
             resolve(fitness);
         });
-    }
-    
-    raycast(origin, direction, maxDistance, obstacles) {
-        const raycaster = new THREE.Raycaster(origin, direction, 0, maxDistance);
-        const intersects = raycaster.intersectObjects(obstacles);
-        return intersects.length > 0 ? intersects[0].distance / maxDistance : 1;
-    }
-
-    getInputs(kart, track) {
-        const forwardVector = kart.getForwardVector();
-        const rightVector = kart.getRightVector();
-        
-        const sensors = {
-            forward: this.raycast(kart.position, forwardVector, 10, track.obstacles),
-            left: this.raycast(kart.position, rightVector.clone().negate(), 5, track.obstacles),
-            right: this.raycast(kart.position, rightVector, 5, track.obstacles),
-            checkpoint: 0,
-            velocity: kart.velocity.length() / kart.maxSpeed,
-            angle: 0,
-            lapProgress: kart.progress,
-            opponentDistance: 0 // No opponents in training simulation
-        };
-
-        const nextCheckpointIndex = kart.nextCheckpoint % track.checkpoints.length;
-        const nextCheckpoint = track.checkpoints[nextCheckpointIndex].position;
-        if (nextCheckpoint) {
-            sensors.checkpoint = nextCheckpoint.distanceTo(kart.position) / 50;
-            const toCheckpoint = nextCheckpoint.clone().sub(kart.position).normalize();
-            sensors.angle = forwardVector.dot(toCheckpoint);
-        }
-        
-        return [
-            sensors.forward,
-            sensors.left,
-            sensors.right,
-            sensors.checkpoint,
-            sensors.velocity,
-            sensors.angle,
-            sensors.lapProgress,
-            sensors.opponentDistance
-        ];
-    }
-    
-    updateKart(kart, track, outputs, deltaTime) {
-        const accelerationOutput = outputs[0];
-        const steeringOutput = outputs[1];
-
-        let acceleration = 0;
-        if (accelerationOutput > 0.1) {
-            acceleration = 30; // kart.accelerationForce;
-        } else if (accelerationOutput < -0.1) {
-            acceleration = -30 * 0.5; // -kart.accelerationForce * 0.5;
-        }
-
-        let turning = 0;
-        if (steeringOutput > 0.1) {
-            turning = 0.4; // kart.turnSpeed;
-        } else if (steeringOutput < -0.1) {
-            turning = -0.4; // -kart.turnSpeed;
-        }
-
-        kart.applyForce(acceleration, turning)
-        kart.updatePhysics(deltaTime)
-
-        const nextCheckpoint = track.checkpoints[kart.nextCheckpoint % track.checkpoints.length].position;
-        const dx = nextCheckpoint.x - kart.position.x;
-        const dz = nextCheckpoint.z - kart.position.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        
-        if (distance < 20) {
-            kart.nextCheckpoint++;
-            if (kart.nextCheckpoint % track.checkpoints.length === 0) {
-                kart.currentLap++;
-            }
-        }
-        
-        kart.progress = (kart.currentLap - 1) + (kart.nextCheckpoint % track.checkpoints.length) / track.checkpoints.length;
     }
     
     calculateFitness(kart, deltaTime) {
