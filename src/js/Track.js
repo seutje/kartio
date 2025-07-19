@@ -8,6 +8,8 @@ class Track {
         this.checkpoints = [];
         this.obstacles = [];
         this.powerups = [];
+        this.missiles = [];
+        this.mines = [];
         this.startPositions = [];
         this.trackData = null;
     }
@@ -117,8 +119,18 @@ class Track {
     
     update(deltaTime) {
         this.powerups.forEach(powerup => {
-            powerup.update(deltaTime);
-        });
+            powerup.update(deltaTime)
+        })
+
+        this.missiles.forEach(missile => {
+            missile.update(deltaTime)
+        })
+        this.missiles = this.missiles.filter(missile => missile.active)
+
+        this.mines.forEach(mine => {
+            mine.update(deltaTime)
+        })
+        this.mines = this.mines.filter(mine => mine.active)
     }
     
     checkPowerupCollisions(kart) {

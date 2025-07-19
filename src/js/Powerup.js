@@ -197,5 +197,5 @@ class Mine {
 }
 
 if (typeof module !== "undefined") {
-    module.exports = { Powerup }
+    module.exports = { Powerup, Missile, Mine }
 }
