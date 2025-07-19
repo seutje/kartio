@@ -11,6 +11,7 @@ class Track {
         this.missiles = [];
         this.mines = [];
         this.startPositions = [];
+        this.checkpointLabels = [];
         this.trackData = null;
     }
 
@@ -19,6 +20,12 @@ class Track {
         try {
             const response = await fetch(`src/tracks/${this.type}.json`);
             this.trackData = await response.json();
+            this.checkpoints = [];
+            this.startPositions = [];
+            this.powerups = [];
+            this.obstacles = [];
+            this.checkpointLabels.forEach(label => this.scene.remove(label));
+            this.checkpointLabels = [];
             this.createTrack();
             this.createCheckpoints();
             this.createPowerups();
@@ -91,6 +98,12 @@ class Track {
                 mesh.position.copy(checkpoint.position);
                 mesh.position.y += 0.1;
                 this.scene.add(mesh);
+
+                const label = this.createCheckpointLabel(index + 1);
+                label.position.copy(checkpoint.position);
+                label.position.y += cp.radius + 2;
+                this.scene.add(label);
+                this.checkpointLabels.push(label);
             }
         });
     }
@@ -115,6 +128,25 @@ class Track {
     
     getStartPositions() {
         return this.startPositions;
+    }
+
+    createCheckpointLabel(number) {
+        const size = 64;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d');
+        context.font = '48px Arial';
+        context.fillStyle = '#ffffff';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(number.toString(), size / 2, size / 2);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+        const sprite = new THREE.Sprite(material);
+        sprite.scale.set(4, 4, 1);
+        return sprite;
     }
     
     update(deltaTime) {
