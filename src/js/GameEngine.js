@@ -117,19 +117,17 @@ class GameEngine {
         const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00];
         const startPositions = this.currentTrack.getStartPositions();
         
-        const spawnOffset = 4; // Increased gap for side-by-side spawning
         const firstCheckpoint = this.currentTrack.checkpoints[0].position;
-        const secondCheckpoint = this.currentTrack.checkpoints[1].position;
         for (let i = 0; i < 4; i++) {
             const kart = new Kart(colors[i], this.scene);
             kart.currentTrack = this.currentTrack;
-            kart.position.copy(firstCheckpoint); // Place on first checkpoint
+            const startPos = startPositions[i] || startPositions[0];
+            kart.position.copy(startPos); // Use start position from track data
             kart.position.y += 1; // Raise kart slightly above ground
-            kart.position.x += (i - 1.5) * spawnOffset; // Adjust x-position for spacing
-            // Calculate direction from first to second checkpoint
-            const direction = new THREE.Vector3().subVectors(secondCheckpoint, firstCheckpoint).normalize();
-            // Calculate rotation to face the second checkpoint
-            const angle = Math.atan2(direction.x, direction.z) + Math.PI;
+
+            // Face towards the first checkpoint from the start position
+            const direction = new THREE.Vector3().subVectors(firstCheckpoint, startPos).normalize();
+            const angle = Math.atan2(direction.x, direction.z);
             kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
