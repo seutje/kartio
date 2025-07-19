@@ -24,8 +24,8 @@ A fully-featured 3D racing game built with Three.js, featuring AI opponents, pow
 - **CLI Training**: Train AI from command line
 
 ### 🎮 Controls
-- **Movement**: WASD or ZQSD (AZERTY support)
-- **Powerup**: Spacebar
+- **Movement**: WASD or ZQSD (AZERTY support), Arrow keys, or Numpad 8/2/4/6
+- **Powerup**: Spacebar or Numpad 0
 - **Camera**: Automatic following camera
 
 ### 🎵 Audio
