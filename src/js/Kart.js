@@ -11,8 +11,8 @@ class Kart extends THREE.Group {
         this.acceleration = new THREE.Vector3();
         this.angularVelocity = 0;
         
-        this.maxSpeed = 200;
-        this.accelerationForce = 50;
+        this.maxSpeed = 400;
+        this.accelerationForce = 100;
         this.friction = 0.9;
         this.turnSpeed = 0.8;
         this.mass = 1;
@@ -151,10 +151,15 @@ class Kart extends THREE.Group {
 
         const movingBackward = this.velocity.dot(forward) < 0
         this.acceleration.add(forward.clone().multiplyScalar(acceleration))
-        const turnDirection = movingBackward ? -turning : turning
-        const minTurnSpeed = 0.1 // Minimum speed to allow turning
-        if (this.velocity.length() > minTurnSpeed) {
-            this.angularVelocity += turnDirection * (this.velocity.length() / this.maxSpeed)
+        const turnDirection = movingBackward ? -turning : turning;
+        const speed = this.velocity.length();
+        const minTurnSpeed = 0.1; // Minimum speed to allow turning
+
+        if (speed > minTurnSpeed) {
+            // Calculate drift factor: higher when speed is lower
+            // It will be 1 when speed is 0, and decrease as speed approaches maxSpeed
+            const driftFactor = 1 + (1 - (speed / this.maxSpeed)) * 2; // Adjust multiplier (2) for desired effect
+            this.angularVelocity += turnDirection * (speed / this.maxSpeed) * driftFactor;
         }
     }
     
