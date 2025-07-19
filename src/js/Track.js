@@ -268,6 +268,7 @@ class Track {
                 const normal = mtv.clone().normalize();
                 const impulse = normal.multiplyScalar(relativeVelocity.dot(normal) * -1.1);
                 kart.velocity.add(impulse);
+                kart.velocity.multiplyScalar(0.9); // Apply friction after collision
             }
         });
         return collided;
