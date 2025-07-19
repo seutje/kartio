@@ -1,5 +1,10 @@
 const DEBUG_Powerup = false;
-const { Explosion } = require('./Explosion');
+let Explosion;
+if (typeof module !== 'undefined' && module.exports) {
+    ({ Explosion } = require('./Explosion'));
+} else {
+    Explosion = window.Explosion;
+}
 
 class Powerup {
     constructor(type, position, scene) {
