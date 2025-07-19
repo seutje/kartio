@@ -23,7 +23,9 @@ class GameEngine {
             fps: 0,
             frameCount: 0,
             lastTime: 0
-        };
+        }
+
+        this.checkpointMarker = null
         
         this.setupRenderer();
         this.setupLighting();
@@ -136,11 +138,20 @@ class GameEngine {
                 kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, autoplay);
             }
             
-            this.karts.push(kart);
+            this.karts.push(kart)
         }
-        
-        this.camera.position.set(0, 10, 20);
-        this.camera.lookAt(this.karts[0].position);
+
+        if (this.checkpointMarker) {
+            this.scene.remove(this.checkpointMarker)
+        }
+        const markerGeometry = new THREE.SphereGeometry(1, 16, 16)
+        const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+        this.checkpointMarker = new THREE.Mesh(markerGeometry, markerMaterial)
+        this.scene.add(this.checkpointMarker)
+        this.updateCheckpointMarker()
+
+        this.camera.position.set(0, 10, 20)
+        this.camera.lookAt(this.karts[0].position)
     }
     
     start() {
@@ -183,8 +194,9 @@ class GameEngine {
 
         this.currentTrack.update(deltaTime)
 
-        this.updateCamera();
-        this.updateUI();
+        this.updateCheckpointMarker()
+        this.updateCamera()
+        this.updateUI()
     }
     
     updateCamera() {
@@ -193,9 +205,20 @@ class GameEngine {
         const idealOffset = new THREE.Vector3(0, 8, 15);
         idealOffset.applyQuaternion(targetKart.quaternion);
         idealOffset.add(targetKart.position);
-        
+
         this.camera.position.lerp(idealOffset, 0.1);
         this.camera.lookAt(targetKart.position);
+    }
+
+    updateCheckpointMarker() {
+        if (!this.checkpointMarker) return
+
+        const playerKart = this.karts.find(kart => kart.isPlayer && !this.isAutoplay) || this.karts[0]
+        const checkpoint = this.currentTrack.checkpoints[playerKart.nextCheckpoint]
+        if (checkpoint) {
+            this.checkpointMarker.position.copy(checkpoint.position)
+            this.checkpointMarker.position.y += 2
+        }
     }
     
     checkCollisions() {
