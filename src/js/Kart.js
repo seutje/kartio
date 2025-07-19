@@ -231,6 +231,8 @@ class Kart extends THREE.Group {
         if (this.isInvulnerable) return
         this.velocity.set(0, 0, 0)
         this.acceleration.set(0, 0, 0)
+        this.isStopped = true
+        this.stopTime = 1
         this.isInvulnerable = true
         this.invulnerabilityTime = 3
         if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
