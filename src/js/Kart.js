@@ -49,7 +49,10 @@ class Kart extends THREE.Group {
     createMesh() {
         if (DEBUG_Kart) console.log('Kart: Creating mesh.');
         const bodyGeometry = new THREE.BoxGeometry(2, 1, 4);
-        const bodyMaterial = new THREE.MeshLambertMaterial({ color: this.color });
+        const bodyMaterial = new THREE.MeshLambertMaterial({
+            color: this.color,
+            transparent: true
+        });
         this.body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         this.body.castShadow = true;
         this.body.receiveShadow = true;
