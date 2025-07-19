@@ -146,13 +146,15 @@ class Kart extends THREE.Group {
     
     applyForce(acceleration, turning) {
         if (DEBUG_Kart) console.log(`Kart: Applying force - acceleration: ${acceleration}, turning: ${turning}`);
-        const forward = new THREE.Vector3(0, 0, -1);
-        forward.applyQuaternion(this.quaternion);
-        
-        this.acceleration.add(forward.multiplyScalar(acceleration));
-        const minTurnSpeed = 0.1; // Minimum speed to allow turning
+        const forward = new THREE.Vector3(0, 0, -1)
+        forward.applyQuaternion(this.quaternion)
+
+        const movingBackward = this.velocity.dot(forward) < 0
+        this.acceleration.add(forward.clone().multiplyScalar(acceleration))
+        const turnDirection = movingBackward ? -turning : turning
+        const minTurnSpeed = 0.1 // Minimum speed to allow turning
         if (this.velocity.length() > minTurnSpeed) {
-            this.angularVelocity += turning * (this.velocity.length() / this.maxSpeed);
+            this.angularVelocity += turnDirection * (this.velocity.length() / this.maxSpeed)
         }
     }
     
