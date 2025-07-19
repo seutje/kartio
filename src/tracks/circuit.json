@@ -39,14 +39,14 @@
     "roadColor": "0x333333"
   },
   "obstacles": [
-    { "type": "barrier", "x": 42.6777, "y": 1, "z": 17.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 112.5 },
-    { "type": "barrier", "x": 17.6777, "y": 1, "z": 42.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 157.5 },
-    { "type": "barrier", "x": -17.6777, "y": 1, "z": 42.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 202.5 },
-    { "type": "barrier", "x": -42.6777, "y": 1, "z": 17.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 247.5 },
-    { "type": "barrier", "x": -42.6777, "y": 1, "z": -17.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 292.5 },
-    { "type": "barrier", "x": -17.6777, "y": 1, "z": -42.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 337.5 },
-    { "type": "barrier", "x": 17.6777, "y": 1, "z": -42.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 22.5 },
-    { "type": "barrier", "x": 42.6777, "y": 1, "z": -17.6777, "width": 38.2683, "height": 2, "depth": 1, "rotation": 67.5 }
+    { "type": "barrier", "x": 46.194, "y": 1, "z": 19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 112.5 },
+    { "type": "barrier", "x": 19.1342, "y": 1, "z": 46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 157.5 },
+    { "type": "barrier", "x": -19.1342, "y": 1, "z": 46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 202.5 },
+    { "type": "barrier", "x": -46.194, "y": 1, "z": 19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 247.5 },
+    { "type": "barrier", "x": -46.194, "y": 1, "z": -19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 292.5 },
+    { "type": "barrier", "x": -19.1342, "y": 1, "z": -46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 337.5 },
+    { "type": "barrier", "x": 19.1342, "y": 1, "z": -46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 22.5 },
+    { "type": "barrier", "x": 46.194, "y": 1, "z": -19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 67.5 }
   ],
   "decorations": [
     { "type": "marking", "x": 0, "y": 0.01, "z": 0, "width": 2, "height": 0.01, "depth": 10, "color": "0xffffff" }
