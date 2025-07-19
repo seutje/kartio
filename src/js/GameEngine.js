@@ -92,22 +92,31 @@ class GameEngine {
     async startGame() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting game...');
         if (this.gameStarted) return;
-        
-        this.gameStarted = true;
-        document.getElementById('startScreen').classList.add('hidden');
-        document.getElementById('stats').classList.remove('hidden');
-        
-        this.audioManager.init();
-        this.setupRace();
-        this.drawRacePath(); // Call the new function to draw the path
-        this.start();
+
+        this.stop()
+        this.clearKarts()
+        this.isAutoplay = false
+
+        this.gameStarted = true
+        document.getElementById('startScreen').classList.add('hidden')
+        document.getElementById('stats').classList.remove('hidden')
+
+        this.audioManager.init()
+        this.setupRace()
+        this.drawRacePath()
+        this.start()
     }
-    
-    startAutoplay() {
-        if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
-        this.isAutoplay = true;
-        this.setupRace(true);
-        this.start();
+
+    async startAutoplay() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...')
+        await AIController.preloadBrain(this.currentTrack.type)
+        this.gameStarted = false
+        this.clearKarts()
+        this.isAutoplay = true
+        this.setupRace(true)
+        this.camera.position.set(0, 60, 0)
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+        this.start()
     }
     
     setupRace(autoplay = false) {
@@ -131,10 +140,10 @@ class GameEngine {
             kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
-                kart.isPlayer = true;
+                kart.isPlayer = true
             } else {
-                kart.isAI = true;
-                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, autoplay);
+                kart.isAI = true
+                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, !autoplay)
             }
             
             this.karts.push(kart)
@@ -149,8 +158,13 @@ class GameEngine {
         this.scene.add(this.checkpointMarker)
         this.updateCheckpointMarker()
 
-        this.camera.position.set(0, 10, 20)
-        this.camera.lookAt(this.karts[0].position)
+        if (autoplay) {
+            this.camera.position.set(0, 60, 0)
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+        } else {
+            this.camera.position.set(0, 10, 20)
+            this.camera.lookAt(this.karts[0].position)
+        }
     }
     
     start() {
@@ -162,6 +176,16 @@ class GameEngine {
     stop() {
         if (DEBUG_GameEngine) console.log('GameEngine: Stopping animation loop.');
         this.isRunning = false;
+    }
+
+    clearKarts() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Clearing karts from scene.');
+        this.karts.forEach(kart => {
+            if (kart.parent) {
+                this.scene.remove(kart)
+            }
+        })
+        this.karts = []
     }
     
     animate() {
@@ -200,13 +224,21 @@ class GameEngine {
     
     updateCamera() {
         if (DEBUG_GameEngine) console.log('GameEngine: Updating camera position.');
-        const targetKart = this.karts[0];
-        const idealOffset = new THREE.Vector3(0, 8, 15);
-        idealOffset.applyQuaternion(targetKart.quaternion);
-        idealOffset.add(targetKart.position);
+        const targetKart = this.karts[0]
 
-        this.camera.position.lerp(idealOffset, 0.1);
-        this.camera.lookAt(targetKart.position);
+        if (!this.gameStarted && this.isAutoplay) {
+            const topDown = new THREE.Vector3(0, 60, 0)
+            this.camera.position.lerp(topDown, 0.1)
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+            return
+        }
+
+        const idealOffset = new THREE.Vector3(0, 8, 15)
+        idealOffset.applyQuaternion(targetKart.quaternion)
+        idealOffset.add(targetKart.position)
+
+        this.camera.position.lerp(idealOffset, 0.1)
+        this.camera.lookAt(targetKart.position)
     }
 
     updateCheckpointMarker() {
