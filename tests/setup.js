@@ -16,11 +16,54 @@ global.THREE = {
             return this
         }
         clone() { return new Vector3(this.x, this.y, this.z); }
-        add(v) { return this; }
-        multiplyScalar(s) { return this; }
+        add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+        sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
+        multiplyScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
         distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }
-        normalize() { return this; }
+        normalize() {
+            const len = Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2)
+            if (len > 0) {
+                this.x /= len
+                this.y /= len
+                this.z /= len
+            }
+            return this
+        }
         dot(v) { return this.x * v.x + this.y * v.y + this.z * v.z; }
+    },
+    Box3: class Box3 {
+        constructor(min = new Vector3(), max = new Vector3()) {
+            this.min = min
+            this.max = max
+        }
+        setFromObject(obj) {
+            this.min = obj.position.clone().add(new Vector3(-0.5, -0.5, -0.5))
+            this.max = obj.position.clone().add(new Vector3(0.5, 0.5, 0.5))
+            return this
+        }
+        intersectsBox(box) {
+            return (
+                this.min.x <= box.max.x && this.max.x >= box.min.x &&
+                this.min.y <= box.max.y && this.max.y >= box.min.y &&
+                this.min.z <= box.max.z && this.max.z >= box.min.z
+            )
+        }
+        getCenter(target) {
+            target.set(
+                (this.min.x + this.max.x) / 2,
+                (this.min.y + this.max.y) / 2,
+                (this.min.z + this.max.z) / 2
+            )
+            return target
+        }
+        getSize(target) {
+            target.set(
+                this.max.x - this.min.x,
+                this.max.y - this.min.y,
+                this.max.z - this.min.z
+            )
+            return target
+        }
     },
     BoxGeometry: class BoxGeometry {},
     CylinderGeometry: class CylinderGeometry {},

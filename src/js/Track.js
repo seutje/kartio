@@ -162,6 +162,17 @@ class Track {
 
                 const velocityAlongNormal = normal.clone().multiplyScalar(2 * kart.velocity.dot(normal))
                 kart.velocity.sub(velocityAlongNormal).multiplyScalar(0.8)
+
+                const overlapX = Math.min(kartBox.max.x, obstacleBox.max.x) - Math.max(kartBox.min.x, obstacleBox.min.x)
+                const overlapZ = Math.min(kartBox.max.z, obstacleBox.max.z) - Math.max(kartBox.min.z, obstacleBox.min.z)
+
+                if (normal.x !== 0) {
+                    const move = normal.x > 0 ? overlapX : -overlapX
+                    kart.position.x += move
+                } else if (normal.z !== 0) {
+                    const move = normal.z > 0 ? overlapZ : -overlapZ
+                    kart.position.z += move
+                }
             }
         })
 
