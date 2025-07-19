@@ -1,4 +1,7 @@
 const DEBUG_Powerup = false;
+if (typeof module !== 'undefined' && module.exports) {
+    ({ Explosion } = require('./Explosion'));
+}
 
 class Powerup {
     constructor(type, position, scene) {
@@ -63,11 +66,12 @@ class Powerup {
 }
 
 class Missile {
-    constructor(position, rotation, scene) {
+    constructor(position, rotation, scene, track) {
         this.position = position.clone();
         // store firing direction without modification
         this.rotation = rotation;
         this.scene = scene;
+        this.track = track;
         this.owner = null;
         this.speed = 50;
         this.lifetime = 5;
@@ -129,13 +133,18 @@ class Missile {
     destroy() {
         this.active = false;
         this.scene.remove(this.mesh);
+        if (this.track && this.track.explosions) {
+            const explosion = new Explosion(this.position.clone(), this.scene);
+            this.track.explosions.push(explosion);
+        }
     }
 }
 
 class Mine {
-    constructor(position, scene) {
+    constructor(position, scene, track) {
         this.position = position.clone();
         this.scene = scene;
+        this.track = track;
         this.owner = null;
         this.active = true;
         this.lifetime = 30;
@@ -193,6 +202,10 @@ class Mine {
     destroy() {
         this.active = false;
         this.scene.remove(this.mesh);
+        if (this.track && this.track.explosions) {
+            const explosion = new Explosion(this.position.clone(), this.scene);
+            this.track.explosions.push(explosion);
+        }
     }
 }
 
