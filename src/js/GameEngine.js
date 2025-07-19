@@ -80,11 +80,8 @@ class GameEngine {
             new Track('snow', this.scene)
         ];
 
-        for (const track of this.tracks) {
-            await track.loadTrackData();
-        }
-
         this.currentTrack = this.tracks[0];
+        await this.currentTrack.loadTrackData();
     }
     
     async startGame() {
