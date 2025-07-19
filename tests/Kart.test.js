@@ -69,6 +69,16 @@ describe('Kart', () => {
         kart.applyForce(0, kart.turnSpeed)
         expect(kart.angularVelocity).toBeLessThan(0)
     })
+
+    test('should stop kart and make it invulnerable after projectile hit', () => {
+        kart.velocity.set(10, 0, 10);
+        kart.applyProjectileHit();
+        expect(kart.velocity.x).toBe(0);
+        expect(kart.velocity.y).toBe(0);
+        expect(kart.velocity.z).toBe(0);
+        expect(kart.isStopped).toBe(true);
+        expect(kart.isInvulnerable).toBe(true);
+    });
 })
 
 describe('NeuralNetwork', () => {

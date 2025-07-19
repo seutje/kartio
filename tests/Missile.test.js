@@ -22,6 +22,8 @@ describe('Projectile hits', () => {
         missile.owner = {};
         missile.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
+        expect(kart.isStopped).toBe(true);
+        expect(kart.stopTime).toBe(1);
         expect(kart.invulnerabilityTime).toBe(3);
         expect(kart.velocity.length()).toBe(0);
         expect(missile.active).toBe(false);
@@ -35,6 +37,8 @@ describe('Projectile hits', () => {
         mine.owner = {};
         mine.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
+        expect(kart.isStopped).toBe(true);
+        expect(kart.stopTime).toBe(1);
         expect(kart.invulnerabilityTime).toBe(3);
         expect(kart.velocity.length()).toBe(0);
         expect(mine.active).toBe(false);

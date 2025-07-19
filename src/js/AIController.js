@@ -72,6 +72,9 @@ class AIController {
     
     update(deltaTime, karts) {
         if (DEBUG_AIController) console.log('AIController: Updating AI for kart.');
+        if (this.kart.isStopped) {
+            return; // AI does nothing if kart is stopped
+        }
         this.updateSensors(karts);
         const inputs = this.getInputs();
         const outputs = this.network.forward(inputs);

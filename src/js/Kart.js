@@ -122,7 +122,7 @@ class Kart extends THREE.Group {
     updatePhysics(deltaTime) {
         if (DEBUG_Kart) console.log('Kart: Updating physics.');
         if (this.isStopped) {
-            this.velocity.multiplyScalar(0.95);
+            this.velocity.set(0, 0, 0);
             return;
         }
         
@@ -231,6 +231,8 @@ class Kart extends THREE.Group {
         if (this.isInvulnerable) return
         this.velocity.set(0, 0, 0)
         this.acceleration.set(0, 0, 0)
+        this.isStopped = true
+        this.stopTime = 1
         this.isInvulnerable = true
         this.invulnerabilityTime = 3
         if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
@@ -283,6 +285,8 @@ class Kart extends THREE.Group {
             
             if (this.stopTime <= 0) {
                 this.isStopped = false;
+                this.acceleration.set(0, 0, 0);
+                this.angularVelocity = 0;
             }
         }
     }
