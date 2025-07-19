@@ -55,6 +55,9 @@ class Track {
                     const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
                     const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
                     barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
+                    if (typeof obstacleData.rotation !== 'undefined') {
+                        barrier.rotation.y = THREE.MathUtils.degToRad(obstacleData.rotation);
+                    }
                     barrier.castShadow = true;
                     this.scene.add(barrier);
                     this.obstacles.push(barrier);
