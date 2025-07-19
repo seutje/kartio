@@ -20,6 +20,12 @@ class Track {
         try {
             const response = await fetch(`src/tracks/${this.type}.json`);
             this.trackData = await response.json();
+            this.checkpoints = [];
+            this.startPositions = [];
+            this.powerups = [];
+            this.obstacles = [];
+            this.checkpointLabels.forEach(label => this.scene.remove(label));
+            this.checkpointLabels = [];
             this.createTrack();
             this.createCheckpoints();
             this.createPowerups();

@@ -91,8 +91,6 @@ class GameEngine {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting game...');
         if (this.gameStarted) return;
         
-        await this.setupTracks();
-
         this.gameStarted = true;
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('stats').classList.remove('hidden');
