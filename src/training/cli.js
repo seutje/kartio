@@ -65,7 +65,7 @@ if (typeof global.document === 'undefined') {
 class TrainingEnvironment {
     constructor(trackType) {
         this.trackType = trackType;
-        this.populationSize = 50;
+        this.populationSize = 100;
         this.generations = parseInt(process.argv[2]) || 50;
         this.mutationRate = 0.1;
         this.eliteCount = 5;
@@ -197,7 +197,7 @@ class TrainingEnvironment {
             
             let fitness = 0
             let time = 0
-            const maxTime = 120
+            const maxTime = 60
             const deltaTime = 0.016
             let disqualified = false
 
@@ -208,7 +208,7 @@ class TrainingEnvironment {
             kart.lastLap = 0;
             kart.stuckTimer = 0;
             
-            while (time < maxTime && kart.currentLap <= 3 && !disqualified) {
+            while (time < maxTime && kart.currentLap <= 2 && !disqualified) {
                 ai.update(deltaTime, [])
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
