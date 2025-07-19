@@ -2,6 +2,30 @@ const DEBUG_AIController = false;
 
 class AIController {
     static brainCache = {};
+
+    static async preloadBrain(trackName) {
+        if (AIController.brainCache[trackName]) {
+            return AIController.brainCache[trackName]
+        }
+
+        const brainPath = `./models/${trackName}_best.json`
+        const loadPromise = (async () => {
+            try {
+                const response = await fetch(brainPath)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+                const brainData = await response.json()
+                return NeuralNetwork.deserialize(JSON.parse(brainData.network))
+            } catch (error) {
+                console.error(`Could not preload brain from ${brainPath}:`, error)
+                throw error
+            }
+        })()
+
+        AIController.brainCache[trackName] = loadPromise
+        return loadPromise
+    }
     constructor(kart, track, trackName, isTraining = false) {
         if (DEBUG_AIController) console.log('AIController: Initializing for kart', kart.color);
 

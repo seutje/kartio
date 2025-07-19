@@ -107,8 +107,9 @@ class GameEngine {
         this.start()
     }
 
-    startAutoplay() {
-        if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
+    async startAutoplay() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...')
+        await AIController.preloadBrain(this.currentTrack.type)
         this.gameStarted = false
         this.clearKarts()
         this.isAutoplay = true
