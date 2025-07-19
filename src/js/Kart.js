@@ -122,7 +122,7 @@ class Kart extends THREE.Group {
     updatePhysics(deltaTime) {
         if (DEBUG_Kart) console.log('Kart: Updating physics.');
         if (this.isStopped) {
-            this.velocity.multiplyScalar(0.95);
+            this.velocity.set(0, 0, 0);
             return;
         }
         
@@ -285,6 +285,8 @@ class Kart extends THREE.Group {
             
             if (this.stopTime <= 0) {
                 this.isStopped = false;
+                this.acceleration.set(0, 0, 0);
+                this.angularVelocity = 0;
             }
         }
     }
