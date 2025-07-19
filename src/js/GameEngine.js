@@ -94,6 +94,7 @@ class GameEngine {
         if (this.gameStarted) return;
 
         this.stop()
+        this.clearKarts()
         this.isAutoplay = false
 
         this.gameStarted = true
@@ -109,6 +110,7 @@ class GameEngine {
     startAutoplay() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
         this.gameStarted = false
+        this.clearKarts()
         this.isAutoplay = true
         this.setupRace(true)
         this.camera.position.set(0, 60, 0)
@@ -173,6 +175,16 @@ class GameEngine {
     stop() {
         if (DEBUG_GameEngine) console.log('GameEngine: Stopping animation loop.');
         this.isRunning = false;
+    }
+
+    clearKarts() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Clearing karts from scene.');
+        this.karts.forEach(kart => {
+            if (kart.parent) {
+                this.scene.remove(kart)
+            }
+        })
+        this.karts = []
     }
     
     animate() {
