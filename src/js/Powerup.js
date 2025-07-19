@@ -124,7 +124,9 @@ class Missile {
         
         karts.forEach(kart => {
             if (kart !== this.owner && kart.position.distanceTo(this.position) < 2) {
-                kart.handleCollision();
+                if (typeof kart.applyProjectileHit === 'function') {
+                    kart.applyProjectileHit();
+                }
                 this.destroy();
             }
         });
@@ -186,7 +188,9 @@ class Mine {
         
         karts.forEach(kart => {
             if (kart !== this.owner && kart.position.distanceTo(this.position) < 1.5) {
-                kart.handleCollision();
+                if (typeof kart.applyProjectileHit === 'function') {
+                    kart.applyProjectileHit();
+                }
                 this.destroy();
             }
         });

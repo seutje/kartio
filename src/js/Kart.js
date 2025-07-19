@@ -226,6 +226,17 @@ class Kart extends THREE.Group {
             this.currentTrack.mines.push(mine)
         }
     }
+
+    applyProjectileHit() {
+        if (this.isInvulnerable) return
+        this.velocity.set(0, 0, 0)
+        this.acceleration.set(0, 0, 0)
+        this.isInvulnerable = true
+        this.invulnerabilityTime = 3
+        if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+            this.body.material.opacity = 0.7
+        }
+    }
     
     collectPowerup(type) {
         if (DEBUG_Kart) console.log(`Kart: Collecting powerup of type ${type}`);
