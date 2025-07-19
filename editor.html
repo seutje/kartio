@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        #toolbar {
+            padding: 10px;
+            background: #333;
+            color: #fff;
+        }
+        #editorCanvas {
+            border: 1px solid #000;
+            display: block;
+        }
+        #exportArea {
+            width: 100%;
+            height: 150px;
+        }
+        #propertyWindow {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #000;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <select id="trackSelect">
+            <option value="circuit">Circuit</option>
+            <option value="desert">Desert</option>
+            <option value="snow">Snow</option>
+        </select>
+        <button id="importBtn">Import</button>
+        <button id="exportBtn">Export</button>
+        <button id="copyBtn">Copy</button>
+    </div>
+    <canvas id="editorCanvas" width="800" height="600"></canvas>
+    <textarea id="exportArea" placeholder="Exported JSON"></textarea>
+    <div id="propertyWindow" class="hidden">
+        <div>
+            <label>X: <input id="prop_x" type="number"></label>
+        </div>
+        <div>
+            <label>Y: <input id="prop_y" type="number"></label>
+        </div>
+        <div>
+            <label>Z: <input id="prop_z" type="number"></label>
+        </div>
+        <div>
+            <label>Width: <input id="prop_width" type="number"></label>
+        </div>
+        <div>
+            <label>Height: <input id="prop_height" type="number"></label>
+        </div>
+        <div>
+            <label>Depth: <input id="prop_depth" type="number"></label>
+        </div>
+        <div>
+            <label>Rotation: <input id="prop_rotation" type="number"></label>
+        </div>
+        <button id="applyBtn">Apply</button>
+    </div>
+    <script src="src/js/TrackEditor.js"></script>
+</body>
+</html>
