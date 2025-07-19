@@ -1,6 +1,7 @@
 const DEBUG_AIController = false;
 
 class AIController {
+    static brainCache = {};
     constructor(kart, track, trackName, isTraining = false) {
         if (DEBUG_AIController) console.log('AIController: Initializing for kart', kart.color);
 
@@ -39,17 +40,32 @@ class AIController {
     }
 
     async loadBrain() {
+        if (AIController.brainCache[this.trackName]) {
+            return AIController.brainCache[this.trackName];
+        }
+
         const brainPath = `./models/${this.trackName}_best.json`;
-        try {
-            const response = await fetch(brainPath);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const loadPromise = (async () => {
+            try {
+                const response = await fetch(brainPath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const brainData = await response.json();
+                return NeuralNetwork.deserialize(JSON.parse(brainData.network));
+            } catch (error) {
+                console.error(`Could not load brain from ${brainPath}:`, error);
+                throw error;
             }
-            const brainData = await response.json();
-            return NeuralNetwork.deserialize(JSON.parse(brainData.network));
-        } catch (error) {
-            console.error(`Could not load brain from ${brainPath}:`, error);
-            throw error;
+        })();
+
+        AIController.brainCache[this.trackName] = loadPromise;
+
+        try {
+            return await loadPromise;
+        } catch (e) {
+            delete AIController.brainCache[this.trackName];
+            throw e;
         }
     }
     
