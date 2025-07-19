@@ -1,9 +1,6 @@
 const DEBUG_Powerup = false;
-let Explosion;
 if (typeof module !== 'undefined' && module.exports) {
     ({ Explosion } = require('./Explosion'));
-} else {
-    Explosion = window.Explosion;
 }
 
 class Powerup {
