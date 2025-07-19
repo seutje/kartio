@@ -69,6 +69,9 @@ class Track {
     
     createCheckpoints() {
         if (DEBUG_Track) console.log('Track: Creating checkpoints.');
+        const checkpointColor = this.trackData.environment.checkpointColor
+            ? parseInt(this.trackData.environment.checkpointColor)
+            : 0x00ff00
         this.trackData.checkpoints.forEach((cp, index) => {
             const checkpoint = {
                 position: new THREE.Vector3(cp.x, cp.y, cp.z),
@@ -79,9 +82,6 @@ class Track {
             this.checkpoints.push(checkpoint);
             if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
                 const geometry = new THREE.RingGeometry(cp.radius - 1, cp.radius, 16);
-                const checkpointColor = this.trackData.environment.checkpointColor
-                    ? parseInt(this.trackData.environment.checkpointColor)
-                    : 0x00ff00
                 const material = new THREE.MeshBasicMaterial({
                     color: checkpointColor,
                     transparent: true,
