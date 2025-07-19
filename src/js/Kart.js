@@ -306,18 +306,11 @@ class Kart extends THREE.Group {
     
     updateProgress() {
         const checkpoint = this.currentTrack.checkpoints[this.nextCheckpoint];
-        if (checkpoint) {
-            const distance = checkpoint.position.distanceTo(this.position);
-            const toCheckpoint = new THREE.Vector3().subVectors(checkpoint.position, this.position).normalize();
-            const forward = this.getForwardVector();
-
-            // Check if kart is close enough and generally facing the checkpoint
-            if (distance < 5 && forward.dot(toCheckpoint) > 0.5) { // 0.5 means within ~60 degrees
-                this.nextCheckpoint = (this.nextCheckpoint + 1) % this.currentTrack.checkpoints.length;
-                
-                if (this.nextCheckpoint === 0) {
-                    this.currentLap++;
-                }
+        if (checkpoint && checkpoint.position.distanceTo(this.position) < 5) {
+            this.nextCheckpoint = (this.nextCheckpoint + 1) % this.currentTrack.checkpoints.length;
+            
+            if (this.nextCheckpoint === 0) {
+                this.currentLap++;
             }
         }
         
