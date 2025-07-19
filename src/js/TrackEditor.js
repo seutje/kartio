@@ -35,13 +35,6 @@ class SimpleTrackEditor extends GameEngine {
         this.camera.updateProjectionMatrix()
     }
 
-    handleWheel(e) {
-        e.preventDefault()
-        const delta = e.deltaY > 0 ? 5 : -5
-        this.camera.position.y += delta
-        this.camera.lookAt(0, 0, 0)
-    }
-
     handleClick(e, propertyWindow) {
         if (!this.track) return
         const rect = this.canvas.getBoundingClientRect()
@@ -102,7 +95,6 @@ const applyBtn = document.getElementById('applyBtn')
 
 const editor = new SimpleTrackEditor(canvas)
 
-canvas.addEventListener('wheel', e => editor.handleWheel(e))
 canvas.addEventListener('click', e => editor.handleClick(e, propertyWindow))
 applyBtn.addEventListener('click', () => editor.applyChanges(propertyWindow))
 importBtn.addEventListener('click', () => editor.loadTrack(trackSelect.value))
