@@ -1,13 +1,14 @@
 const DEBUG_GameEngine = false;
 
 class GameEngine {
-    constructor() {
+    constructor(canvasId = 'gameCanvas') {
         if (DEBUG_GameEngine) console.log('GameEngine: Initializing...');
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderer = new THREE.WebGLRenderer({ 
-            canvas: document.getElementById('gameCanvas'),
-            antialias: true 
+        const canvas = typeof document !== 'undefined' ? document.getElementById(canvasId) : undefined;
+        this.renderer = new THREE.WebGLRenderer({
+            canvas,
+            antialias: true
         });
         
         this.clock = new THREE.Clock();
