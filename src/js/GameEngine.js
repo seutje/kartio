@@ -105,12 +105,14 @@ class GameEngine {
         this.drawRacePath()
         this.start()
     }
-    
+
     startAutoplay() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
         this.gameStarted = false
         this.isAutoplay = true
         this.setupRace(true)
+        this.camera.position.set(0, 60, 0)
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0))
         this.start()
     }
     
@@ -153,8 +155,13 @@ class GameEngine {
         this.scene.add(this.checkpointMarker)
         this.updateCheckpointMarker()
 
-        this.camera.position.set(0, 10, 20)
-        this.camera.lookAt(this.karts[0].position)
+        if (autoplay) {
+            this.camera.position.set(0, 60, 0)
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0))
+        } else {
+            this.camera.position.set(0, 10, 20)
+            this.camera.lookAt(this.karts[0].position)
+        }
     }
     
     start() {
@@ -204,12 +211,12 @@ class GameEngine {
     
     updateCamera() {
         if (DEBUG_GameEngine) console.log('GameEngine: Updating camera position.');
-        const targetKart = this.karts[0];
+        const targetKart = this.karts[0]
 
         if (!this.gameStarted && this.isAutoplay) {
-            const topDown = new THREE.Vector3(targetKart.position.x, targetKart.position.y + 50, targetKart.position.z)
+            const topDown = new THREE.Vector3(0, 60, 0)
             this.camera.position.lerp(topDown, 0.1)
-            this.camera.lookAt(targetKart.position)
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0))
             return
         }
 
