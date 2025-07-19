@@ -125,9 +125,9 @@ class GameEngine {
             kart.position.copy(startPos); // Use start position from track data
             kart.position.y += 1; // Raise kart slightly above ground
 
-            // Face towards the first checkpoint from the start position
+            // Face towards the next checkpoint from the start position
             const direction = new THREE.Vector3().subVectors(firstCheckpoint, startPos).normalize();
-            const angle = Math.atan2(direction.x, direction.z);
+            const angle = Math.atan2(direction.x, -direction.z);
             kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
