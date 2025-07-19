@@ -3,6 +3,8 @@ let gameEngine;
 async function init() {
     gameEngine = new GameEngine();
     await gameEngine.initialize();
+
+    gameEngine.startAutoplay();
     
     const startScreen = document.getElementById('startScreen');
     startScreen.addEventListener('click', () => {

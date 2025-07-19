@@ -92,22 +92,26 @@ class GameEngine {
     async startGame() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting game...');
         if (this.gameStarted) return;
-        
-        this.gameStarted = true;
-        document.getElementById('startScreen').classList.add('hidden');
-        document.getElementById('stats').classList.remove('hidden');
-        
-        this.audioManager.init();
-        this.setupRace();
-        this.drawRacePath(); // Call the new function to draw the path
-        this.start();
+
+        this.stop()
+        this.isAutoplay = false
+
+        this.gameStarted = true
+        document.getElementById('startScreen').classList.add('hidden')
+        document.getElementById('stats').classList.remove('hidden')
+
+        this.audioManager.init()
+        this.setupRace()
+        this.drawRacePath()
+        this.start()
     }
     
     startAutoplay() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting autoplay...');
-        this.isAutoplay = true;
-        this.setupRace(true);
-        this.start();
+        this.gameStarted = false
+        this.isAutoplay = true
+        this.setupRace(true)
+        this.start()
     }
     
     setupRace(autoplay = false) {
@@ -201,12 +205,20 @@ class GameEngine {
     updateCamera() {
         if (DEBUG_GameEngine) console.log('GameEngine: Updating camera position.');
         const targetKart = this.karts[0];
-        const idealOffset = new THREE.Vector3(0, 8, 15);
-        idealOffset.applyQuaternion(targetKart.quaternion);
-        idealOffset.add(targetKart.position);
 
-        this.camera.position.lerp(idealOffset, 0.1);
-        this.camera.lookAt(targetKart.position);
+        if (!this.gameStarted && this.isAutoplay) {
+            const topDown = new THREE.Vector3(targetKart.position.x, targetKart.position.y + 50, targetKart.position.z)
+            this.camera.position.lerp(topDown, 0.1)
+            this.camera.lookAt(targetKart.position)
+            return
+        }
+
+        const idealOffset = new THREE.Vector3(0, 8, 15)
+        idealOffset.applyQuaternion(targetKart.quaternion)
+        idealOffset.add(targetKart.position)
+
+        this.camera.position.lerp(idealOffset, 0.1)
+        this.camera.lookAt(targetKart.position)
     }
 
     updateCheckpointMarker() {
