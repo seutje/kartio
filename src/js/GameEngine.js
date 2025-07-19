@@ -154,7 +154,7 @@ class GameEngine {
                 kart.isPlayer = true
             } else {
                 kart.isAI = true
-                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, !autoplay)
+                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, false)
             }
             
             this.karts.push(kart)
