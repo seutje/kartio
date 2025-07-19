@@ -39,14 +39,29 @@
     "roadColor": "0x333333"
   },
   "obstacles": [
-    { "type": "barrier", "x": 46.194, "y": 1, "z": 19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 0 },
-    { "type": "barrier", "x": 19.1342, "y": 1, "z": 46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 45 },
-    { "type": "barrier", "x": -19.1342, "y": 1, "z": 46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 90 },
-    { "type": "barrier", "x": -46.194, "y": 1, "z": 19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 135 },
-    { "type": "barrier", "x": -46.194, "y": 1, "z": -19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 180 },
-    { "type": "barrier", "x": -19.1342, "y": 1, "z": -46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 225 },
-    { "type": "barrier", "x": 19.1342, "y": 1, "z": -46.194, "width": 38.2683, "height": 2, "depth": 1, "rotation": 270 },
-    { "type": "barrier", "x": 46.194, "y": 1, "z": -19.1342, "width": 38.2683, "height": 2, "depth": 1, "rotation": 315 }
+    { "type": "barrier", "x": 16.437, "y": 1, "z": -39.683, "width": 30.612, "height": 2, "depth": 1, "rotation": 22.5 },
+    { "type": "barrier", "x": 11.843, "y": 1, "z": -28.597, "width": 30.612, "height": 2, "depth": 1, "rotation": 22.5 },
+
+    { "type": "barrier", "x": 39.683, "y": 1, "z": -16.437, "width": 30.612, "height": 2, "depth": 1, "rotation": 67.5 },
+    { "type": "barrier", "x": 28.597, "y": 1, "z": -11.843, "width": 30.612, "height": 2, "depth": 1, "rotation": 67.5 },
+
+    { "type": "barrier", "x": 39.683, "y": 1, "z": 16.437, "width": 30.612, "height": 2, "depth": 1, "rotation": 112.5 },
+    { "type": "barrier", "x": 28.597, "y": 1, "z": 11.843, "width": 30.612, "height": 2, "depth": 1, "rotation": 112.5 },
+
+    { "type": "barrier", "x": 16.437, "y": 1, "z": 39.683, "width": 30.612, "height": 2, "depth": 1, "rotation": 157.5 },
+    { "type": "barrier", "x": 11.843, "y": 1, "z": 28.597, "width": 30.612, "height": 2, "depth": 1, "rotation": 157.5 },
+
+    { "type": "barrier", "x": -16.437, "y": 1, "z": 39.683, "width": 30.612, "height": 2, "depth": 1, "rotation": 202.5 },
+    { "type": "barrier", "x": -11.843, "y": 1, "z": 28.597, "width": 30.612, "height": 2, "depth": 1, "rotation": 202.5 },
+
+    { "type": "barrier", "x": -39.683, "y": 1, "z": 16.437, "width": 30.612, "height": 2, "depth": 1, "rotation": 247.5 },
+    { "type": "barrier", "x": -28.597, "y": 1, "z": 11.843, "width": 30.612, "height": 2, "depth": 1, "rotation": 247.5 },
+
+    { "type": "barrier", "x": -39.683, "y": 1, "z": -16.437, "width": 30.612, "height": 2, "depth": 1, "rotation": 292.5 },
+    { "type": "barrier", "x": -28.597, "y": 1, "z": -11.843, "width": 30.612, "height": 2, "depth": 1, "rotation": 292.5 },
+
+    { "type": "barrier", "x": -16.437, "y": 1, "z": -39.683, "width": 30.612, "height": 2, "depth": 1, "rotation": 337.5 },
+    { "type": "barrier", "x": -11.843, "y": 1, "z": -28.597, "width": 30.612, "height": 2, "depth": 1, "rotation": 337.5 }
   ],
   "decorations": [
     { "type": "marking", "x": 0, "y": 0.01, "z": 0, "width": 2, "height": 0.01, "depth": 10, "color": "0xffffff" }
