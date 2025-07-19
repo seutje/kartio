@@ -20,3 +20,22 @@ describe('Track obstacle collisions', () => {
         expect(kart.velocity.x).toBe(0)
     })
 })
+
+describe('Track obstacle rotation', () => {
+    test('rotation value is applied to barrier', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [
+                { type: 'barrier', x: 0, y: 0, z: 0, width: 10, height: 2, depth: 1, rotation: 45 }
+            ],
+            decorations: []
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        expect(track.obstacles[0].rotation.y).toBeCloseTo(Math.PI / 4)
+    })
+})
