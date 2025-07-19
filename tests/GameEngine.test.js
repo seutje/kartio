@@ -1,20 +1,4 @@
 global.AudioManager = class AudioManager {}
-global.THREE.Scene = class Scene { add() {} }
-global.THREE.AmbientLight = class AmbientLight {}
-global.THREE.DirectionalLight = class DirectionalLight {
-    constructor() {
-        this.position = { set: () => {} }
-        this.castShadow = false
-        this.shadow = { mapSize: {}, camera: {} }
-    }
-}
-global.THREE.WebGLRenderer = class WebGLRenderer {
-    constructor() { this.shadowMap = {} }
-    setSize() {}
-    setClearColor() {}
-    set sortObjects(value) {}
-}
-global.THREE.PCFSoftShadowMap = 0
 const { GameEngine } = require('../src/js/GameEngine')
 
 describe('GameEngine checkpoint marker', () => {
