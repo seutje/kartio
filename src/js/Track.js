@@ -79,8 +79,11 @@ class Track {
             this.checkpoints.push(checkpoint);
             if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
                 const geometry = new THREE.RingGeometry(cp.radius - 1, cp.radius, 16);
+                const checkpointColor = this.trackData.environment.checkpointColor
+                    ? parseInt(this.trackData.environment.checkpointColor)
+                    : 0x00ff00
                 const material = new THREE.MeshBasicMaterial({
-                    color: 0x00ff00,
+                    color: checkpointColor,
                     transparent: true,
                     opacity: 0.5,
                     side: THREE.DoubleSide

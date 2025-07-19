@@ -28,7 +28,8 @@
   ],
   "environment": {
     "skyColor": "0x87CEEB",
-    "groundColor": "0x444444",
+    "groundColor": "0x00ff00",
+    "checkpointColor": "0x444444",
     "ambientLight": "0x404040",
     "directionalLight": "0xffffff"
   },
