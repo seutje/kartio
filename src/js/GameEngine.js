@@ -143,8 +143,7 @@ class GameEngine {
                 kart.isPlayer = true
             } else {
                 kart.isAI = true
-                const model = autoplay ? 'circuit' : this.currentTrack.type
-                kart.aiController = new AIController(kart, this.currentTrack, model, autoplay)
+                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, !autoplay)
             }
             
             this.karts.push(kart)
