@@ -139,10 +139,11 @@ class GameEngine {
             kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
-                kart.isPlayer = true;
+                kart.isPlayer = true
             } else {
-                kart.isAI = true;
-                kart.aiController = new AIController(kart, this.currentTrack, this.currentTrack.type, autoplay);
+                kart.isAI = true
+                const model = autoplay ? 'circuit' : this.currentTrack.type
+                kart.aiController = new AIController(kart, this.currentTrack, model, autoplay)
             }
             
             this.karts.push(kart)
