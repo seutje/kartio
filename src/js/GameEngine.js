@@ -359,22 +359,27 @@ class GameEngine {
             case 'KeyW':
             case 'KeyZ':
             case 'ArrowUp':
+            case 'Numpad8':
                 playerKart.accelerate(true)
                 break
             case 'KeyS':
             case 'ArrowDown':
+            case 'Numpad2':
                 playerKart.brake(true)
                 break
             case 'KeyA':
             case 'KeyQ':
             case 'ArrowLeft':
+            case 'Numpad4':
                 playerKart.turnLeft(true)
                 break
             case 'KeyD':
             case 'ArrowRight':
+            case 'Numpad6':
                 playerKart.turnRight(true)
                 break
             case 'Space':
+            case 'Numpad0':
                 playerKart.usePowerup()
                 break
         }
@@ -390,19 +395,23 @@ class GameEngine {
             case 'KeyW':
             case 'KeyZ':
             case 'ArrowUp':
+            case 'Numpad8':
                 playerKart.accelerate(false)
                 break
             case 'KeyS':
             case 'ArrowDown':
+            case 'Numpad2':
                 playerKart.brake(false)
                 break
             case 'KeyA':
             case 'KeyQ':
             case 'ArrowLeft':
+            case 'Numpad4':
                 playerKart.turnLeft(false)
                 break
             case 'KeyD':
             case 'ArrowRight':
+            case 'Numpad6':
                 playerKart.turnRight(false)
                 break
         }
