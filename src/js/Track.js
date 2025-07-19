@@ -142,7 +142,7 @@ class Track {
     }
 
     checkObstacleCollisions(kart) {
-        const kartBox = new THREE.Box3().setFromObject(kart)
+        let kartBox = new THREE.Box3().setFromObject(kart)
         let collided = false
 
         this.obstacles.forEach(obstacle => {
@@ -152,16 +152,22 @@ class Track {
                 const obstacleCenter = new THREE.Vector3()
                 obstacleBox.getCenter(obstacleCenter)
 
+                const intersection = kartBox.clone().intersect(obstacleBox)
+                const overlapX = intersection.max.x - intersection.min.x
+                const overlapZ = intersection.max.z - intersection.min.z
+
                 const delta = kart.position.clone().sub(obstacleCenter)
-                let normal
-                if (Math.abs(delta.x) > Math.abs(delta.z)) {
-                    normal = new THREE.Vector3(Math.sign(delta.x), 0, 0)
+                if (overlapX < overlapZ) {
+                    const push = delta.x > 0 ? overlapX : -overlapX
+                    kart.position.x += push
+                    kart.velocity.x = 0
                 } else {
-                    normal = new THREE.Vector3(0, 0, Math.sign(delta.z))
+                    const push = delta.z > 0 ? overlapZ : -overlapZ
+                    kart.position.z += push
+                    kart.velocity.z = 0
                 }
 
-                const velocityAlongNormal = normal.clone().multiplyScalar(2 * kart.velocity.dot(normal))
-                kart.velocity.sub(velocityAlongNormal).multiplyScalar(0.8)
+                kartBox = new THREE.Box3().setFromObject(kart)
             }
         })
 
