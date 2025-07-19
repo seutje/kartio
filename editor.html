@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Editor</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #toolbar {
+            padding: 10px;
+            background: #eee;
+        }
+        #editorCanvas {
+            display: block;
+            width: 100%;
+            height: 60vh;
+            border: 1px solid #ccc;
+        }
+        #exportArea {
+            width: 100%;
+            height: 200px;
+        }
+        #editOverlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 1px solid #333;
+            padding: 10px;
+            z-index: 100;
+        }
+        .hidden {
+            display: none;
+        }
+        #editOverlay label {
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <select id="trackSelect">
+            <option value="circuit">circuit</option>
+            <option value="desert">desert</option>
+            <option value="snow">snow</option>
+        </select>
+        <button id="importBtn">Import</button>
+        <button id="exportBtn">Export</button>
+        <button id="copyBtn">Copy</button>
+    </div>
+    <canvas id="editorCanvas"></canvas>
+    <textarea id="exportArea"></textarea>
+
+    <div id="editOverlay" class="hidden">
+        <label>Type <input id="propType"></label>
+        <label>X <input id="propX" type="number" step="0.1"></label>
+        <label>Y <input id="propY" type="number" step="0.1"></label>
+        <label>Z <input id="propZ" type="number" step="0.1"></label>
+        <label>Width <input id="propWidth" type="number" step="0.1"></label>
+        <label>Height <input id="propHeight" type="number" step="0.1"></label>
+        <label>Depth <input id="propDepth" type="number" step="0.1"></label>
+        <label>Rotation <input id="propRotation" type="number" step="0.1"></label>
+        <button id="applyBtn">Apply</button>
+        <button id="closeEdit">Close</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="src/js/TrackEditor.js"></script>
+    <script>
+        const editor = new TrackEditor()
+        document.getElementById('importBtn').addEventListener('click', () => {
+            const type = document.getElementById('trackSelect').value
+            editor.loadTrack(type)
+        })
+    </script>
+</body>
+</html>
