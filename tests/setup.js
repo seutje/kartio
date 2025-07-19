@@ -16,6 +16,9 @@ global.THREE = {
             return this
         }
         clone() { return new Vector3(this.x, this.y, this.z); }
+        copy(v) {
+            this.x = v.x; this.y = v.y; this.z = v.z; return this
+        }
         add(v) { return this; }
         multiplyScalar(s) { return this; }
         distanceTo(v) { return Math.sqrt((this.x - v.x) ** 2 + (this.y - v.y) ** 2 + (this.z - v.z) ** 2); }

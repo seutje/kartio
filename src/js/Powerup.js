@@ -121,10 +121,12 @@ class Missile {
     
     checkCollisions() {
         const karts = window.gameEngine ? window.gameEngine.karts : [];
-        
+
         karts.forEach(kart => {
             if (kart !== this.owner && kart.position.distanceTo(this.position) < 2) {
-                kart.handleCollision();
+                if (typeof kart.applyHit === 'function') {
+                    kart.applyHit(5);
+                }
                 this.destroy();
             }
         });
@@ -142,6 +144,7 @@ class Mine {
         this.scene = scene;
         this.owner = null;
         this.active = true;
+        this.activationDelay = 1;
         this.lifetime = 30;
         if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.createMesh();
@@ -169,7 +172,11 @@ class Mine {
     
     update(deltaTime) {
         if (!this.active) return;
-        
+
+        if (this.activationDelay > 0) {
+            this.activationDelay -= deltaTime;
+        }
+
         this.lifetime -= deltaTime;
         if (this.lifetime <= 0) {
             this.destroy();
@@ -182,11 +189,15 @@ class Mine {
     }
     
     checkCollisions() {
+        if (this.activationDelay > 0) return;
+
         const karts = window.gameEngine ? window.gameEngine.karts : [];
-        
+
         karts.forEach(kart => {
             if (kart !== this.owner && kart.position.distanceTo(this.position) < 1.5) {
-                kart.handleCollision();
+                if (typeof kart.applyHit === 'function') {
+                    kart.applyHit(5);
+                }
                 this.destroy();
             }
         });

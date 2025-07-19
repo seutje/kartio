@@ -307,6 +307,15 @@ class Kart extends THREE.Group {
         right.applyQuaternion(this.quaternion);
         return right;
     }
+
+    applyHit(duration) {
+        if (DEBUG_Kart) console.log(`Kart: Hit for ${duration}s`)
+        this.velocity.set(0, 0, 0)
+        this.isStopped = true
+        this.stopTime = duration
+        this.isInvulnerable = true
+        this.invulnerabilityTime = duration
+    }
 }
 
 if (typeof module !== "undefined") {
