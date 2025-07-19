@@ -71,6 +71,7 @@ class Powerup {
 class Missile {
     constructor(position, rotation, scene) {
         this.position = position.clone();
+        // store firing direction without modification
         this.rotation = rotation;
         this.scene = scene;
         this.owner = null;
@@ -86,10 +87,11 @@ class Missile {
         const geometry = new THREE.CylinderGeometry(0.2, 0.2, 2, 8);
         const material = new THREE.MeshLambertMaterial({ color: 0xff4444 });
         
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.copy(this.position);
-        this.mesh.rotation.y = this.rotation;
-        this.mesh.rotation.z = Math.PI / 2;
+        this.mesh = new THREE.Mesh(geometry, material)
+        this.mesh.position.copy(this.position)
+        // rotate model 90 degrees so it faces sideways
+        this.mesh.rotation.y = this.rotation + Math.PI / 2
+        this.mesh.rotation.z = Math.PI / 2
         this.scene.add(this.mesh);
     }
     
