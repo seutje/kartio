@@ -361,7 +361,7 @@ class GameEngine {
     drawRacePath() {
         if (DEBUG_GameEngine) console.log('GameEngine: Drawing race path.');
         const checkpoints = this.currentTrack.checkpoints;
-        const pathMaterial = new THREE.LineBasicMaterial({ color: 0xffa500, linewidth: 3 }); // Orange line
+        const pathMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff, linewidth: 3 }); // Blue line
         const arrowColor = 0x0000ff; // Blue arrow
 
         for (let i = 0; i < checkpoints.length; i++) {
