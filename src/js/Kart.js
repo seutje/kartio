@@ -135,7 +135,10 @@ class Kart extends THREE.Group {
         }
         
         this.position.add(this.velocity.clone().multiplyScalar(deltaTime));
-        this.rotation.y += this.angularVelocity * deltaTime;
+        const turnScale = 2;
+        const turnAngle = this.angularVelocity * deltaTime * turnScale;
+        this.rotation.y += turnAngle;
+        this.velocity.applyAxisAngle(new THREE.Vector3(0, 1, 0), turnAngle);
         
         this.acceleration.set(0, 0, 0);
         this.angularVelocity *= 0.9;

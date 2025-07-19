@@ -40,6 +40,14 @@ describe('Kart', () => {
         expect(kart.isTurningRight).toBe(true)
     })
 
+    test('should rotate velocity when turning', () => {
+        kart.velocity.set(0, 0, -10)
+        kart.angularVelocity = Math.PI / 2
+        kart.updatePhysics(1)
+        expect(Math.abs(kart.velocity.x)).toBeGreaterThan(0)
+        expect(kart.rotation.y).toBeCloseTo(Math.PI)
+    })
+
     test('should collect powerup', () => {
         kart.collectPowerup('boost')
         expect(kart.currentPowerup).toBe('boost')
