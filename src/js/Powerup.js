@@ -16,19 +16,7 @@ class Powerup {
     
     createMesh() {
         const geometry = new THREE.BoxGeometry(1, 1, 1);
-        let color;
-        
-        switch (this.type) {
-            case 'boost':
-                color = 0x00ff00;
-                break;
-            case 'missile':
-                color = 0xff0000;
-                break;
-            case 'mine':
-                color = 0x0000ff;
-                break;
-        }
+        const color = 0x00ff00; // All powerups are now green
         
         const material = new THREE.MeshLambertMaterial({ 
             color: color,

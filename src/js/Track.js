@@ -115,10 +115,7 @@ class Track {
         if (DEBUG_Track) console.log('Track: Creating powerup spawns.');
         const powerupTypes = ['boost', 'missile', 'mine'];
         this.trackData.powerupSpawns.forEach(spawn => {
-            let type = spawn.type;
-            if (type === 'random') {
-                type = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
-            }
+            const type = spawn.type;
             const powerup = new Powerup(type, new THREE.Vector3(spawn.x, spawn.y, spawn.z), this.scene);
             this.powerups.push(powerup);
         });

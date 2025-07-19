@@ -250,7 +250,12 @@ class Kart extends THREE.Group {
     
     collectPowerup(type) {
         if (DEBUG_Kart) console.log(`Kart: Collecting powerup of type ${type}`);
-        this.currentPowerup = type;
+        if (type === 'random') {
+            const powerupTypes = ['boost', 'missile', 'mine'];
+            this.currentPowerup = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
+        } else {
+            this.currentPowerup = type;
+        }
     }
     
     handleCollision(otherKart) {
