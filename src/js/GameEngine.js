@@ -26,7 +26,11 @@ class GameEngine {
         }
 
         this.checkpointMarker = null
-        
+
+        if (typeof window !== 'undefined') {
+            window.gameEngine = this
+        }
+
         this.setupRenderer();
         this.setupLighting();
         this.setupControls();
