@@ -17,8 +17,9 @@ describe('Projectile hits', () => {
     test('missile hit stops kart and grants invulnerability', () => {
         const scene = { add: jest.fn(), remove: jest.fn() };
         const kart = new Kart(0xff0000, scene);
+        const track = new Track('test', scene);
         window.gameEngine = { karts: [kart] };
-        const missile = new Missile(kart.position.clone(), 0, scene);
+        const missile = new Missile(kart.position.clone(), 0, scene, track);
         missile.owner = {};
         missile.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
@@ -32,8 +33,9 @@ describe('Projectile hits', () => {
     test('mine hit stops kart and grants invulnerability', () => {
         const scene = { add: jest.fn(), remove: jest.fn() };
         const kart = new Kart(0xff0000, scene);
+        const track = new Track('test', scene);
         window.gameEngine = { karts: [kart] };
-        const mine = new Mine(kart.position.clone(), scene);
+        const mine = new Mine(kart.position.clone(), scene, track);
         mine.owner = {};
         mine.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
@@ -42,5 +44,16 @@ describe('Projectile hits', () => {
         expect(kart.invulnerabilityTime).toBe(3);
         expect(kart.velocity.length()).toBe(0);
         expect(mine.active).toBe(false);
+    });
+
+    test('projectile destruction creates explosion on track', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() };
+        const track = new Track('test', scene);
+        const missile = new Missile(new THREE.Vector3(), 0, scene, track);
+        missile.destroy();
+        expect(track.explosions.length).toBe(1);
+        const mine = new Mine(new THREE.Vector3(), scene, track);
+        mine.destroy();
+        expect(track.explosions.length).toBe(2);
     });
 });
