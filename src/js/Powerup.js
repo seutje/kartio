@@ -71,7 +71,8 @@ class Powerup {
 class Missile {
     constructor(position, rotation, scene) {
         this.position = position.clone();
-        this.rotation = rotation;
+        // rotate missile 90 degrees relative to firing direction
+        this.rotation = rotation + Math.PI / 2;
         this.scene = scene;
         this.owner = null;
         this.speed = 50;
