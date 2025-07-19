@@ -155,4 +155,21 @@ describe('Powerup', () => {
         const result = powerup.checkCollision(kart)
         expect(result).toBe(false)
     })
+
+    test('respawns after collection', () => {
+        jest.useFakeTimers()
+        const prev = global.NO_GRAPHICS
+        global.NO_GRAPHICS = false
+        mockScene.add.mockClear()
+        const pu = new Powerup('boost', { x: 0, y: 0, z: 0 }, mockScene)
+        const addCalls = mockScene.add.mock.calls.length
+        const kart = { position: { distanceTo: jest.fn(() => 1) } }
+        pu.checkCollision(kart)
+        expect(pu.collected).toBe(true)
+        jest.advanceTimersByTime(1000)
+        expect(pu.collected).toBe(false)
+        expect(mockScene.add.mock.calls.length).toBe(addCalls + 1)
+        global.NO_GRAPHICS = prev
+        jest.useRealTimers()
+    })
 })

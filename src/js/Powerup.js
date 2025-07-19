@@ -57,11 +57,17 @@ class Powerup {
     
     checkCollision(kart) {
         if (this.collected) return false;
-        
+
         const distance = kart.position.distanceTo(this.position);
         if (distance < 2) {
             this.collected = true;
             this.scene.remove(this.mesh);
+            setTimeout(() => {
+                this.collected = false;
+                if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+                    this.scene.add(this.mesh);
+                }
+            }, 1000);
             return true;
         }
         return false;
