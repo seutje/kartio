@@ -34,6 +34,9 @@ class GameEngine {
         }
 
         this.checkpointMarker = null
+        this.uiUpdateInterval = 100; // milliseconds
+        this.lastUiUpdateTime = 0;
+        this.racePathElements = []; // To store references to path lines and arrows
 
         if (typeof window !== 'undefined') {
             window.gameEngine = this
@@ -110,6 +113,7 @@ class GameEngine {
 
         this.audioManager.init()
         this.setupRace()
+        this.clearRacePath()
         this.drawRacePath()
         this.start()
     }
@@ -226,7 +230,13 @@ class GameEngine {
 
         this.updateCheckpointMarker()
         this.updateCamera()
-        this.updateUI()
+
+        // Update UI less frequently
+        const currentTime = performance.now();
+        if (currentTime - this.lastUiUpdateTime >= this.uiUpdateInterval) {
+            this.updateUI();
+            this.lastUiUpdateTime = currentTime;
+        }
     }
     
     updateCamera() {
@@ -340,6 +350,14 @@ class GameEngine {
         this.renderer.render(this.scene, this.camera);
     }
     
+    clearRacePath() {
+        if (DEBUG_GameEngine) console.log('GameEngine: Clearing race path.');
+        this.racePathElements.forEach(element => {
+            this.scene.remove(element);
+        });
+        this.racePathElements = [];
+    }
+
     drawRacePath() {
         if (DEBUG_GameEngine) console.log('GameEngine: Drawing race path.');
         const checkpoints = this.currentTrack.checkpoints;
@@ -359,6 +377,7 @@ class GameEngine {
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
             const line = new THREE.Line(geometry, pathMaterial);
             this.scene.add(line);
+            this.racePathElements.push(line);
 
             // Add arrow helper
             const dir = new THREE.Vector3().subVectors(endPoint, startPoint).normalize();
@@ -370,6 +389,7 @@ class GameEngine {
 
             const arrowHelper = new THREE.ArrowHelper(dir, origin.lerp(endPoint, 0.5), length, hex, headLength, headWidth);
             this.scene.add(arrowHelper);
+            this.racePathElements.push(arrowHelper);
         }
     }
 
