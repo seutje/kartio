@@ -19,7 +19,7 @@ describe('Projectile hits', () => {
         const kart = new Kart(0xff0000, scene);
         const track = new Track('test', scene);
         window.gameEngine = { karts: [kart] };
-        const missile = new Missile(kart.position.clone(), 0, scene, track);
+        const missile = new Missile(kart.position.clone(), 0, scene, track, { obstacles: [] });
         missile.owner = {};
         missile.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
@@ -55,5 +55,15 @@ describe('Projectile hits', () => {
         const mine = new Mine(new THREE.Vector3(), scene, track);
         mine.destroy();
         expect(track.explosions.length).toBe(2);
+    });
+
+    test('missile collides with obstacle and is destroyed', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() };
+        const obstacle = { position: new THREE.Vector3(0, 0, 0), mesh: { position: new THREE.Vector3(0, 0, 0) } };
+        const track = { obstacles: [obstacle] };
+        const missile = new Missile(new THREE.Vector3(0, 0, 0), 0, scene, track);
+        missile.mesh = { position: new THREE.Vector3(0, 0, 0) };
+        missile.checkCollisions();
+        expect(missile.active).toBe(false);
     });
 });

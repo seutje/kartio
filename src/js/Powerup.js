@@ -128,6 +128,15 @@ class Missile {
                 this.destroy();
             }
         });
+
+        // Check collision with obstacles
+        this.track.obstacles.forEach(obstacle => {
+            // Assuming obstacles have a mesh with position and geometry for collision detection
+            // This is a simplified check, a more robust solution would involve SAT or similar
+            if (this.mesh.position.distanceTo(obstacle.position) < 2) { // Adjust threshold as needed
+                this.destroy();
+            }
+        });
     }
     
     destroy() {
