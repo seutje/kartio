@@ -193,6 +193,11 @@ class AIController {
         // Speed bonus: reward for higher speeds
         this.fitness += this.kart.velocity.length() * 1; // Increased bonus
 
+        const forward = this.kart.getForwardVector()
+        if (this.kart.velocity.dot(forward) < 0) {
+            this.fitness -= deltaTime * 200
+        }
+
         if (progress > this.lastProgress) {
             this.fitness += 1;
         }

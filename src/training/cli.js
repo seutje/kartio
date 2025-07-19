@@ -269,6 +269,11 @@ class TrainingEnvironment {
         // Speed bonus: reward for higher speeds
         currentFitness += kart.velocity.length() * 1; // Increased bonus
 
+        const forward = kart.getForwardVector()
+        if (kart.velocity.dot(forward) < 0) {
+            currentFitness -= deltaTime * 200
+        }
+
         // Stuck penalty
         if (kart.velocity.length() < 0.5) {
             kart.stuckTimer += deltaTime;
