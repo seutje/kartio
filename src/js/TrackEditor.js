@@ -1,8 +1,7 @@
-class SimpleTrackEditor {
+class SimpleTrackEditor extends GameEngine {
     constructor(canvas) {
+        super(canvas.id)
         this.canvas = canvas
-        this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
-        this.scene = new THREE.Scene()
         const aspect = canvas.clientWidth / canvas.clientHeight
         const size = 100
         this.camera = new THREE.OrthographicCamera(
@@ -15,7 +14,6 @@ class SimpleTrackEditor {
         )
         this.camera.position.set(0, 100, 0)
         this.camera.lookAt(0, 0, 0)
-        this.scene.add(new THREE.AmbientLight(0xffffff))
         this.raycaster = new THREE.Raycaster()
         this.mouse = new THREE.Vector2()
         this.track = null
