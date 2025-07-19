@@ -206,14 +206,20 @@ class Kart extends THREE.Group {
     
     fireMissile() {
         if (DEBUG_Kart) console.log('Kart: Firing missile.');
-        const missile = new Missile(this.position.clone(), this.rotation.y, this.scene);
-        missile.owner = this;
+        const missile = new Missile(this.position.clone(), this.rotation.y, this.scene)
+        missile.owner = this
+        if (this.currentTrack && this.currentTrack.missiles) {
+            this.currentTrack.missiles.push(missile)
+        }
     }
-    
+
     dropMine() {
         if (DEBUG_Kart) console.log('Kart: Dropping mine.');
-        const mine = new Mine(this.position.clone(), this.scene);
-        mine.owner = this;
+        const mine = new Mine(this.position.clone(), this.scene)
+        mine.owner = this
+        if (this.currentTrack && this.currentTrack.mines) {
+            this.currentTrack.mines.push(mine)
+        }
     }
     
     collectPowerup(type) {
