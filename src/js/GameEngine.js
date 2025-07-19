@@ -1,5 +1,12 @@
 const DEBUG_GameEngine = false;
 
+const COLOR_NAMES = {
+    0xff0000: 'red',
+    0x00ff00: 'green',
+    0x0000ff: 'blue',
+    0xffff00: 'yellow'
+}
+
 class GameEngine {
     constructor(canvasId = 'gameCanvas') {
         if (DEBUG_GameEngine) console.log('GameEngine: Initializing...');
@@ -285,6 +292,29 @@ class GameEngine {
         document.getElementById('position').textContent = this.getPlayerPosition();
         document.getElementById('lap').textContent = this.getPlayerLap();
         document.getElementById('powerup').textContent = this.getPlayerPowerup();
+        if (this.isAutoplay) {
+            this.updateAIStats()
+        } else {
+            const aiStats = document.getElementById('aiStats')
+            if (aiStats) aiStats.classList.add('hidden')
+        }
+    }
+
+    updateAIStats() {
+        const aiStats = document.getElementById('aiStats')
+        if (!aiStats) return
+        aiStats.innerHTML = ''
+        const sorted = [...this.karts].sort((a, b) => b.progress - a.progress)
+        this.karts.forEach(kart => {
+            const div = document.createElement('div')
+            const position = sorted.indexOf(kart) + 1
+            const suffix = ['st', 'nd', 'rd', 'th'][Math.min(position - 1, 3)]
+            const colorName = COLOR_NAMES[kart.color] || 'unknown'
+            const fitness = kart.aiController ? kart.aiController.fitness.toFixed(0) : 0
+            div.textContent = `${colorName}: ${position}${suffix} - ${kart.currentLap}/3 - ${fitness}`
+            aiStats.appendChild(div)
+        })
+        aiStats.classList.remove('hidden')
     }
     
     getPlayerPosition() {
