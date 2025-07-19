@@ -122,7 +122,7 @@ class GameEngine {
 
             // Face towards the next checkpoint from the start position
             const direction = new THREE.Vector3().subVectors(firstCheckpoint, startPos).normalize();
-            const angle = Math.atan2(direction.x, -direction.z);
+            const angle = Math.atan2(direction.x, direction.z) + Math.PI;
             kart.rotation.y = angle;
             
             if (i === 0 && !autoplay) {
