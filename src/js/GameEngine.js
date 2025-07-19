@@ -124,6 +124,7 @@ class GameEngine {
             const kart = new Kart(colors[i], this.scene);
             kart.currentTrack = this.currentTrack;
             kart.position.copy(firstCheckpoint); // Place on first checkpoint
+            kart.position.y += 1; // Raise kart slightly above ground
             kart.position.x += (i - 1.5) * spawnOffset; // Adjust x-position for spacing
             // Calculate direction from first to second checkpoint
             const direction = new THREE.Vector3().subVectors(secondCheckpoint, firstCheckpoint).normalize();
