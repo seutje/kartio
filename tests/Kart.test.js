@@ -54,6 +54,13 @@ describe('Kart', () => {
         kart.updateProgress()
         expect(kart.progress).toBe(0.5)
     })
+
+    test('reverses steering when moving backward', () => {
+        kart.velocity.set(0, 0, 1)
+        kart.angularVelocity = 0
+        kart.applyForce(0, kart.turnSpeed)
+        expect(kart.angularVelocity).toBeLessThan(0)
+    })
 })
 
 describe('NeuralNetwork', () => {
