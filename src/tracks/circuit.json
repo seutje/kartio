@@ -21,10 +21,10 @@
     { "x": -28.28, "y": 0, "z": -28.28, "radius": 5 }
   ],
   "powerupSpawns": [
-    { "x": 20, "y": 1, "z": 20, "type": "random" },
-    { "x": -20, "y": 1, "z": 20, "type": "random" },
-    { "x": 20, "y": 1, "z": -20, "type": "random" },
-    { "x": -20, "y": 1, "z": -20, "type": "random" }
+    { "x": 0, "y": 1, "z": -40, "type": "random" },
+    { "x": 40, "y": 1, "z": 0, "type": "random" },
+    { "x": 0, "y": 1, "z": 40, "type": "random" },
+    { "x": -40, "y": 1, "z": 0, "type": "random" }
   ],
   "environment": {
     "skyColor": "0x87CEEB",
