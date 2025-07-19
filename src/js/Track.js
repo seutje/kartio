@@ -184,23 +184,37 @@ class Track {
             const obstacleBox = new THREE.Box3().setFromObject(obstacle)
             if (kartBox.intersectsBox(obstacleBox)) {
                 collided = true
-                const obstacleCenter = new THREE.Vector3()
-                obstacleBox.getCenter(obstacleCenter)
 
-                const intersection = kartBox.clone().intersect(obstacleBox)
+                const rotationMatrix = new THREE.Matrix4().makeRotationY(obstacle.rotation.y || 0)
+                const inverseRotation = rotationMatrix.clone().invert()
+
+                const localKartBox = kartBox.clone().applyMatrix4(inverseRotation)
+                const localObstacleBox = obstacleBox.clone().applyMatrix4(inverseRotation)
+                const intersection = localKartBox.clone().intersect(localObstacleBox)
+
                 const overlapX = intersection.max.x - intersection.min.x
                 const overlapZ = intersection.max.z - intersection.min.z
 
-                const delta = kart.position.clone().sub(obstacleCenter)
+                const localDelta = kart.position.clone().applyMatrix4(inverseRotation)
+                    .sub(obstacle.position.clone().applyMatrix4(inverseRotation))
+
+                const pushVector = new THREE.Vector3()
+                const localVelocity = kart.velocity.clone().applyMatrix4(inverseRotation)
+
                 if (overlapX < overlapZ) {
-                    const push = delta.x > 0 ? overlapX : -overlapX
-                    kart.position.x += push
-                    kart.velocity.x = 0
+                    const push = localDelta.x > 0 ? overlapX : -overlapX
+                    pushVector.set(push, 0, 0)
+                    localVelocity.x = 0
                 } else {
-                    const push = delta.z > 0 ? overlapZ : -overlapZ
-                    kart.position.z += push
-                    kart.velocity.z = 0
+                    const push = localDelta.z > 0 ? overlapZ : -overlapZ
+                    pushVector.set(0, 0, push)
+                    localVelocity.z = 0
                 }
+
+                pushVector.applyMatrix4(rotationMatrix)
+                kart.position.add(pushVector)
+
+                kart.velocity.copy(localVelocity.applyMatrix4(rotationMatrix))
 
                 kartBox = new THREE.Box3().setFromObject(kart)
             }
