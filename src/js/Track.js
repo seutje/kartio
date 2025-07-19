@@ -176,37 +176,101 @@ class Track {
         });
     }
 
-    checkObstacleCollisions(kart) {
-        let kartBox = new THREE.Box3().setFromObject(kart)
-        let collided = false
+    checkSATCollision(box1, box2) {
+        let minOverlap = Number.MAX_VALUE;
+        let mtv = null;
 
-        this.obstacles.forEach(obstacle => {
-            const obstacleBox = new THREE.Box3().setFromObject(obstacle)
-            if (kartBox.intersectsBox(obstacleBox)) {
-                collided = true
-                const obstacleCenter = new THREE.Vector3()
-                obstacleBox.getCenter(obstacleCenter)
+        const axes1 = [
+            new THREE.Vector3(1, 0, 0).applyQuaternion(box1.quaternion),
+            new THREE.Vector3(0, 1, 0).applyQuaternion(box1.quaternion),
+            new THREE.Vector3(0, 0, 1).applyQuaternion(box1.quaternion)
+        ];
+        const axes2 = [
+            new THREE.Vector3(1, 0, 0).applyQuaternion(box2.quaternion),
+            new THREE.Vector3(0, 1, 0).applyQuaternion(box2.quaternion),
+            new THREE.Vector3(0, 0, 1).applyQuaternion(box2.quaternion)
+        ];
+        const axes = [...axes1, ...axes2];
 
-                const intersection = kartBox.clone().intersect(obstacleBox)
-                const overlapX = intersection.max.x - intersection.min.x
-                const overlapZ = intersection.max.z - intersection.min.z
+        for (let i = 0; i < axes.length; i++) {
+            const axis = axes[i];
+            const p1 = this.getProjection(box1, axis);
+            const p2 = this.getProjection(box2, axis);
 
-                const delta = kart.position.clone().sub(obstacleCenter)
-                if (overlapX < overlapZ) {
-                    const push = delta.x > 0 ? overlapX : -overlapX
-                    kart.position.x += push
-                    kart.velocity.x = 0
-                } else {
-                    const push = delta.z > 0 ? overlapZ : -overlapZ
-                    kart.position.z += push
-                    kart.velocity.z = 0
-                }
-
-                kartBox = new THREE.Box3().setFromObject(kart)
+            const overlap = Math.max(0, Math.min(p1.max, p2.max) - Math.max(p1.min, p2.min));
+            if (overlap === 0) {
+                return null;
             }
-        })
 
-        return collided
+            if (overlap < minOverlap) {
+                minOverlap = overlap;
+                const center1 = new THREE.Vector3();
+                new THREE.Box3().setFromObject(box1).getCenter(center1);
+                const center2 = new THREE.Vector3();
+                new THREE.Box3().setFromObject(box2).getCenter(center2);
+                const direction = center1.clone().sub(center2);
+                if (axis.dot(direction) < 0) {
+                    mtv = axis.clone().multiplyScalar(minOverlap);
+                } else {
+                    mtv = axis.clone().multiplyScalar(-minOverlap);
+                }
+            }
+        }
+        return mtv;
+    }
+
+    getProjection(box, axis) {
+        const vertices = this.getVertices(box);
+        let min = axis.dot(vertices[0]);
+        let max = min;
+        for (let i = 1; i < vertices.length; i++) {
+            const p = axis.dot(vertices[i]);
+            if (p < min) {
+                min = p;
+            } else if (p > max) {
+                max = p;
+            }
+        }
+        return { min, max };
+    }
+
+    getVertices(box) {
+        const vertices = [];
+        const halfSize = new THREE.Vector3(box.geometry.parameters.width / 2, box.geometry.parameters.height / 2, box.geometry.parameters.depth / 2);
+        const positions = [
+            new THREE.Vector3(-halfSize.x, -halfSize.y, -halfSize.z),
+            new THREE.Vector3(halfSize.x, -halfSize.y, -halfSize.z),
+            new THREE.Vector3(halfSize.x, halfSize.y, -halfSize.z),
+            new THREE.Vector3(-halfSize.x, halfSize.y, -halfSize.z),
+            new THREE.Vector3(-halfSize.x, -halfSize.y, halfSize.z),
+            new THREE.Vector3(halfSize.x, -halfSize.y, halfSize.z),
+            new THREE.Vector3(halfSize.x, halfSize.y, halfSize.z),
+            new THREE.Vector3(-halfSize.x, halfSize.y, halfSize.z)
+        ];
+        for (let i = 0; i < positions.length; i++) {
+            const vertex = positions[i].applyQuaternion(box.quaternion).add(box.position);
+            if (box.parent) {
+                vertex.add(box.parent.position);
+            }
+            vertices.push(vertex);
+        }
+        return vertices;
+    }
+
+    checkObstacleCollisions(kart) {
+        let collided = false;
+        this.obstacles.forEach(obstacle => {
+            const mtv = this.checkSATCollision(kart.body, obstacle);
+            if (mtv) {
+                collided = true;
+                kart.position.sub(mtv);
+                const relativeVelocity = kart.velocity.clone(); 
+                const normal = mtv.clone().normalize();
+                const impulse = normal.multiplyScalar(relativeVelocity.dot(normal) * -1.1);
+                kart.velocity.add(impulse);
+            }
+        });
+        return collided;
     }
 }
 
