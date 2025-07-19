@@ -113,7 +113,12 @@ class TrainingEnvironment {
             this.generation = i + 1;
             console.log(`\nGeneration ${this.generation}/${this.generations}`);
             
-            await this.evaluatePopulation();
+            const hasQualified = await this.evaluatePopulation()
+            if (!hasQualified) {
+                console.log('All karts disqualified. Skipping to next generation.')
+                this.evolvePopulation()
+                continue
+            }
             this.evolvePopulation();
             
             const avgFitness = this.population.reduce((sum, individual) => sum + individual.fitness, 0) / this.population.length;
@@ -142,18 +147,21 @@ class TrainingEnvironment {
     
     async evaluatePopulation() {
         const promises = this.population.map(async (individual, index) => {
-            const fitness = await this.simulateRace(individual.network);
-            individual.fitness = fitness;
-            
-            if (fitness > this.bestFitness) {
-                this.bestFitness = fitness;
-                this.saveBestModel();
+            const result = await this.simulateRace(individual.network)
+            individual.fitness = result.fitness
+            individual.disqualified = result.disqualified
+
+            if (result.fitness > this.bestFitness) {
+                this.bestFitness = result.fitness
+                this.saveBestModel()
             }
-        });
-        
-        await Promise.all(promises);
-        
-        this.population.sort((a, b) => b.fitness - a.fitness);
+        })
+
+        await Promise.all(promises)
+
+        this.population.sort((a, b) => b.fitness - a.fitness)
+
+        return !this.population.every(ind => ind.disqualified)
     }
     
     async simulateRace(network) {
@@ -187,10 +195,11 @@ class TrainingEnvironment {
             const ai = new AIController(kart, track, this.trackType, true)
             ai.network = network
             
-            let fitness = 0;
-            let time = 0;
-            const maxTime = 120;
-            const deltaTime = 0.016;
+            let fitness = 0
+            let time = 0
+            const maxTime = 120
+            const deltaTime = 0.016
+            let disqualified = false
 
             // Initialize additional kart properties for fitness calculation
             kart.lastProgress = 0;
@@ -199,10 +208,16 @@ class TrainingEnvironment {
             kart.lastLap = 0;
             kart.stuckTimer = 0;
             
-            while (time < maxTime && kart.currentLap <= 3) {
+            while (time < maxTime && kart.currentLap <= 3 && !disqualified) {
                 ai.update(deltaTime, [])
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
+
+                if (this.track.checkObstacleCollisions(kart)) {
+                    disqualified = true
+                    fitness = 0
+                    break
+                }
                 
                 const currentStepFitness = this.calculateFitness(kart, deltaTime); // Calculate fitness for this step
                 fitness += currentStepFitness; // Accumulate fitness
@@ -222,10 +237,10 @@ class TrainingEnvironment {
                     break;
                 }
                 
-                time += deltaTime;
+                time += deltaTime
             }
-            
-            resolve(fitness);
+
+            resolve({ fitness, disqualified })
         });
     }
     
