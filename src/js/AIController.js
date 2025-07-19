@@ -153,9 +153,9 @@ class AIController {
 
         let turning = 0;
         if (steeringOutput > 0.1) {
-            turning = this.kart.turnSpeed;
-        } else if (steeringOutput < -0.1) {
             turning = -this.kart.turnSpeed;
+        } else if (steeringOutput < -0.1) {
+            turning = this.kart.turnSpeed;
         }
 
         this.kart.applyForce(acceleration, turning);
