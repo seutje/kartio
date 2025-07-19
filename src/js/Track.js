@@ -131,9 +131,12 @@ class Track {
 
     checkObstacleCollisions(kart) {
         const kartBox = new THREE.Box3().setFromObject(kart)
+        let collided = false
+
         this.obstacles.forEach(obstacle => {
             const obstacleBox = new THREE.Box3().setFromObject(obstacle)
             if (kartBox.intersectsBox(obstacleBox)) {
+                collided = true
                 const obstacleCenter = new THREE.Vector3()
                 obstacleBox.getCenter(obstacleCenter)
 
@@ -149,6 +152,8 @@ class Track {
                 kart.velocity.sub(velocityAlongNormal).multiplyScalar(0.8)
             }
         })
+
+        return collided
     }
 }
 
