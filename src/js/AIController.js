@@ -9,7 +9,7 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        this.network = new NeuralNetwork(8, 10, 2); // Initialize with a random brain
+        this.network = new NeuralNetwork(9, 10, 2); // Initialize with a random brain
 
         if (!isTraining) {
             this.loadBrain().then(network => {
@@ -29,13 +29,14 @@ class AIController {
         
         this.sensors = {
             forward: 0,
+            forwardLeft: 0,
             left: 0,
+            forwardRight: 0,
             right: 0,
             checkpoint: 0,
             velocity: 0,
             angle: 0,
-            lapProgress: 0,
-            opponentDistance: 0
+            lapProgress: 0
         };
     }
 
@@ -88,7 +89,10 @@ class AIController {
         const right = this.kart.getRightVector();
         
         this.sensors.forward = this.raycast(forward, 10);
-        this.sensors.left = this.raycast(right.clone().negate(), 5);
+        const leftDir = right.clone().negate();
+        this.sensors.left = this.raycast(leftDir, 5);
+        this.sensors.forwardLeft = this.raycast(forward.clone().add(leftDir).normalize(), 10);
+        this.sensors.forwardRight = this.raycast(forward.clone().add(right).normalize(), 10);
         this.sensors.right = this.raycast(right, 5);
         
         const nextCheckpoint = this.track.checkpoints[this.kart.nextCheckpoint];
@@ -101,16 +105,6 @@ class AIController {
         this.sensors.velocity = this.kart.velocity.length() / this.kart.maxSpeed;
         this.sensors.lapProgress = this.kart.progress;
         
-        let minOpponentDistance = Infinity;
-        karts.forEach(other => {
-            if (other !== this.kart) {
-                const distance = other.position.distanceTo(this.kart.position);
-                if (distance < minOpponentDistance) {
-                    minOpponentDistance = distance;
-                }
-            }
-        });
-        this.sensors.opponentDistance = Math.min(minOpponentDistance, 10) / 10;
     }
     
     raycast(direction, maxDistance) {
@@ -135,13 +129,14 @@ class AIController {
     getInputs() {
         return [
             this.sensors.forward,
+            this.sensors.forwardLeft,
             this.sensors.left,
+            this.sensors.forwardRight,
             this.sensors.right,
             this.sensors.checkpoint,
             this.sensors.velocity,
             this.sensors.angle,
-            this.sensors.lapProgress,
-            this.sensors.opponentDistance
+            this.sensors.lapProgress
         ];
     }
     
