@@ -45,7 +45,7 @@ describe('Kart', () => {
         kart.angularVelocity = Math.PI / 2
         kart.updatePhysics(1)
         expect(Math.abs(kart.velocity.x)).toBeGreaterThan(0)
-        expect(kart.rotation.y).toBeCloseTo(Math.PI / 4)
+        expect(kart.rotation.y).toBeCloseTo(Math.PI)
     })
 
     test('should collect powerup', () => {
