@@ -136,7 +136,7 @@ class TrainingEnvironment {
     
     initializePopulation() {
         for (let i = 0; i < this.populationSize; i++) {
-            const network = new NeuralNetwork(9, 10, 2);
+            const network = new NeuralNetwork(10, 10, 3);
             this.population.push({
                 network: network,
                 fitness: 0,
