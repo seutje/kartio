@@ -144,15 +144,13 @@ class AudioManager {
         if (DEBUG_AudioManager) console.log('AudioManager: Creating music.');
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(220, this.audioContext.currentTime);
-        
+
+        oscillator.type = 'square';
         gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(this.musicGain);
-        
+
         return { oscillator, gainNode };
     }
     
@@ -173,17 +171,32 @@ class AudioManager {
     playMusic() {
         if (DEBUG_AudioManager) console.log('AudioManager: Playing music.');
         if (!this.initialized) return;
-        
+
         const music = this.createMusic();
         music.oscillator.start();
-        
-        setInterval(() => {
-            const now = this.audioContext.currentTime;
+
+        const melody = [
+            { freq: 659, duration: 0.3 },
+            { freq: 659, duration: 0.3 },
+            { freq: 659, duration: 0.3 },
+            { freq: 523, duration: 0.3 },
+            { freq: 659, duration: 0.3 },
+            { freq: 784, duration: 0.6 },
+            { freq: 392, duration: 0.6 }
+        ];
+
+        let noteIndex = 0;
+        const playNote = () => {
+            const note = melody[noteIndex];
             music.oscillator.frequency.setValueAtTime(
-                220 + Math.sin(now * 0.5) * 50, 
-                now
+                note.freq,
+                this.audioContext.currentTime
             );
-        }, 100);
+            noteIndex = (noteIndex + 1) % melody.length;
+            setTimeout(playNote, note.duration * 1000);
+        };
+
+        playNote();
     }
     
     stopSound(name) {
