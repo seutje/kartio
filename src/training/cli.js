@@ -220,11 +220,22 @@ class TrainingEnvironment {
             const maxTime = 60
             const deltaTime = 0.016
             let disqualified = false
+            let stoppedTime = 0
             
             while (time < maxTime && kart.currentLap <= 2 && !disqualified) {
                 ai.update(deltaTime, [])
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
+
+                if (kart.velocity.length() < 0.1) {
+                    stoppedTime += deltaTime
+                    if (stoppedTime > 2) {
+                        disqualified = true
+                        break
+                    }
+                } else {
+                    stoppedTime = 0
+                }
 
                 if (ai.checkObstacleCollision()) {
                     disqualified = true
