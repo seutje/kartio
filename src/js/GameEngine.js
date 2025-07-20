@@ -22,6 +22,9 @@ class GameEngine {
         this.isRunning = false;
         this.isAutoplay = false;
         this.gameStarted = false;
+        this.isCountingDown = false;
+        this.countdownValue = 3;
+        this.countdownTimer = null;
         
         this.karts = [];
         this.currentTrack = null;
@@ -61,6 +64,20 @@ class GameEngine {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.sortObjects = true;
+
+        // Create a separate 2D canvas for UI elements like countdown
+        this.uiCanvas = document.createElement('canvas');
+        this.uiCanvas.id = 'uiCanvas';
+        this.uiCanvas.style.position = 'absolute';
+        this.uiCanvas.style.top = '0';
+        this.uiCanvas.style.left = '0';
+        this.uiCanvas.style.pointerEvents = 'none'; // Allow clicks to pass through to the game canvas
+        document.body.appendChild(this.uiCanvas);
+        this.uiContext = this.uiCanvas.getContext('2d');
+
+        // Set initial size for the UI canvas
+        this.uiCanvas.width = window.innerWidth;
+        this.uiCanvas.height = window.innerHeight;
     }
     
     setupLighting() {
@@ -117,7 +134,19 @@ class GameEngine {
         this.setupRace()
         this.clearRacePath()
         this.drawRacePath()
-        this.start()
+        
+        this.isCountingDown = true;
+        this.countdownValue = 3;
+        this.start(); // Start the animation loop to draw the countdown
+        this.countdownTimer = setInterval(() => {
+            this.countdownValue--;
+            if (this.countdownValue === 0) {
+                clearInterval(this.countdownTimer);
+                this.isCountingDown = false;
+                this.countdownTimer = null;
+                this.uiContext.clearRect(0, 0, this.uiCanvas.width, this.uiCanvas.height); // Clear the countdown text
+            }
+        }, 1000);
     }
 
     async startAutoplay() {
@@ -248,7 +277,11 @@ class GameEngine {
         this.updateStats();
         
         this.karts.forEach(kart => {
-            if (kart.isPlayer && !this.isAutoplay) {
+            if (this.isCountingDown) {
+                // During countdown, prevent kart movement
+                kart.velocity.set(0, 0, 0);
+                kart.angularVelocity = 0;
+            } else if (kart.isPlayer && !this.isAutoplay) {
                 kart.update(deltaTime);
             } else if (kart.isAI) {
                 kart.aiController.update(deltaTime, this.karts);
@@ -383,6 +416,27 @@ class GameEngine {
     
     render() {
         this.renderer.render(this.scene, this.camera);
+        if (this.isCountingDown) {
+            this.drawCountdown();
+        }
+    }
+
+    drawCountdown() {
+        const context = this.uiContext;
+        const canvas = this.uiCanvas;
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.font = 'bold 200px Arial';
+        context.fillStyle = 'white';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+
+        if (this.countdownValue > 0) {
+            context.fillText(this.countdownValue, canvas.width / 2, canvas.height / 2);
+        } else {
+            context.fillText('GO!', canvas.width / 2, canvas.height / 2);
+        }
     }
     
     clearRacePath() {
@@ -441,6 +495,10 @@ class GameEngine {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Resize UI canvas as well
+        this.uiCanvas.width = window.innerWidth;
+        this.uiCanvas.height = window.innerHeight;
     }
     
     onKeyDown(event) {

@@ -48,5 +48,21 @@ global.document = {
             powerup: { textContent: '' }
         }
         return elements[id] || null
+    },
+    createElement: (tagName) => {
+        if (tagName === 'canvas') {
+            return {
+                style: {},
+                getContext: () => ({
+                    clearRect: () => {},
+                    fillText: () => {},
+                    measureText: () => ({ width: 0 })
+                })
+            };
+        }
+        return {};
+    },
+    body: {
+        appendChild: () => {}
     }
-}
+};
