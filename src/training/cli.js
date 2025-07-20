@@ -67,8 +67,13 @@ class TrainingEnvironment {
         this.trackType = trackType;
         this.populationSize = 100;
         this.generations = parseInt(process.argv[2]) || 50;
-        this.mutationRate = 0.1;
+        this.mutationRate = 0.1
+        this.minMutationRate = 0.05
+        this.maxMutationRate = 0.5
         this.eliteCount = 5;
+        this.newBloodRate = 0.1
+        this.prevBestFitness = 0;
+        this.noImprovement = 0;
 
         this.gameEngine = new GameEngine()
 
@@ -119,6 +124,21 @@ class TrainingEnvironment {
             const avgFitness = this.population.reduce((sum, individual) => sum + individual.fitness, 0) / this.population.length;
             console.log(`Best fitness: ${this.bestFitness.toFixed(2)}`);
             console.log(`Average fitness: ${avgFitness.toFixed(2)}`);
+
+            if (this.bestFitness > this.prevBestFitness) {
+                this.prevBestFitness = this.bestFitness
+                this.noImprovement = 0
+                this.mutationRate = Math.max(this.minMutationRate, this.mutationRate * 0.9)
+                this.newBloodRate = Math.max(0.1, this.newBloodRate * 0.9)
+            } else {
+                this.noImprovement++
+                if (this.noImprovement >= 3) {
+                    this.mutationRate = Math.min(this.mutationRate * 1.2, this.maxMutationRate)
+                    this.newBloodRate = Math.min(this.newBloodRate + 0.05, 0.3)
+                    this.noImprovement = 0
+                    console.log(`Increasing mutation rate to ${this.mutationRate.toFixed(2)} and new blood to ${this.newBloodRate.toFixed(2)} due to stagnation`)
+                }
+            }
             
             if (this.generation % 10 === 0) {
                 this.saveModel();
@@ -242,17 +262,26 @@ class TrainingEnvironment {
         }
         
         while (newPopulation.length < this.populationSize) {
-            const parent1 = this.selectParent();
-            const parent2 = this.selectParent();
-            
-            const child = NeuralNetwork.crossover(parent1.network, parent2.network);
-            child.mutate(this.mutationRate);
-            
+            if (Math.random() < this.newBloodRate) {
+                newPopulation.push({
+                    network: new NeuralNetwork(10, 10, 3),
+                    fitness: 0,
+                    isTraining: true
+                })
+                continue
+            }
+
+            const parent1 = this.selectParent()
+            const parent2 = this.selectParent()
+
+            const child = NeuralNetwork.crossover(parent1.network, parent2.network)
+            child.mutate(this.mutationRate)
+
             newPopulation.push({
                 network: child,
                 fitness: 0,
                 isTraining: true
-            });
+            })
         }
         
         this.population = newPopulation;
