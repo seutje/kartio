@@ -41,8 +41,9 @@ class Kart extends THREE.Group {
         this.currentTrack = null;
         this.groundY = this.position.y;
         
+        this.createMesh();
+
         if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
-            this.createMesh();
             this.addToScene();
         }
     }
