@@ -275,6 +275,7 @@ class Track {
             const mtv = this.checkSATCollision(kart.body, obstacle);
             if (mtv) {
                 collided = true;
+                kart.audioManager.playSound('collision');
                 const horizontalMtv = mtv.clone();
                 horizontalMtv.y = 0;
                 kart.position.sub(horizontalMtv);

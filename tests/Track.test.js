@@ -11,7 +11,11 @@ describe('Track obstacle collisions', () => {
         track.obstacles = [obstacle]
 
         global.NO_GRAPHICS = false;
-        const kart = new Kart(0xff0000, scene);
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        const kart = new Kart(0xff0000, scene, mockAudioManager);
         global.NO_GRAPHICS = true;
         kart.position.set(0, 0, 0);
         kart.velocity = new THREE.Vector3(1, 0, 0);
@@ -51,7 +55,11 @@ describe('Track obstacle rotation', () => {
         track.obstacles = [obstacle];
 
         global.NO_GRAPHICS = false;
-        const kart = new Kart(0xff0000, scene);
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        const kart = new Kart(0xff0000, scene, mockAudioManager);
         global.NO_GRAPHICS = true;
         kart.position.set(0, 0, 0);
         kart.velocity = new THREE.Vector3(1, 0, 0);

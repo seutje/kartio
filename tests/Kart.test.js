@@ -8,7 +8,11 @@ describe('Kart', () => {
 
     beforeEach(() => {
         mockScene = { add: jest.fn(), remove: jest.fn() }
-        kart = new Kart(0xff0000, mockScene)
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        kart = new Kart(0xff0000, mockScene, mockAudioManager);
     })
 
     test('should initialize with default values', () => {

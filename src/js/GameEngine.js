@@ -113,7 +113,7 @@ class GameEngine {
         document.getElementById('startScreen').classList.add('hidden')
         document.getElementById('stats').classList.remove('hidden')
 
-        this.audioManager.init()
+        await this.audioManager.init()
         this.setupRace()
         this.clearRacePath()
         this.drawRacePath()
@@ -141,7 +141,7 @@ class GameEngine {
         
         const firstCheckpoint = this.currentTrack.checkpoints[0].position;
         for (let i = 0; i < 4; i++) {
-            const kart = new Kart(colors[i], this.scene);
+            const kart = new Kart(colors[i], this.scene, this.audioManager);
             kart.currentTrack = this.currentTrack;
             const startPos = startPositions[i] || startPositions[0];
             kart.position.copy(startPos); // Use start position from track data

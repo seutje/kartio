@@ -26,7 +26,7 @@ class AudioManager {
             this.sfxGain.connect(this.audioContext.destination);
             
             this.musicGain.gain.value = 0.3;
-            this.sfxGain.gain.value = 0.5;
+            this.sfxGain.gain.value = 0.3;
             
             await this.loadSounds();
             this.initialized = true;
