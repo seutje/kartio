@@ -34,4 +34,35 @@ describe('GameEngine autoplay', () => {
         engine.checkAutoplayRestart()
         expect(engine.startAutoplay).toHaveBeenCalled()
     })
+
+    test('stop cancels animation frame', () => {
+        const engine = new GameEngine()
+        const mockRAF = jest.fn(() => 42)
+        const mockCancel = jest.fn()
+        global.requestAnimationFrame = mockRAF
+        global.cancelAnimationFrame = mockCancel
+
+        engine.currentTrack = {
+            update: jest.fn(),
+            checkObstacleCollisions: jest.fn(),
+            checkPowerupCollisions: jest.fn(),
+            checkpoints: [{ position: new THREE.Vector3() }]
+        }
+        engine.karts = [{
+            position: new THREE.Vector3(),
+            quaternion: new THREE.Quaternion(),
+            isPlayer: true,
+            nextCheckpoint: 0,
+            update: jest.fn()
+        }]
+
+        engine.start()
+        engine.stop()
+
+        expect(mockRAF).toHaveBeenCalledTimes(1)
+        expect(mockCancel).toHaveBeenCalledWith(42)
+
+        delete global.requestAnimationFrame
+        delete global.cancelAnimationFrame
+    })
 })

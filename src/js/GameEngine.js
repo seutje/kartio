@@ -33,6 +33,8 @@ class GameEngine {
             lastTime: 0
         }
 
+        this.animationId = null
+
         this.checkpointMarker = null
         this.uiUpdateInterval = 100; // milliseconds
         this.lastUiUpdateTime = 0;
@@ -188,6 +190,12 @@ class GameEngine {
     stop() {
         if (DEBUG_GameEngine) console.log('GameEngine: Stopping animation loop.');
         this.isRunning = false;
+        if (this.animationId !== null) {
+            if (typeof cancelAnimationFrame !== 'undefined') {
+                cancelAnimationFrame(this.animationId)
+            }
+            this.animationId = null
+        }
     }
 
     clearKarts() {
@@ -204,7 +212,7 @@ class GameEngine {
         if (DEBUG_GameEngine) console.log('GameEngine: Animating frame.');
         if (!this.isRunning) return;
         
-        requestAnimationFrame(() => this.animate());
+        this.animationId = requestAnimationFrame(() => this.animate());
         
         const deltaTime = this.clock.getDelta();
         this.update(deltaTime);
