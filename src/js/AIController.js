@@ -250,7 +250,7 @@ class AIController {
         this.fitness += currentFitness
 
         if (this.kart.currentLap > 3 && !this.finishBonusApplied) {
-            this.fitness += 1000;
+            this.fitness += 2000;
             this.finishBonusApplied = true;
         }
 

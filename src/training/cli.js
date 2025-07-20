@@ -67,11 +67,11 @@ class TrainingEnvironment {
         this.trackType = trackType;
         this.populationSize = 100;
         this.generations = parseInt(process.argv[2]) || 50;
-        this.mutationRate = 0.1
-        this.minMutationRate = 0.05
-        this.maxMutationRate = 0.5
+        this.mutationRate = 0.2
+        this.minMutationRate = 0.1
+        this.maxMutationRate = 0.7
         this.eliteCount = 5;
-        this.newBloodRate = 0.1
+        this.newBloodRate = 0.2
         this.prevBestFitness = 0;
         this.noImprovement = 0;
 
@@ -217,12 +217,12 @@ class TrainingEnvironment {
             
             ai.fitness = 0
             let time = 0
-            const maxTime = 60
+            const maxTime = 120
             const deltaTime = 0.016
             let disqualified = false
             let stoppedTime = 0
             
-            while (time < maxTime && kart.currentLap <= 2 && !disqualified) {
+            while (time < maxTime && kart.currentLap <= 5 && !disqualified) {
                 ai.update(deltaTime, [])
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
@@ -249,7 +249,7 @@ class TrainingEnvironment {
                     console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Total Fitness: ${ai.fitness.toFixed(2)}`);
                 }
 
-                if (kart.currentLap > 3) {
+                if (kart.currentLap > 5) {
                     break;
                 }
 
