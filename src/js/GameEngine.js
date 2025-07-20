@@ -123,6 +123,9 @@ class GameEngine {
         await AIController.preloadBrain(this.currentTrack.type)
         this.gameStarted = false
         this.clearKarts()
+        if (this.currentTrack && typeof this.currentTrack.reset === 'function') {
+            this.currentTrack.reset()
+        }
         this.isAutoplay = true
         this.setupRace(true)
         this.camera.position.set(0, 60, 0)

@@ -134,6 +134,28 @@ class Track {
         return this.startPositions;
     }
 
+    reset() {
+        if (DEBUG_Track) console.log('Track: Resetting dynamic objects.');
+        this.powerups.forEach(p => {
+            if (p.mesh && p.scene) this.scene.remove(p.mesh)
+        })
+        this.powerups = []
+        this.missiles.forEach(m => {
+            if (m.mesh) this.scene.remove(m.mesh)
+        })
+        this.missiles = []
+        this.mines.forEach(m => {
+            if (m.mesh) this.scene.remove(m.mesh)
+        })
+        this.mines = []
+        this.explosions.forEach(e => {
+            if (e.mesh) this.scene.remove(e.mesh)
+        })
+        this.explosions = []
+        this.checkpoints.forEach(cp => { cp.passed = false })
+        this.createPowerups()
+    }
+
     createCheckpointLabel(number) {
         const size = 64;
         const canvas = document.createElement('canvas');
