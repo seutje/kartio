@@ -60,6 +60,23 @@ describe('Track obstacle rotation', () => {
 
         expect(collided).toBe(true);
     });
+
+    test('obstacles are created without graphics', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [
+                { type: 'barrier', x: 0, y: 0, z: 0, width: 10, height: 2, depth: 1 }
+            ],
+            decorations: []
+        }
+        global.NO_GRAPHICS = true
+        track.createTrack()
+        expect(track.obstacles.length).toBe(1)
+        expect(scene.add).not.toHaveBeenCalled()
+    })
 });
 
 describe('Track powerup handling', () => {

@@ -52,22 +52,26 @@ class Track {
             ground.rotation.x = -Math.PI / 2;
             ground.receiveShadow = true;
             this.scene.add(ground);
+        }
 
-            obstacles.forEach(obstacleData => {
-                if (obstacleData.type === 'barrier') {
-                    const barrierGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
-                    const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
-                    const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
-                    barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
-                    if (typeof obstacleData.rotation !== 'undefined') {
-                        barrier.rotation.y = THREE.MathUtils.degToRad(obstacleData.rotation);
-                    }
-                    barrier.castShadow = true;
-                    this.scene.add(barrier);
-                    this.obstacles.push(barrier);
+        obstacles.forEach(obstacleData => {
+            if (obstacleData.type === 'barrier') {
+                const barrierGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
+                const barrierMaterial = new THREE.MeshLambertMaterial({ color: parseInt(trackGeometry.borderColor) });
+                const barrier = new THREE.Mesh(barrierGeometry, barrierMaterial);
+                barrier.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
+                if (typeof obstacleData.rotation !== 'undefined') {
+                    barrier.rotation.y = THREE.MathUtils.degToRad(obstacleData.rotation);
                 }
-            });
+                barrier.castShadow = true;
+                if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+                    this.scene.add(barrier);
+                }
+                this.obstacles.push(barrier);
+            }
+        });
 
+        if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
             decorations.forEach(decorationData => {
                 if (decorationData.type === 'marking') {
                     const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth);
