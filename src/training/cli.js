@@ -222,7 +222,7 @@ class TrainingEnvironment {
             let disqualified = false
             let stoppedTime = 0
             
-            while (time < maxTime && kart.currentLap <= 5 && !disqualified) {
+            while (time < maxTime && kart.currentLap <= 2 && !disqualified) {
                 ai.update(deltaTime, [])
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
@@ -249,7 +249,7 @@ class TrainingEnvironment {
                     console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Total Fitness: ${ai.fitness.toFixed(2)}`);
                 }
 
-                if (kart.currentLap > 5) {
+                if (kart.currentLap > 3) {
                     break;
                 }
 
