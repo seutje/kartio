@@ -35,6 +35,31 @@ describe('GameEngine autoplay', () => {
         expect(engine.startAutoplay).toHaveBeenCalled()
     })
 
+    test('startAutoplay clears mines', async () => {
+        class DummyAIController {
+            static preloadBrain() { return Promise.resolve() }
+        }
+        global.AIController = DummyAIController
+        const { Kart } = require('../src/js/Kart')
+        const { Mine } = require('../src/js/Powerup')
+        global.Kart = Kart
+        const engine = new GameEngine()
+        const track = {
+            type: 'test',
+            mines: [new Mine(new THREE.Vector3(), engine.scene, {}), new Mine(new THREE.Vector3(), engine.scene, {})],
+            getStartPositions: () => [new THREE.Vector3(0, 0, 0)],
+            checkpoints: [{ position: new THREE.Vector3() }]
+        }
+        engine.currentTrack = track
+        engine.start = jest.fn()
+
+        await engine.startAutoplay()
+
+        expect(track.mines.length).toBe(0)
+        delete global.Kart
+        delete global.AIController
+    })
+
     test('stop cancels animation frame', () => {
         const engine = new GameEngine()
         const mockRAF = jest.fn(() => 42)
