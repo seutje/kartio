@@ -199,7 +199,7 @@ class Mine {
         const karts = window.gameEngine ? window.gameEngine.karts : [];
         
         karts.forEach(kart => {
-            if (kart !== this.owner && kart.position.distanceTo(this.position) < 1.5) {
+            if (kart.position.distanceTo(this.position) < 1.5) {
                 if (typeof kart.applyProjectileHit === 'function') {
                     kart.applyProjectileHit();
                 }

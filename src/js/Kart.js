@@ -230,7 +230,9 @@ class Kart extends THREE.Group {
 
     dropMine() {
         if (DEBUG_Kart) console.log('Kart: Dropping mine.');
-        const mine = new Mine(this.position.clone(), this.scene, this.currentTrack)
+        const backward = this.getForwardVector().negate()
+        const minePosition = this.position.clone().add(backward.multiplyScalar(2))
+        const mine = new Mine(minePosition, this.scene, this.currentTrack)
         mine.owner = this
         if (this.currentTrack && this.currentTrack.mines) {
             this.currentTrack.mines.push(mine)
