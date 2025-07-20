@@ -210,7 +210,7 @@ class AIController {
         currentFitness = progress * 100;
 
         // Checkpoint bonus: only add if a new checkpoint has been reached
-        if (this.kart.nextCheckpoint !== this.lastCheckpoint) {
+        if (this.lastCheckpoint !== 0 && this.kart.nextCheckpoint !== this.lastCheckpoint) {
             currentFitness += 200;
             this.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
         } else {
