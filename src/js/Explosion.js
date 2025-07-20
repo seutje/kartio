@@ -1,10 +1,11 @@
 const DEBUG_Explosion = false;
 
 class Explosion {
-    constructor(position, scene) {
+    constructor(position, scene, audioManager) {
         if (DEBUG_Explosion) console.log('Explosion: Creating explosion at', position);
         this.position = position.clone();
         this.scene = scene;
+        this.audioManager = audioManager;
         this.mesh = null;
         this.elapsed = 0;
         this.durationGrow = 0.2;
@@ -15,6 +16,7 @@ class Explosion {
             this.createMesh();
             this.addToScene();
         }
+        this.audioManager.playSound('explosion');
     }
 
     createMesh() {

@@ -19,7 +19,11 @@ describe('Projectile hits', () => {
         const kart = new Kart(0xff0000, scene);
         const track = new Track('test', scene);
         window.gameEngine = { karts: [kart] };
-        const missile = new Missile(kart.position.clone(), 0, scene, track, { obstacles: [] });
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        const missile = new Missile(kart.position.clone(), 0, scene, track, mockAudioManager);
         missile.owner = {};
         missile.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
@@ -35,7 +39,11 @@ describe('Projectile hits', () => {
         const kart = new Kart(0xff0000, scene);
         const track = new Track('test', scene);
         window.gameEngine = { karts: [kart] };
-        const mine = new Mine(kart.position.clone(), scene, track);
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        const mine = new Mine(kart.position.clone(), scene, track, mockAudioManager);
         mine.owner = {};
         mine.checkCollisions();
         expect(kart.isInvulnerable).toBe(true);
@@ -49,10 +57,14 @@ describe('Projectile hits', () => {
     test('projectile destruction creates explosion on track', () => {
         const scene = { add: jest.fn(), remove: jest.fn() };
         const track = new Track('test', scene);
-        const missile = new Missile(new THREE.Vector3(), 0, scene, track);
+        const mockAudioManager = {
+            playSound: jest.fn(),
+            stopSound: jest.fn()
+        };
+        const missile = new Missile(new THREE.Vector3(), 0, scene, track, mockAudioManager);
         missile.destroy();
         expect(track.explosions.length).toBe(1);
-        const mine = new Mine(new THREE.Vector3(), scene, track);
+        const mine = new Mine(new THREE.Vector3(), scene, track, mockAudioManager);
         mine.destroy();
         expect(track.explosions.length).toBe(2);
     });

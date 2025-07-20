@@ -241,7 +241,7 @@ class Kart extends THREE.Group {
     fireMissile() {
         if (DEBUG_Kart) console.log('Kart: Firing missile.');
         this.audioManager.playSound('missile');
-        const missile = new Missile(this.position.clone(), this.rotation.y, this.scene, this.currentTrack)
+        const missile = new Missile(this.position.clone(), this.rotation.y, this.scene, this.currentTrack, this.audioManager)
         missile.owner = this
         if (this.currentTrack && this.currentTrack.missiles) {
             this.currentTrack.missiles.push(missile)
@@ -253,7 +253,7 @@ class Kart extends THREE.Group {
         this.audioManager.playSound('mine');
         const backward = this.getForwardVector().negate()
         const minePosition = this.position.clone().add(backward.multiplyScalar(2))
-        const mine = new Mine(minePosition, this.scene, this.currentTrack)
+        const mine = new Mine(minePosition, this.scene, this.currentTrack, this.audioManager)
         mine.owner = this
         if (this.currentTrack && this.currentTrack.mines) {
             this.currentTrack.mines.push(mine)

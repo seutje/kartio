@@ -47,7 +47,8 @@ class AudioManager {
             collision: this.createCollisionSound(),
             powerup: this.createPowerupSound(),
             missile: this.createMissileSound(),
-            mine: this.createMineSound()
+            mine: this.createMineSound(),
+            explosion: this.createExplosionSound()
         };
         
         for (const [name, buffer] of Object.entries(soundUrls)) {
@@ -139,6 +140,21 @@ class AudioManager {
             const t = i / this.audioContext.sampleRate;
             const freq = 60 * Math.exp(-t * 3);
             data[i] = Math.sin(2 * Math.PI * freq * t) * 0.4 * Math.exp(-t * 2);
+        }
+        
+        return buffer;
+    }
+    
+    createExplosionSound() {
+        if (DEBUG_AudioManager) console.log('AudioManager: Creating explosion sound.');
+        const bufferSize = this.audioContext.sampleRate * 0.7;
+        const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            const t = i / this.audioContext.sampleRate;
+            const noise = (Math.random() - 0.5) * 2;
+            data[i] = noise * Math.exp(-t * 5) * 0.8; // Short decay, high amplitude noise
         }
         
         return buffer;

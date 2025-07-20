@@ -66,7 +66,7 @@ class Powerup {
 }
 
 class Missile {
-    constructor(position, rotation, scene, track) {
+    constructor(position, rotation, scene, track, audioManager) {
         this.position = position.clone();
         // store firing direction without modification
         this.rotation = rotation;
@@ -76,6 +76,7 @@ class Missile {
         this.speed = 50;
         this.lifetime = 5;
         this.active = true;
+        this.audioManager = audioManager;
         
         this.createMesh();
         this.addToScene();
@@ -143,20 +144,21 @@ class Missile {
         this.active = false;
         this.scene.remove(this.mesh);
         if (this.track && this.track.explosions) {
-            const explosion = new Explosion(this.position.clone(), this.scene);
+            const explosion = new Explosion(this.position.clone(), this.scene, this.audioManager);
             this.track.explosions.push(explosion);
         }
     }
 }
 
 class Mine {
-    constructor(position, scene, track) {
+    constructor(position, scene, track, audioManager) {
         this.position = position.clone();
         this.scene = scene;
         this.track = track;
         this.owner = null;
         this.active = true;
         this.lifetime = 30;
+        this.audioManager = audioManager;
         if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.createMesh();
             this.addToScene();
@@ -212,7 +214,7 @@ class Mine {
         this.active = false;
         this.scene.remove(this.mesh);
         if (this.track && this.track.explosions) {
-            const explosion = new Explosion(this.position.clone(), this.scene);
+            const explosion = new Explosion(this.position.clone(), this.scene, this.audioManager);
             this.track.explosions.push(explosion);
         }
     }
