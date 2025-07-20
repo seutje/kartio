@@ -155,9 +155,8 @@ class Kart extends THREE.Group {
         const forward = new THREE.Vector3(0, 0, -1)
         forward.applyQuaternion(this.quaternion)
 
-        const movingBackward = this.velocity.dot(forward) < 0
         this.acceleration.add(forward.clone().multiplyScalar(acceleration))
-        const turnDirection = movingBackward ? -turning : turning;
+        const turnDirection = turning;
         const speed = this.velocity.length();
         const minTurnSpeed = 0.1; // Minimum speed to allow turning
 

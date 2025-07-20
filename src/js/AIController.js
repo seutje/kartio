@@ -182,10 +182,10 @@ class AIController {
         const powerupOutput = outputs[2];
 
         let acceleration = 0;
-        if (accelerationOutput > 0.1) {
-            acceleration = this.kart.accelerationForce;
-        } else if (accelerationOutput < -0.1) {
-            acceleration = -this.kart.accelerationForce * 0.5;
+        if (accelerationOutput > 0) {
+            acceleration = this.kart.accelerationForce * accelerationOutput;
+        } else {
+            acceleration = 0; // No backward acceleration
         }
 
         let turning = 0;
@@ -211,21 +211,21 @@ class AIController {
 
         // Checkpoint bonus: only add if a new checkpoint has been reached
         if (this.kart.nextCheckpoint !== this.lastCheckpoint) {
-            currentFitness += 100; // Bonus for reaching a new checkpoint
+            currentFitness += 200;
             this.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
         } else {
             // Penalty for not reaching a new checkpoint within a certain time
             this.timeSinceLastCheckpoint += deltaTime;
-            if (this.timeSinceLastCheckpoint > 5) { // 5 seconds without new checkpoint
-                currentFitness -= 200; // Significant penalty
+            if (this.timeSinceLastCheckpoint > 10) {
+                currentFitness -= 200;
             }
         }
         
         // Time penalty: penalize for taking too long
-        currentFitness -= deltaTime * 50; // Increased penalty
+        currentFitness -= deltaTime * 50;
 
         // Speed bonus: reward for higher speeds
-        currentFitness += this.kart.velocity.length() * 5; // Increased bonus
+        currentFitness += this.kart.velocity.length() * 10;
 
         const forward = this.kart.getForwardVector()
         if (this.kart.velocity.dot(forward) < 0) {

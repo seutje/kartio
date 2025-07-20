@@ -202,7 +202,7 @@ class TrainingEnvironment {
             const kart = new Kart(0xff0000, scene)
             kart.isAI = true
             kart.position.copy(initialPosition)
-            kart.velocity.copy(direction.clone().multiplyScalar(0.1))
+            kart.velocity.copy(direction.clone().multiplyScalar(5));
             kart.rotation.y = initialRotationY
             kart.quaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), initialRotationY)
             kart.currentLap = 1
