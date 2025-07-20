@@ -22,6 +22,17 @@ async function init() {
             gameEngine.audioManager.resume();
         }
     });
+
+    const musicToggle = document.getElementById('musicToggle');
+    musicToggle.addEventListener('change', (event) => {
+        if (gameEngine.audioManager) {
+            if (event.target.checked) {
+                gameEngine.audioManager.playMusic();
+            } else {
+                gameEngine.audioManager.stopMusic();
+            }
+        }
+    });
 }
 
 window.addEventListener('load', init);
