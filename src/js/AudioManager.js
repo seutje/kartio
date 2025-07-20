@@ -224,14 +224,6 @@ class AudioManager {
         }
     }
     
-    stopSound(name) {
-        if (DEBUG_AudioManager) console.log(`AudioManager: Stopping sound ${name}.`);
-        if (this.sounds[name]) {
-            this.sounds[name].stop();
-            delete this.sounds[name];
-        }
-    }
-    
     playMusic() {
         if (DEBUG_AudioManager) console.log('AudioManager: Playing music.');
         if (!this.initialized) return;
