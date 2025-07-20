@@ -175,6 +175,8 @@ class Track {
     }
     
     checkPowerupCollisions(kart) {
+        if (kart.currentPowerup) return;
+
         this.powerups.forEach(powerup => {
             if (powerup.checkCollision(kart)) {
                 kart.collectPowerup(powerup.type);

@@ -60,4 +60,21 @@ describe('Track obstacle rotation', () => {
 
         expect(collided).toBe(true);
     });
+});
+
+describe('Track powerup handling', () => {
+    test('kart does not pick up new powerup if already holding one', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        const powerup = { checkCollision: jest.fn(() => true), type: 'boost' }
+        track.powerups = [powerup]
+
+        const kart = new Kart(0xff0000, scene)
+        kart.currentPowerup = 'missile'
+
+        track.checkPowerupCollisions(kart)
+
+        expect(powerup.checkCollision).not.toHaveBeenCalled()
+        expect(kart.currentPowerup).toBe('missile')
+    })
 })
