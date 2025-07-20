@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Neural Network Browser Test</title>
+    <script src="src/js/webgl-matrix-multiply.js"></script>
+    <script src="src/js/NeuralNetwork.js"></script>
+</head>
+<body>
+    <h1>Neural Network Browser Test</h1>
+    <p>Check the console for output.</p>
+    <script>
+        try {
+            const nn = new NeuralNetwork(4, 8, 2);
+            console.log("NeuralNetwork instance created successfully in browser:", nn);
+            const inputs = [0.1, 0.2, 0.3, 0.4];
+            const output = nn.forward(inputs);
+            console.log("NeuralNetwork forward pass successful. Output:", output);
+        } catch (error) {
+            console.error("Error in NeuralNetwork browser test:", error);
+        }
+    </script>
+</body>
+</html>

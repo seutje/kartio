@@ -1,5 +1,12 @@
 const DEBUG_NeuralNetwork = false;
 
+if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
+    WebGLMatrixMultiply = require('./webgl-matrix-multiply').WebGLMatrixMultiply;
+}
+
+let webGLMultiplier = null;
+
+
 class NeuralNetwork {
     constructor(inputSize, hiddenSize, outputSize) {
         if (DEBUG_NeuralNetwork) console.log(`NeuralNetwork: Creating with inputSize: ${inputSize}, hiddenSize: ${hiddenSize}, outputSize: ${outputSize}`);
@@ -41,23 +48,21 @@ class NeuralNetwork {
     }
     
     forward(inputs) {
-        const hidden = [];
-        for (let i = 0; i < this.hiddenSize; i++) {
-            let sum = this.bias1[i];
-            for (let j = 0; j < this.inputSize; j++) {
-                sum += inputs[j] * this.weights1[j][i];
-            }
-            hidden[i] = this.tanh(sum);
+        if (!webGLMultiplier) {
+            webGLMultiplier = new WebGLMatrixMultiply();
         }
-        
-        const output = [];
-        for (let i = 0; i < this.outputSize; i++) {
-            let sum = this.bias2[i];
-            for (let j = 0; j < this.hiddenSize; j++) {
-                sum += hidden[j] * this.weights2[j][i];
-            }
-            output[i] = this.tanh(sum);
-        }
+
+        // Convert inputs to a 2D array for matrix multiplication
+        const inputMatrix = [inputs];
+
+        // Calculate hidden layer
+        const hiddenWeightedSum = webGLMultiplier.multiply(inputMatrix, this.weights1);
+        const hidden = hiddenWeightedSum[0].map((val, i) => this.tanh(val + this.bias1[i]));
+
+        // Calculate output layer
+        const hiddenMatrix = [hidden];
+        const outputWeightedSum = webGLMultiplier.multiply(hiddenMatrix, this.weights2);
+        const output = outputWeightedSum[0].map((val, i) => this.tanh(val + this.bias2[i]));
         
         return output;
     }
