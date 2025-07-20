@@ -9,6 +9,8 @@ class AudioManager {
         this.musicGain = null;
         this.sfxGain = null;
         this.initialized = false;
+        this.musicOscillators = [];
+        this.musicLoopTimeout = null;
     }
     
     async init() {
@@ -142,18 +144,62 @@ class AudioManager {
     
     createMusic() {
         if (DEBUG_AudioManager) console.log('AudioManager: Creating music.');
-        const oscillator = this.audioContext.createOscillator();
-        const gainNode = this.audioContext.createGain();
-        
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(220, this.audioContext.currentTime);
-        
-        gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(this.musicGain);
-        
-        return { oscillator, gainNode };
+        const melody = [
+            { note: 440, duration: 0.2 }, // A4
+            { note: 493.88, duration: 0.2 }, // B4
+            { note: 523.25, duration: 0.2 }, // C5
+            { note: 587.33, duration: 0.2 }, // D5
+            { note: 659.25, duration: 0.2 }, // E5
+            { note: 587.33, duration: 0.2 }, // D5
+            { note: 523.25, duration: 0.2 }, // C5
+            { note: 493.88, duration: 0.2 }, // B4
+            { note: 440, duration: 0.4 }, // A4
+            { note: 0, duration: 0.2 }, // Rest
+            { note: 391.99, duration: 0.2 }, // G4
+            { note: 440, duration: 0.2 }, // A4
+            { note: 493.88, duration: 0.2 }, // B4
+            { note: 523.25, duration: 0.2 }, // C5
+            { note: 493.88, duration: 0.2 }, // B4
+            { note: 440, duration: 0.2 }, // A4
+            { note: 391.99, duration: 0.2 }, // G4
+            { note: 329.63, duration: 0.4 }, // E4
+            { note: 0, duration: 0.2 } // Rest
+        ];
+
+        let currentTime = this.audioContext.currentTime;
+        let totalDuration = 0;
+
+        this.musicOscillators = []; // Clear previous oscillators
+
+        melody.forEach(note => {
+            if (note.note === 0) { // Handle rests
+                currentTime += note.duration;
+                totalDuration += note.duration;
+                return;
+            }
+
+            const oscillator = this.audioContext.createOscillator();
+            const gainNode = this.audioContext.createGain();
+
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(note.note, currentTime);
+
+            gainNode.gain.setValueAtTime(0.05, currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + note.duration);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(this.musicGain);
+
+            oscillator.start(currentTime);
+            oscillator.stop(currentTime + note.duration);
+
+            this.musicOscillators.push(oscillator);
+
+            currentTime += note.duration;
+            totalDuration += note.duration;
+        });
+
+        return totalDuration;
     }
     
     playSound(name, loop = false) {
@@ -170,20 +216,12 @@ class AudioManager {
         this.sounds[name] = source;
     }
     
-    playMusic() {
-        if (DEBUG_AudioManager) console.log('AudioManager: Playing music.');
-        if (!this.initialized) return;
-        
-        const music = this.createMusic();
-        music.oscillator.start();
-        
-        setInterval(() => {
-            const now = this.audioContext.currentTime;
-            music.oscillator.frequency.setValueAtTime(
-                220 + Math.sin(now * 0.5) * 50, 
-                now
-            );
-        }, 100);
+    stopSound(name) {
+        if (DEBUG_AudioManager) console.log(`AudioManager: Stopping sound ${name}.`);
+        if (this.sounds[name]) {
+            this.sounds[name].stop();
+            delete this.sounds[name];
+        }
     }
     
     stopSound(name) {
@@ -192,6 +230,36 @@ class AudioManager {
             this.sounds[name].stop();
             delete this.sounds[name];
         }
+    }
+    
+    playMusic() {
+        if (DEBUG_AudioManager) console.log('AudioManager: Playing music.');
+        if (!this.initialized) return;
+
+        this.stopMusic(); // Stop any existing music before starting new
+
+        const playMelody = () => {
+            const totalDuration = this.createMusic();
+            this.musicLoopTimeout = setTimeout(playMelody, totalDuration * 1000);
+        };
+
+        playMelody();
+    }
+
+    stopMusic() {
+        if (DEBUG_AudioManager) console.log('AudioManager: Stopping music.');
+        if (this.musicLoopTimeout) {
+            clearTimeout(this.musicLoopTimeout);
+            this.musicLoopTimeout = null;
+        }
+        this.musicOscillators.forEach(oscillator => {
+            try {
+                oscillator.stop();
+            } catch (e) {
+                // Oscillator might have already stopped
+            }
+        });
+        this.musicOscillators = [];
     }
     
     setMusicVolume(volume) {
