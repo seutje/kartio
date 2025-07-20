@@ -27,6 +27,7 @@ class Kart extends THREE.Group {
         
         this.currentLap = 1;
         this.progress = 0;
+        this.lapProgress = 0;
         this.checkpoints = [];
         this.nextCheckpoint = 0;
         
@@ -317,8 +318,40 @@ class Kart extends THREE.Group {
                 this.currentLap++;
             }
         }
-        
+
         this.progress = (this.currentLap - 1) + (this.nextCheckpoint / this.currentTrack.checkpoints.length);
+        
+        // Calculate accurate progress between checkpoints
+        const totalCheckpoints = this.currentTrack.checkpoints.length;
+        const prevCheckpointIndex = (this.nextCheckpoint - 1 + totalCheckpoints) % totalCheckpoints;
+        
+        const prevPos = this.currentTrack.checkpoints[prevCheckpointIndex].position;
+        const nextPos = this.currentTrack.checkpoints[this.nextCheckpoint].position;
+        
+        // Vector from previous to next checkpoint
+        const segmentVector = new THREE.Vector3().subVectors(nextPos, prevPos);
+        const segmentLength = segmentVector.length();
+        
+        if (segmentLength > 0) {
+            // Vector from previous checkpoint to kart
+            const kartVector = new THREE.Vector3().subVectors(this.position, prevPos);
+            
+            // Project kart position onto segment
+            const segmentDirection = segmentVector.clone().normalize();
+            const projectionLength = kartVector.dot(segmentDirection);
+            
+            // Clamp projection to segment bounds
+            const clampedProjection = Math.max(0, Math.min(1, projectionLength / segmentLength));
+            
+            // Calculate progress: completed checkpoints + current segment progress
+            const completedSegments = (this.nextCheckpoint === 0) ? totalCheckpoints : this.nextCheckpoint;
+            const segmentProgress = (completedSegments - 1 + clampedProjection) / totalCheckpoints;
+            
+            this.lapProgress = (this.currentLap - 1) + segmentProgress;
+        } else {
+            // Fallback to simple checkpoint-based progress
+            this.lapProgress = (this.currentLap - 1) + (this.nextCheckpoint / totalCheckpoints);
+        }
     }
     
     updateVisuals(deltaTime) {

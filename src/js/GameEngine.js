@@ -325,7 +325,7 @@ class GameEngine {
         const aiStats = document.getElementById('aiStats')
         if (!aiStats) return
         aiStats.innerHTML = ''
-        const sorted = [...this.karts].sort((a, b) => b.progress - a.progress)
+        const sorted = [...this.karts].sort((a, b) => b.lapProgress - a.lapProgress)
         this.karts.forEach(kart => {
             const div = document.createElement('div')
             const position = sorted.indexOf(kart) + 1
@@ -340,7 +340,7 @@ class GameEngine {
     
     getPlayerPosition() {
         const playerKart = this.karts.find(kart => kart.isPlayer && !this.isAutoplay) || this.karts[0];
-        const sortedKarts = [...this.karts].sort((a, b) => b.progress - a.progress);
+        const sortedKarts = [...this.karts].sort((a, b) => b.lapProgress - a.lapProgress);
         const position = sortedKarts.indexOf(playerKart) + 1;
         
         const suffix = ['st', 'nd', 'rd', 'th'][Math.min(position - 1, 3)];
