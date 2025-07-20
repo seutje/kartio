@@ -67,11 +67,11 @@ class TrainingEnvironment {
         this.trackType = trackType;
         this.populationSize = 100;
         this.generations = parseInt(process.argv[2]) || 50;
-        this.mutationRate = 0.1
-        this.minMutationRate = 0.05
-        this.maxMutationRate = 0.5
+        this.mutationRate = 0.2
+        this.minMutationRate = 0.1
+        this.maxMutationRate = 0.7
         this.eliteCount = 5;
-        this.newBloodRate = 0.1
+        this.newBloodRate = 0.2
         this.prevBestFitness = 0;
         this.noImprovement = 0;
 
@@ -217,7 +217,7 @@ class TrainingEnvironment {
             
             ai.fitness = 0
             let time = 0
-            const maxTime = 60
+            const maxTime = 120
             const deltaTime = 0.016
             let disqualified = false
             let stoppedTime = 0
