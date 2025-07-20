@@ -94,7 +94,7 @@ class AudioManager {
         for (let i = 0; i < bufferSize; i++) {
             const t = i / this.audioContext.sampleRate;
             const noise = (Math.random() - 0.5) * 2;
-            data[i] = noise * Math.exp(-t * 10) * 0.01;
+            data[i] = noise * Math.exp(-t * 10) * 0.005;
         }
         
         return buffer;
@@ -154,7 +154,7 @@ class AudioManager {
         for (let i = 0; i < bufferSize; i++) {
             const t = i / this.audioContext.sampleRate;
             const noise = (Math.random() - 0.5) * 2;
-            data[i] = noise * Math.exp(-t * 5) * 0.8; // Short decay, high amplitude noise
+            data[i] = noise * Math.exp(-t * 5) * 0.3; // Short decay, high amplitude noise
         }
         
         return buffer;
