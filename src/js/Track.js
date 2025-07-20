@@ -271,11 +271,16 @@ class Track {
             const mtv = this.checkSATCollision(kart.body, obstacle);
             if (mtv) {
                 collided = true;
-                kart.position.sub(mtv);
-                const relativeVelocity = kart.velocity.clone(); 
-                const normal = mtv.clone().normalize();
-                const impulse = normal.multiplyScalar(relativeVelocity.dot(normal) * -1.1);
-                kart.velocity.add(impulse);
+                const horizontalMtv = mtv.clone();
+                horizontalMtv.y = 0;
+                kart.position.sub(horizontalMtv);
+                kart.position.y = kart.groundY;
+                const relativeVelocity = kart.velocity.clone();
+                const normal = horizontalMtv.clone().normalize();
+                if (normal.length() > 0) {
+                    const impulse = normal.multiplyScalar(relativeVelocity.dot(normal) * -1.1);
+                    kart.velocity.add(impulse);
+                }
                 kart.velocity.multiplyScalar(0.9); // Apply friction after collision
             }
         });

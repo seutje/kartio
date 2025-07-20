@@ -144,6 +144,7 @@ class GameEngine {
             const startPos = startPositions[i] || startPositions[0];
             kart.position.copy(startPos); // Use start position from track data
             kart.position.y += 1; // Raise kart slightly above ground
+            kart.groundY = kart.position.y
 
             // Face towards the next checkpoint from the start position
             const direction = new THREE.Vector3().subVectors(firstCheckpoint, startPos).normalize();
