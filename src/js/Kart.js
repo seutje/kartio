@@ -39,6 +39,7 @@ class Kart extends THREE.Group {
         this.isAI = false;
         this.aiController = null;
         this.currentTrack = null;
+        this.groundY = this.position.y;
         
         if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.createMesh();
@@ -138,6 +139,7 @@ class Kart extends THREE.Group {
         }
         
         this.position.add(this.velocity.clone().multiplyScalar(deltaTime));
+        this.position.y = this.groundY;
         const turnScale = 2;
         const turnAngle = this.angularVelocity * deltaTime * turnScale;
         this.rotation.y += turnAngle;
