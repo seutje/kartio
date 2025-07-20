@@ -326,9 +326,9 @@ class GameEngine {
         if (!aiStats) return
         aiStats.innerHTML = ''
         const sorted = [...this.karts].sort((a, b) => b.progress - a.progress)
-        this.karts.forEach(kart => {
+        sorted.forEach((kart, index) => {
             const div = document.createElement('div')
-            const position = sorted.indexOf(kart) + 1
+            const position = index + 1
             const suffix = ['st', 'nd', 'rd', 'th'][Math.min(position - 1, 3)]
             const colorName = COLOR_NAMES[kart.color] || 'unknown'
             const fitness = kart.aiController ? kart.aiController.fitness.toFixed(0) : 0
