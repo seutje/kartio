@@ -24,10 +24,10 @@ describe('GameEngine checkpoint marker', () => {
 })
 
 describe('GameEngine autoplay', () => {
-    test('restarts when all karts finished', () => {
+    test('restarts when all karts finished', async () => {
         const engine = new GameEngine()
         engine.isAutoplay = true
-        engine.startAutoplay = jest.fn()
+        engine.startAutoplay = jest.fn(() => Promise.resolve())
         engine.karts = [
             { currentLap: 4 },
             { currentLap: 4 }
@@ -35,6 +35,22 @@ describe('GameEngine autoplay', () => {
 
         engine.checkAutoplayRestart()
         expect(engine.startAutoplay).toHaveBeenCalled()
+        await Promise.resolve()
+        expect(engine.restartingAutoplay).toBe(false)
+    })
+
+    test('does not restart multiple times while pending', () => {
+        const engine = new GameEngine()
+        engine.isAutoplay = true
+        engine.startAutoplay = jest.fn(() => Promise.resolve())
+        engine.karts = [
+            { currentLap: 4 },
+            { currentLap: 4 }
+        ]
+
+        engine.checkAutoplayRestart()
+        engine.checkAutoplayRestart()
+        expect(engine.startAutoplay).toHaveBeenCalledTimes(1)
     })
 
     test('startAutoplay resets current track', async () => {

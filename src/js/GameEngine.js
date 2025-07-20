@@ -37,6 +37,7 @@ class GameEngine {
         this.uiUpdateInterval = 100; // milliseconds
         this.lastUiUpdateTime = 0;
         this.racePathElements = []; // To store references to path lines and arrows
+        this.restartingAutoplay = false;
 
         if (typeof window !== 'undefined') {
             window.gameEngine = this
@@ -365,11 +366,17 @@ class GameEngine {
     }
 
     checkAutoplayRestart() {
-        if (!this.isAutoplay) return
+        if (!this.isAutoplay || this.restartingAutoplay) return
         const finished = this.karts.length > 0 && this.karts.every(k => k.currentLap > 3)
         if (finished) {
+            this.restartingAutoplay = true
             this.stop()
-            this.startAutoplay()
+            const result = this.startAutoplay()
+            if (result && typeof result.then === 'function') {
+                result.finally(() => { this.restartingAutoplay = false })
+            } else {
+                this.restartingAutoplay = false
+            }
         }
     }
 
