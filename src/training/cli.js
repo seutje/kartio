@@ -206,9 +206,8 @@ class TrainingEnvironment {
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
 
-                if (this.track.checkObstacleCollisions(kart)) {
+                if (ai.checkObstacleCollision()) {
                     disqualified = true
-                    ai.fitness -= 500
                     break
                 }
 
@@ -220,7 +219,6 @@ class TrainingEnvironment {
                 }
 
                 if (kart.currentLap > 3) {
-                    ai.fitness += 1000; // Bonus for finishing all laps
                     break;
                 }
 

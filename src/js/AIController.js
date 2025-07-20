@@ -50,6 +50,7 @@ class AIController {
         this.timeElapsed = 0;
         this.lastLap = 0;
         this.timeSinceLastCheckpoint = 0;
+        this.finishBonusApplied = false;
         
         this.sensors = {
             forward: 0,
@@ -248,6 +249,11 @@ class AIController {
 
         this.fitness += currentFitness
 
+        if (this.kart.currentLap > 3 && !this.finishBonusApplied) {
+            this.fitness += 1000;
+            this.finishBonusApplied = true;
+        }
+
         this.lastProgress = progress;
         this.lastCheckpoint = this.kart.nextCheckpoint;
         this.lastLap = this.kart.currentLap
@@ -263,6 +269,14 @@ class AIController {
         } else {
             this.stuckTimer = 0;
         }
+    }
+
+    checkObstacleCollision() {
+        const collided = this.track.checkObstacleCollisions(this.kart);
+        if (collided) {
+            this.fitness -= 500;
+        }
+        return collided;
     }
     
     copy() {
