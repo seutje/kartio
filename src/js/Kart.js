@@ -16,6 +16,10 @@ class Kart extends THREE.Group {
         this.accelerationForce = 100;
         this.friction = 0.9;
         this.turnSpeed = 0.8;
+
+        this.initialMaxSpeed = this.maxSpeed;
+        this.initialAccelerationForce = this.accelerationForce;
+        this.boostTimeout = null;
         this.mass = 1;
         
         this.isAccelerating = false;
@@ -231,10 +235,14 @@ class Kart extends THREE.Group {
         this.accelerationForce *= 1.5;
         
         this.audioManager.playSound('boost');
-        setTimeout(() => {
-            this.maxSpeed /= 1.5;
-            this.accelerationForce /= 1.5;
+        if (this.boostTimeout) {
+            clearTimeout(this.boostTimeout);
+        }
+        this.boostTimeout = setTimeout(() => {
+            this.maxSpeed = this.initialMaxSpeed;
+            this.accelerationForce = this.initialAccelerationForce;
             this.audioManager.stopSound('boost');
+            this.boostTimeout = null;
         }, 3000);
     }
     
@@ -398,6 +406,15 @@ class Kart extends THREE.Group {
         const right = new THREE.Vector3(1, 0, 0);
         right.applyQuaternion(this.quaternion);
         return right;
+    }
+
+    resetKartState() {
+        if (this.boostTimeout) {
+            clearTimeout(this.boostTimeout);
+            this.boostTimeout = null;
+        }
+        this.maxSpeed = this.initialMaxSpeed;
+        this.accelerationForce = this.initialAccelerationForce;
     }
 }
 

@@ -126,6 +126,8 @@ class GameEngine {
         this.clearKarts()
         this.isAutoplay = false
 
+        this.karts.forEach(kart => kart.resetKartState());
+
         this.gameStarted = true
         document.getElementById('startScreen').classList.add('hidden')
         document.getElementById('stats').classList.remove('hidden')
@@ -157,6 +159,8 @@ class GameEngine {
         this.clearMines()
         this.clearMissiles()
         this.isAutoplay = true
+
+        this.karts.forEach(kart => kart.resetKartState());
         this.setupRace(true)
         this.camera.position.set(0, 60, 0)
         this.camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -260,6 +264,8 @@ class GameEngine {
         })
         this.currentTrack.missiles = []
     }
+
+
     
     animate() {
         if (DEBUG_GameEngine) console.log('GameEngine: Animating frame.');
