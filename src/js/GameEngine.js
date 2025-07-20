@@ -238,6 +238,8 @@ class GameEngine {
             this.updateUI();
             this.lastUiUpdateTime = currentTime;
         }
+
+        this.checkAutoplayRestart()
     }
     
     updateCamera() {
@@ -357,6 +359,15 @@ class GameEngine {
             this.scene.remove(element);
         });
         this.racePathElements = [];
+    }
+
+    checkAutoplayRestart() {
+        if (!this.isAutoplay) return
+        const finished = this.karts.length > 0 && this.karts.every(k => k.currentLap > 3)
+        if (finished) {
+            this.stop()
+            this.startAutoplay()
+        }
     }
 
     drawRacePath() {
