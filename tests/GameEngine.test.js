@@ -20,3 +20,18 @@ describe('GameEngine checkpoint marker', () => {
         expect(engine.checkpointMarker.position.z).toBe(0)
     })
 })
+
+describe('GameEngine autoplay', () => {
+    test('restarts when all karts finished', () => {
+        const engine = new GameEngine()
+        engine.isAutoplay = true
+        engine.startAutoplay = jest.fn()
+        engine.karts = [
+            { currentLap: 4 },
+            { currentLap: 4 }
+        ]
+
+        engine.checkAutoplayRestart()
+        expect(engine.startAutoplay).toHaveBeenCalled()
+    })
+})
