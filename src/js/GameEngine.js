@@ -125,6 +125,8 @@ class GameEngine {
         await AIController.preloadBrain(this.currentTrack.type)
         this.gameStarted = false
         this.clearKarts()
+        this.clearMines()
+        this.clearMissiles()
         this.isAutoplay = true
         this.setupRace(true)
         this.camera.position.set(0, 60, 0)
@@ -206,6 +208,28 @@ class GameEngine {
             }
         })
         this.karts = []
+    }
+
+    clearMines() {
+        if (!this.currentTrack || !this.currentTrack.mines) return
+        this.currentTrack.mines.forEach(mine => {
+            if (mine.mesh && mine.scene) {
+                mine.scene.remove(mine.mesh)
+            }
+            mine.active = false
+        })
+        this.currentTrack.mines = []
+    }
+
+    clearMissiles() {
+        if (!this.currentTrack || !this.currentTrack.missiles) return
+        this.currentTrack.missiles.forEach(missile => {
+            if (missile.mesh && missile.scene) {
+                missile.scene.remove(missile.mesh)
+            }
+            missile.active = false
+        })
+        this.currentTrack.missiles = []
     }
     
     animate() {
