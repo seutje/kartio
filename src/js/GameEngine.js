@@ -181,6 +181,7 @@ class GameEngine {
     
     start() {
         if (DEBUG_GameEngine) console.log('GameEngine: Starting animation loop.');
+        this.clock.start();
         this.isRunning = true;
         this.animate();
     }
