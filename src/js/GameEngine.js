@@ -8,7 +8,7 @@ const COLOR_NAMES = {
 }
 
 class GameEngine {
-    constructor(canvasId = 'gameCanvas') {
+    constructor(canvasId = 'gameCanvas', isHeadless = false) {
         if (DEBUG_GameEngine) console.log('GameEngine: Initializing...');
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -45,11 +45,12 @@ class GameEngine {
 
         if (typeof window !== 'undefined') {
             window.gameEngine = this
+            if (!isHeadless) {
+            this.setupRenderer();
+            this.setupLighting();
+            this.setupControls();
         }
-
-        this.setupRenderer();
-        this.setupLighting();
-        this.setupControls();
+        }
     }
 
     async initialize() {
@@ -66,18 +67,23 @@ class GameEngine {
         this.renderer.sortObjects = true;
 
         // Create a separate 2D canvas for UI elements like countdown
-        this.uiCanvas = document.createElement('canvas');
-        this.uiCanvas.id = 'uiCanvas';
-        this.uiCanvas.style.position = 'absolute';
-        this.uiCanvas.style.top = '0';
-        this.uiCanvas.style.left = '0';
-        this.uiCanvas.style.pointerEvents = 'none'; // Allow clicks to pass through to the game canvas
-        document.body.appendChild(this.uiCanvas);
-        this.uiContext = this.uiCanvas.getContext('2d');
+        if (typeof document !== 'undefined') {
+            this.uiCanvas = document.createElement('canvas');
+            this.uiCanvas.id = 'uiCanvas';
+            this.uiCanvas.style.position = 'absolute';
+            this.uiCanvas.style.top = '0';
+            this.uiCanvas.style.left = '0';
+            this.uiCanvas.style.pointerEvents = 'none'; // Allow clicks to pass through to the game canvas
+            document.body.appendChild(this.uiCanvas);
+            this.uiContext = this.uiCanvas.getContext('2d');
 
-        // Set initial size for the UI canvas
-        this.uiCanvas.width = window.innerWidth;
-        this.uiCanvas.height = window.innerHeight;
+            // Set initial size for the UI canvas
+            this.uiCanvas.width = window.innerWidth;
+            this.uiCanvas.height = window.innerHeight;
+        } else {
+            this.uiCanvas = null;
+            this.uiContext = null;
+        }
     }
     
     setupLighting() {
@@ -374,15 +380,17 @@ class GameEngine {
     
     updateUI() {
         if (DEBUG_GameEngine) console.log('GameEngine: Updating UI.');
-        document.getElementById('fps').textContent = this.stats.fps;
-        document.getElementById('position').textContent = this.getPlayerPosition();
-        document.getElementById('lap').textContent = this.getPlayerLap();
-        document.getElementById('powerup').textContent = this.getPlayerPowerup();
-        if (this.isAutoplay) {
-            this.updateAIStats()
-        } else {
-            const aiStats = document.getElementById('aiStats')
-            if (aiStats) aiStats.classList.add('hidden')
+        if (typeof document !== 'undefined') {
+            document.getElementById('fps').textContent = this.stats.fps;
+            document.getElementById('position').textContent = this.getPlayerPosition();
+            document.getElementById('lap').textContent = this.getPlayerLap();
+            document.getElementById('powerup').textContent = this.getPlayerPowerup();
+            if (this.isAutoplay) {
+                this.updateAIStats()
+            } else {
+                const aiStats = document.getElementById('aiStats')
+                if (aiStats) aiStats.classList.add('hidden')
+            }
         }
     }
 
@@ -430,6 +438,7 @@ class GameEngine {
     }
 
     drawCountdown() {
+        if (!this.uiContext || !this.uiCanvas) return;
         const context = this.uiContext;
         const canvas = this.uiCanvas;
 

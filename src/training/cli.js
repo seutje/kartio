@@ -75,7 +75,7 @@ class TrainingEnvironment {
         this.prevBestFitness = 0;
         this.noImprovement = 0;
 
-        this.gameEngine = new GameEngine()
+        this.gameEngine = new GameEngine(undefined, true)
 
         this.population = [];
         this.generation = 0;
@@ -199,7 +199,8 @@ class TrainingEnvironment {
             const initialRotationY = Math.atan2(direction.x, direction.z);
 
             const scene = { add: () => {} }
-            const kart = new Kart(0xff0000, scene)
+            const audioManager = { playSound: () => {} }
+            const kart = new Kart(0xff0000, scene, audioManager)
             kart.isAI = true
             kart.position.copy(initialPosition)
             kart.velocity.copy(direction.clone().multiplyScalar(5));
