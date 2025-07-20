@@ -162,10 +162,19 @@ class Kart extends THREE.Group {
         const minTurnSpeed = 0.1; // Minimum speed to allow turning
 
         if (speed > minTurnSpeed) {
+            // Determine if the kart is moving forwards or backwards
+            const isMovingForward = this.velocity.dot(forward) > 0;
+            let effectiveTurnDirection = turnDirection;
+
+            // Reverse turn direction if moving backward
+            if (!isMovingForward) {
+                effectiveTurnDirection *= -1;
+            }
+
             // Calculate drift factor: higher when speed is lower
             // It will be 1 when speed is 0, and decrease as speed approaches maxSpeed
             const driftFactor = 1 + (1 - (speed / this.maxSpeed)) * 2; // Adjust multiplier (2) for desired effect
-            this.angularVelocity += turnDirection * (speed / this.maxSpeed) * driftFactor;
+            this.angularVelocity += effectiveTurnDirection * (speed / this.maxSpeed) * driftFactor;
         }
     }
     
