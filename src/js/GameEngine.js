@@ -124,6 +124,8 @@ class GameEngine {
 
         this.stop()
         this.clearKarts()
+        this.clearMines()
+        this.clearMissiles()
         this.isAutoplay = false
 
         this.karts.forEach(kart => kart.resetKartState());
