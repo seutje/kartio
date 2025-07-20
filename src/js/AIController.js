@@ -211,7 +211,7 @@ class AIController {
 
         // Checkpoint bonus: only add if a new checkpoint has been reached
         if (this.kart.nextCheckpoint !== this.lastCheckpoint) {
-            currentFitness += 10; // Bonus for reaching a new checkpoint
+            currentFitness += 100; // Bonus for reaching a new checkpoint
             this.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
         } else {
             // Penalty for not reaching a new checkpoint within a certain time
@@ -225,7 +225,7 @@ class AIController {
         currentFitness -= deltaTime * 50; // Increased penalty
 
         // Speed bonus: reward for higher speeds
-        currentFitness += this.kart.velocity.length() * 1; // Increased bonus
+        currentFitness += this.kart.velocity.length() * 5; // Increased bonus
 
         const forward = this.kart.getForwardVector()
         if (this.kart.velocity.dot(forward) < 0) {
