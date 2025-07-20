@@ -195,18 +195,11 @@ class TrainingEnvironment {
             const ai = new AIController(kart, track, this.trackType, true)
             ai.network = network
             
-            let fitness = 0
+            ai.fitness = 0
             let time = 0
             const maxTime = 60
             const deltaTime = 0.016
             let disqualified = false
-
-            // Initialize additional kart properties for fitness calculation
-            kart.lastProgress = 0;
-            kart.lastCheckpoint = 0;
-            kart.timeSinceLastCheckpoint = 0;
-            kart.lastLap = 0;
-            kart.stuckTimer = 0;
             
             while (time < maxTime && kart.currentLap <= 2 && !disqualified) {
                 ai.update(deltaTime, [])
@@ -215,82 +208,29 @@ class TrainingEnvironment {
 
                 if (this.track.checkObstacleCollisions(kart)) {
                     disqualified = true
-                    fitness -= 500
+                    ai.fitness -= 500
                     break
                 }
-                
-                const currentStepFitness = this.calculateFitness(kart, deltaTime); // Calculate fitness for this step
-                fitness += currentStepFitness; // Accumulate fitness
+
+                // Fitness is updated internally by the AI controller
                 
                 // Debugging: Log kart state and fitness
                 if (DEBUG_Cli && network === this.population[0].network && time % 1 < deltaTime) {
-                    console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Step Fitness: ${currentStepFitness.toFixed(2)}, Total Fitness: ${fitness.toFixed(2)}`);
+                    console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Total Fitness: ${ai.fitness.toFixed(2)}`);
                 }
-
-                // Update lastProgress and lastCheckpoint for the next iteration's fitness calculation
-                kart.lastProgress = kart.progress;
-                kart.lastCheckpoint = kart.nextCheckpoint;
-                kart.lastLap = kart.currentLap;
 
                 if (kart.currentLap > 3) {
-                    fitness += 1000; // Bonus for finishing all laps
+                    ai.fitness += 1000; // Bonus for finishing all laps
                     break;
                 }
-                
+
                 time += deltaTime
             }
 
-            resolve({ fitness, disqualified })
+            resolve({ fitness: ai.fitness, disqualified })
         });
     }
     
-    calculateFitness(kart, deltaTime) {
-        const progress = kart.progress;
-        let currentFitness = 0;
-
-        // Base fitness on overall progress
-        currentFitness = progress * 100;
-
-        // Checkpoint bonus: only add if a new checkpoint has been reached
-        if (kart.nextCheckpoint !== kart.lastCheckpoint) {
-            currentFitness += 10; // Bonus for reaching a new checkpoint
-            kart.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
-        } else {
-            // Penalty for not reaching a new checkpoint within a certain time
-            kart.timeSinceLastCheckpoint += deltaTime;
-            if (kart.timeSinceLastCheckpoint > 5) { // 5 seconds without new checkpoint
-                currentFitness -= 200; // Significant penalty
-            }
-        }
-        
-        // Time penalty: penalize for taking too long
-        currentFitness -= deltaTime * 50; // Increased penalty
-
-        // Speed bonus: reward for higher speeds
-        currentFitness += kart.velocity.length() * 1; // Increased bonus
-
-        const forward = kart.getForwardVector()
-        if (kart.velocity.dot(forward) < 0) {
-            currentFitness -= deltaTime * 200
-        }
-
-        // Stuck penalty
-        if (kart.velocity.length() < 0.5) {
-            kart.stuckTimer += deltaTime;
-            if (kart.stuckTimer > 1) {
-                currentFitness -= 1000;
-            }
-        } else {
-            kart.stuckTimer = 0;
-        }
-
-        // Lap completion bonus: significant reward for completing a lap
-        if (kart.currentLap > (kart.lastLap || 0)) {
-            currentFitness += 500; // Very large bonus for completing a lap
-        }
-
-        return currentFitness;
-    }
     
     evolvePopulation() {
         const newPopulation = [];
