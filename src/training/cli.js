@@ -115,7 +115,7 @@ class TrainingEnvironment {
             
             const hasQualified = await this.evaluatePopulation()
             if (!hasQualified) {
-                console.log('All karts disqualified. Skipping to next generation.')
+                console.log('All karts disqualified. Using top performers for next generation.')
                 this.evolvePopulation()
                 continue
             }
@@ -215,7 +215,8 @@ class TrainingEnvironment {
 
                 if (this.track.checkObstacleCollisions(kart)) {
                     disqualified = true
-                    fitness = 0
+                    fitness -= 50
+                    if (fitness < 0) fitness = 0
                     break
                 }
                 
