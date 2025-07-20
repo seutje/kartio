@@ -21,12 +21,14 @@ class AudioManager {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.musicGain = this.audioContext.createGain();
             this.sfxGain = this.audioContext.createGain();
+            this.sfxCompressor = this.audioContext.createDynamicsCompressor();
             
             this.musicGain.connect(this.audioContext.destination);
-            this.sfxGain.connect(this.audioContext.destination);
+            this.sfxGain.connect(this.sfxCompressor);
+            this.sfxCompressor.connect(this.audioContext.destination);
             
             this.musicGain.gain.value = 0.3;
-            this.sfxGain.gain.value = 0.3;
+            this.sfxGain.gain.value = 0.15;
             
             await this.loadSounds();
             this.initialized = true;
