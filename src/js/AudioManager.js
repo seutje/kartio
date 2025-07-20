@@ -91,7 +91,7 @@ class AudioManager {
         for (let i = 0; i < bufferSize; i++) {
             const t = i / this.audioContext.sampleRate;
             const noise = (Math.random() - 0.5) * 2;
-            data[i] = noise * Math.exp(-t * 10) * 0.5;
+            data[i] = noise * Math.exp(-t * 10) * 0.01;
         }
         
         return buffer;
