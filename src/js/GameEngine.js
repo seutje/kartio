@@ -338,6 +338,7 @@ class GameEngine {
 
         this.camera.position.lerp(idealOffset, 0.1)
         this.camera.lookAt(targetKart.position)
+        this.audioManager.setListenerPosition(this.camera.position.x, this.camera.position.y, this.camera.position.z)
     }
 
     updateCheckpointMarker() {

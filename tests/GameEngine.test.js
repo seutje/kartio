@@ -1,4 +1,10 @@
-global.AudioManager = class AudioManager {}
+global.AudioManager = class AudioManager {
+    constructor() {}
+    async init() {}
+    setListenerPosition() {}
+    playSound() {}
+    stopSound() {}
+}
 const { GameEngine } = require('../src/js/GameEngine')
 
 describe('GameEngine checkpoint marker', () => {

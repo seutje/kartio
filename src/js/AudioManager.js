@@ -8,6 +8,7 @@ class AudioManager {
         this.sounds = {};
         this.musicGain = null;
         this.sfxGain = null;
+        this.panner = null; // Add panner node
         this.initialized = false;
         this.musicOscillators = [];
         this.musicLoopTimeout = null;
@@ -21,14 +22,16 @@ class AudioManager {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.musicGain = this.audioContext.createGain();
             this.sfxGain = this.audioContext.createGain();
+            this.panner = this.audioContext.createPanner(); // Initialize panner
             this.sfxCompressor = this.audioContext.createDynamicsCompressor();
             
             this.musicGain.connect(this.audioContext.destination);
-            this.sfxGain.connect(this.sfxCompressor);
+            this.sfxGain.connect(this.panner); // Connect sfxGain to panner
+            this.panner.connect(this.sfxCompressor); // Connect panner to compressor
             this.sfxCompressor.connect(this.audioContext.destination);
             
             this.musicGain.gain.value = 0.3;
-            this.sfxGain.gain.value = 0.15;
+            this.sfxGain.gain.value = 20;
             
             await this.loadSounds();
             this.initialized = true;
@@ -220,15 +223,27 @@ class AudioManager {
         return totalDuration;
     }
     
-    playSound(name, loop = false) {
-        if (DEBUG_AudioManager) console.log(`AudioManager: Playing sound ${name}.`);
+    playSound(name, loop = false, x = 0, y = 0, z = 0) {
+        if (DEBUG_AudioManager) console.log(`AudioManager: Playing sound ${name} at (${x}, ${y}, ${z}).`);
         if (!this.initialized || !this.buffers[name]) return;
         
         const source = this.audioContext.createBufferSource();
         source.buffer = this.buffers[name];
         source.loop = loop;
         
-        source.connect(this.sfxGain);
+        const panner = this.audioContext.createPanner();
+        panner.panningModel = 'HRTF';
+        panner.distanceModel = 'inverse';
+        panner.refDistance = 1;
+        panner.maxDistance = 10000;
+        panner.rolloffFactor = 1;
+        panner.coneInnerAngle = 360;
+        panner.coneOuterAngle = 0;
+        panner.coneOuterGain = 0;
+        panner.setPosition(x, y, z);
+
+        source.connect(panner);
+        panner.connect(this.sfxGain);
         source.start();
         
         this.sounds[name] = source;
@@ -240,6 +255,11 @@ class AudioManager {
             this.sounds[name].stop();
             delete this.sounds[name];
         }
+    }
+
+    setListenerPosition(x, y, z) {
+        if (DEBUG_AudioManager) console.log(`AudioManager: Setting listener position to (${x}, ${y}, ${z}).`);
+        this.audioContext.listener.setPosition(x, y, z);
     }
     
     playMusic() {

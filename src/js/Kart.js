@@ -108,7 +108,7 @@ class Kart extends THREE.Group {
         this.updateVisuals(deltaTime);
 
         if (this.isPlayer && (this.isAccelerating || this.isBraking)) {
-            this.audioManager.playSound('engine', true);
+            this.audioManager.playSound('engine', true, this.position.x, this.position.y, this.position.z);
         } else {
             this.audioManager.stopSound('engine');
         }
@@ -234,7 +234,7 @@ class Kart extends THREE.Group {
         this.maxSpeed *= 1.5;
         this.accelerationForce *= 1.5;
         
-        this.audioManager.playSound('boost');
+        this.audioManager.playSound('boost', false, this.position.x, this.position.y, this.position.z);
         if (this.boostTimeout) {
             clearTimeout(this.boostTimeout);
         }
@@ -248,7 +248,7 @@ class Kart extends THREE.Group {
     
     fireMissile() {
         if (DEBUG_Kart) console.log('Kart: Firing missile.');
-        this.audioManager.playSound('missile');
+        this.audioManager.playSound('missile', false, this.position.x, this.position.y, this.position.z);
         const missile = new Missile(this.position.clone(), this.rotation.y, this.scene, this.currentTrack, this.audioManager)
         missile.owner = this
         if (this.currentTrack && this.currentTrack.missiles) {
@@ -258,7 +258,7 @@ class Kart extends THREE.Group {
 
     dropMine() {
         if (DEBUG_Kart) console.log('Kart: Dropping mine.');
-        this.audioManager.playSound('mine');
+        this.audioManager.playSound('mine', false, this.position.x, this.position.y, this.position.z);
         const backward = this.getForwardVector().negate()
         const minePosition = this.position.clone().add(backward.multiplyScalar(2))
         const mine = new Mine(minePosition, this.scene, this.currentTrack, this.audioManager)
@@ -283,7 +283,7 @@ class Kart extends THREE.Group {
     
     collectPowerup(type) {
         if (DEBUG_Kart) console.log(`Kart: Collecting powerup of type ${type}`);
-        this.audioManager.playSound('powerup');
+        this.audioManager.playSound('powerup', false, this.position.x, this.position.y, this.position.z);
         if (type === 'random') {
             const powerupTypes = ['boost', 'missile', 'mine'];
             this.currentPowerup = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
@@ -293,7 +293,7 @@ class Kart extends THREE.Group {
     }
     
     handleCollision(otherKart) {
-        this.audioManager.playSound('collision');
+        this.audioManager.playSound('collision', false, this.position.x, this.position.y, this.position.z);
         // Calculate the direction of impact
         const collisionNormal = new THREE.Vector3().subVectors(this.position, otherKart.position).normalize();
 
