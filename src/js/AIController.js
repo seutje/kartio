@@ -33,7 +33,7 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        this.network = new NeuralNetwork(9, 10, 2); // Initialize with a random brain
+        this.network = new NeuralNetwork(10, 10, 3); // Initialize with a random brain
 
         if (!isTraining) {
             this.loadBrain().then(network => {
@@ -60,7 +60,8 @@ class AIController {
             checkpoint: 0,
             velocity: 0,
             angle: 0,
-            lapProgress: 0
+            lapProgress: 0,
+            powerup: 0
         };
     }
 
@@ -130,7 +131,14 @@ class AIController {
         
         this.sensors.velocity = this.kart.velocity.length() / this.kart.maxSpeed;
         this.sensors.lapProgress = this.kart.progress;
-        
+
+        const powerupMap = {
+            boost: 0.33,
+            missile: 0.66,
+            mine: 1
+        };
+        this.sensors.powerup = powerupMap[this.kart.currentPowerup] || 0;
+
     }
     
     raycast(direction, maxDistance) {
@@ -162,13 +170,15 @@ class AIController {
             this.sensors.checkpoint,
             this.sensors.velocity,
             this.sensors.angle,
-            this.sensors.lapProgress
+            this.sensors.lapProgress,
+            this.sensors.powerup
         ];
     }
     
     applyOutputs(outputs, deltaTime) {
         const accelerationOutput = outputs[0];
         const steeringOutput = outputs[1];
+        const powerupOutput = outputs[2];
 
         let acceleration = 0;
         if (accelerationOutput > 0.1) {
@@ -186,7 +196,7 @@ class AIController {
 
         this.kart.applyForce(acceleration, turning);
 
-        if (this.kart.currentPowerup && Math.random() < 0.01) {
+        if (this.kart.currentPowerup && powerupOutput > 0.5) {
             this.kart.usePowerup();
         }
     }
