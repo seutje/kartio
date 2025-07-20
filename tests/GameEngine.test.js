@@ -66,3 +66,32 @@ describe('GameEngine autoplay', () => {
         delete global.cancelAnimationFrame
     })
 })
+
+describe('GameEngine countdown', () => {
+    test('showCountdown updates element and hides it', async () => {
+        jest.useFakeTimers()
+        const engine = new GameEngine()
+        const addSpy = jest.fn()
+        const removeSpy = jest.fn()
+        const originalGet = global.document.getElementById
+        const countdownEl = { classList: { add: addSpy, remove: removeSpy }, textContent: '' }
+        jest.spyOn(global.document, 'getElementById').mockImplementation(id => {
+            if (id === 'countdown') {
+                return countdownEl
+            }
+            return originalGet(id)
+        })
+
+        const el = global.document.getElementById('countdown')
+        const promise = engine.showCountdown(1)
+        await jest.runAllTimersAsync()
+        await promise
+
+        expect(removeSpy).toHaveBeenCalledWith('hidden')
+        expect(addSpy).toHaveBeenCalledWith('hidden')
+        expect(el.textContent).toBe('GO!')
+
+        jest.useRealTimers()
+        global.document.getElementById.mockRestore()
+    })
+})

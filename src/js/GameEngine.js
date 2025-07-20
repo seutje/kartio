@@ -114,6 +114,7 @@ class GameEngine {
         document.getElementById('stats').classList.remove('hidden')
 
         await this.audioManager.init()
+        await this.showCountdown()
         this.setupRace()
         this.clearRacePath()
         this.drawRacePath()
@@ -130,6 +131,19 @@ class GameEngine {
         this.camera.position.set(0, 60, 0)
         this.camera.lookAt(new THREE.Vector3(0, 0, 0))
         this.start()
+    }
+
+    async showCountdown(seconds = 3) {
+        const countdownEl = document.getElementById('countdown')
+        if (!countdownEl) return
+        countdownEl.classList.remove('hidden')
+        for (let i = seconds; i > 0; i--) {
+            countdownEl.textContent = String(i)
+            await new Promise(r => setTimeout(r, 1000))
+        }
+        countdownEl.textContent = 'GO!'
+        await new Promise(r => setTimeout(r, 1000))
+        countdownEl.classList.add('hidden')
     }
     
     setupRace(autoplay = false) {

@@ -88,6 +88,17 @@
         .hidden {
             display: none !important;
         }
+
+        #countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            color: white;
+            z-index: 1001;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -99,7 +110,9 @@
             <p>It's a me, a racist stereotype!</p>
             <p>Click to start</p>
         </div>
-        
+
+        <div id="countdown" class="hidden"></div>
+
         <div id="stats" class="hidden">
             <div>FPS: <span id="fps">0</span></div>
             <div>Position: <span id="position">1st</span></div>

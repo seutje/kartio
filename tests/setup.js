@@ -42,6 +42,7 @@ global.document = {
         const elements = {
             startScreen: { classList: { add: () => {}, remove: () => {} } },
             stats: { classList: { add: () => {}, remove: () => {} } },
+            countdown: { classList: { add: () => {}, remove: () => {} }, textContent: '' },
             fps: { textContent: '' },
             position: { textContent: '' },
             lap: { textContent: '' },
