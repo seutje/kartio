@@ -114,12 +114,7 @@ class TrainingEnvironment {
             console.log(`\nGeneration ${this.generation}/${this.generations}`);
             
             const hasQualified = await this.evaluatePopulation()
-            if (!hasQualified) {
-                console.log('All karts disqualified. Skipping to next generation.')
-                this.evolvePopulation()
-                continue
-            }
-            this.evolvePopulation();
+            this.evolvePopulation()
             
             const avgFitness = this.population.reduce((sum, individual) => sum + individual.fitness, 0) / this.population.length;
             console.log(`Best fitness: ${this.bestFitness.toFixed(2)}`);
@@ -127,6 +122,11 @@ class TrainingEnvironment {
             
             if (this.generation % 10 === 0) {
                 this.saveModel();
+            }
+
+            if (!hasQualified) {
+                console.log('All karts disqualified. Skipping to next generation.')
+                continue
             }
         }
         
@@ -215,7 +215,7 @@ class TrainingEnvironment {
 
                 if (this.track.checkObstacleCollisions(kart)) {
                     disqualified = true
-                    fitness = 0
+                    fitness -= 500
                     break
                 }
                 
