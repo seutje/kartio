@@ -262,7 +262,7 @@ class TrainingEnvironment {
         while (newPopulation.length < this.populationSize) {
             if (Math.random() < this.newBloodRate) {
                 newPopulation.push({
-                    network: new NeuralNetwork(10, 10, 3),
+                    network: new NeuralNetwork(9, 10, 3),
                     fitness: 0,
                     isTraining: true
                 })
