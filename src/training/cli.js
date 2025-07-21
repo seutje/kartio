@@ -162,7 +162,7 @@ class TrainingEnvironment {
                 try {
                     const data = JSON.parse(fs.readFileSync(bestPath, 'utf8'))
                     const network = NeuralNetwork.deserialize(JSON.parse(data.network))
-                    this.bestFitness = parseFloat(data.fitness)
+                    this.bestFitness = data.fitness
                     this.population.push({
                         network,
                         fitness: 0,
