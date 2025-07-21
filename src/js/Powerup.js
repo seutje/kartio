@@ -1,4 +1,4 @@
-const DEBUG_Powerup = true;
+const DEBUG_Powerup = false;
 if (typeof module !== 'undefined' && module.exports) {
     ({ Explosion } = require('./Explosion'));
 }
@@ -11,7 +11,7 @@ class Powerup {
         this.scene = scene;
         this.collected = false;
 
-        if (true || !(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.createMesh();
             this.addToScene();
         }
@@ -50,7 +50,6 @@ class Powerup {
 
         const distance = kart.position.distanceTo(this.position);
         if (distance < 2) {
-            console.log("collected")
             this.collected = true;
             this.scene.remove(this.mesh);
             setTimeout(() => {
