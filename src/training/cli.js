@@ -347,7 +347,7 @@ class TrainingEnvironment {
 }
 
 async function main() {
-    const trackType = 'circuit';
+    const trackType = process.argv[3] || 'circuit';
     const trainer = new TrainingEnvironment(trackType);
     
     try {
