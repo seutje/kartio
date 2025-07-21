@@ -443,7 +443,7 @@ class GameEngine {
             const suffix = ['st', 'nd', 'rd', 'th'][Math.min(position - 1, 3)]
             const colorName = COLOR_NAMES[kart.color] || 'unknown'
             const fitness = kart.aiController ? kart.aiController.fitness.toFixed(0) : 0
-            div.textContent = `${colorName}: ${position}${suffix} - ${kart.currentLap}/3 - ${fitness} - ${kart.progress} - ${kart.velocity.length()}`
+            div.textContent = `${colorName}: ${position}${suffix} - ${kart.currentLap}/3`
             aiStats.appendChild(div)
         })
         aiStats.classList.remove('hidden')
