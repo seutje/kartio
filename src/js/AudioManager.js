@@ -240,9 +240,13 @@ class AudioManager {
         panner.coneInnerAngle = 360;
         panner.coneOuterAngle = 0;
         panner.coneOuterGain = 0;
-        panner.positionX.setValueAtTime(x, this.audioContext.currentTime);
-        panner.positionY.setValueAtTime(y, this.audioContext.currentTime);
-        panner.positionZ.setValueAtTime(z, this.audioContext.currentTime);
+        if (panner.positionX) {
+            panner.positionX.setValueAtTime(x, this.audioContext.currentTime);
+            panner.positionY.setValueAtTime(y, this.audioContext.currentTime);
+            panner.positionZ.setValueAtTime(z, this.audioContext.currentTime);
+        } else {
+            panner.setPosition(x, y, z);
+        }
 
         source.connect(panner);
         panner.connect(this.sfxGain);
@@ -260,10 +264,15 @@ class AudioManager {
     }
 
     setListenerPosition(x, y, z) {
+        if (!this.initialized) return;
         if (DEBUG_AudioManager) console.log(`AudioManager: Setting listener position to (${x}, ${y}, ${z}).`);
-        this.audioContext.listener.positionX.setValueAtTime(x, this.audioContext.currentTime);
-        this.audioContext.listener.positionY.setValueAtTime(y, this.audioContext.currentTime);
-        this.audioContext.listener.positionZ.setValueAtTime(z, this.audioContext.currentTime);
+        if (this.audioContext.listener.positionX) {
+            this.audioContext.listener.positionX.setValueAtTime(x, this.audioContext.currentTime);
+            this.audioContext.listener.positionY.setValueAtTime(y, this.audioContext.currentTime);
+            this.audioContext.listener.positionZ.setValueAtTime(z, this.audioContext.currentTime);
+        } else {
+            this.audioContext.listener.setPosition(x, y, z);
+        }
     }
     
     playMusic() {
