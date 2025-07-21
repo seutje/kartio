@@ -42,6 +42,8 @@ class AIController {
                 console.warn(`Failed to load brain for ${trackName}. Using a random brain.`);
             });
         }
+        this.raycaster = new THREE.Raycaster();
+        this.obstacles = [];
         
         this.fitness = 0;
         this.lastCheckpoint = 0;
@@ -143,21 +145,18 @@ class AIController {
     }
     
     raycast(direction, maxDistance) {
-        const raycaster = new THREE.Raycaster(
-            this.kart.position.clone().add(new THREE.Vector3(0, 1, 0)),
-            direction,
-            0,
-            maxDistance
-        );
+        this.raycaster.set(this.kart.position.clone().add(new THREE.Vector3(0, 1, 0)), direction);
+        this.raycaster.far = maxDistance;
         
-        const obstacles = [];
-        this.track.obstacles.forEach(obstacle => {
-            if (obstacle.geometry) {
-                obstacles.push(obstacle);
-            }
-        });
-        
-        const intersects = raycaster.intersectObjects(obstacles);
+        if (this.obstacles.length === 0) {
+            this.track.obstacles.forEach(obstacle => {
+                if (obstacle.geometry) {
+                    this.obstacles.push(obstacle);
+                }
+            });
+        }
+
+        const intersects = this.raycaster.intersectObjects(this.obstacles);
         return intersects.length > 0 ? intersects[0].distance / maxDistance : 1;
     }
     
