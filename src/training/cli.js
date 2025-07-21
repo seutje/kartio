@@ -228,30 +228,16 @@ class TrainingEnvironment {
                 kart.updatePhysics(deltaTime)
                 kart.updateProgress()
 
-                if (kart.velocity.length() < 0.1) {
-                    stoppedTime += deltaTime
-                    if (stoppedTime > 2) {
-                        disqualified = true
-                        break
-                    }
-                } else {
-                    stoppedTime = 0
-                }
+                // Fitness is updated internally by the AI controller
 
-                if (ai.checkObstacleCollision()) {
+                if (ai.fitness < -10000) {
                     disqualified = true
                     break
                 }
-
-                // Fitness is updated internally by the AI controller
                 
                 // Debugging: Log kart state and fitness
                 if (DEBUG_Cli && network === this.population[0].network && time % 1 < deltaTime) {
                     console.log(`Time: ${time.toFixed(2)}, Kart Pos: (${kart.position.x.toFixed(2)}, ${kart.position.z.toFixed(2)}), Progress: ${kart.progress.toFixed(2)}, Next CP: ${kart.nextCheckpoint}, Current Lap: ${kart.currentLap}, Total Fitness: ${ai.fitness.toFixed(2)}`);
-                }
-
-                if (kart.currentLap > 5) {
-                    break;
                 }
 
                 time += deltaTime

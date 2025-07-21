@@ -203,39 +203,47 @@ class AIController {
     
     updateFitness(deltaTime) {
         const progress = this.kart.progress;
+        const lapProgress = this.kart.lapProgress;
         let currentFitness = 0;
 
         // Base fitness on overall progress
         currentFitness = progress * 100;
 
+        currentFitness += lapProgress * 10;
+
         // Checkpoint bonus: only add if a new checkpoint has been reached
-        if (this.lastCheckpoint !== 0 && this.kart.nextCheckpoint !== this.lastCheckpoint) {
-            currentFitness += 200;
+        if (this.kart.nextCheckpoint > this.lastCheckpoint && this.lastCheckpoint !== this.track.checkpoints.length - 1) {
+            currentFitness += 1000;
             this.timeSinceLastCheckpoint = 0; // Reset timer for new checkpoint
         } else {
             // Penalty for not reaching a new checkpoint within a certain time
             this.timeSinceLastCheckpoint += deltaTime;
-            if (this.timeSinceLastCheckpoint > 10) {
+            if (this.timeSinceLastCheckpoint > 20) {
                 currentFitness -= 200;
             }
+        }
+
+        // Penalty for collisions with obstacles
+        if (this.track.checkObstacleCollisions(this.kart)) {
+            currentFitness -= 2500
         }
         
         // Time penalty: penalize for taking too long
         currentFitness -= deltaTime * 50;
 
         // Speed bonus: reward for higher speeds
-        currentFitness += this.kart.velocity.length() * 10;
+        currentFitness += this.kart.velocity.length() * 100;
 
         const forward = this.kart.getForwardVector()
         if (this.kart.velocity.dot(forward) < 0) {
-            currentFitness -= deltaTime * 200
+            currentFitness -= deltaTime * 10
         }
 
         // Stuck penalty
-        if (this.kart.velocity.length() < 0.5) {
+        if (this.kart.velocity.length() < 10) {
             this.stuckTimer += deltaTime;
-            if (this.stuckTimer > 1) {
-                currentFitness -= 1000;
+            if (this.stuckTimer > 2) {
+                currentFitness -= 10000;
             }
         } else {
             this.stuckTimer = 0;
@@ -261,21 +269,13 @@ class AIController {
     checkStuck(deltaTime) {
         if (this.kart.velocity.length() < 0.5) {
             this.stuckTimer += deltaTime;
-            if (this.stuckTimer > 1) {
+            if (this.stuckTimer > 2) {
                 this.fitness -= 1000;
                 this.stuckTimer = 0;
             }
         } else {
             this.stuckTimer = 0;
         }
-    }
-
-    checkObstacleCollision() {
-        const collided = this.track.checkObstacleCollisions(this.kart);
-        if (collided) {
-            this.fitness -= 500;
-        }
-        return collided;
     }
     
     copy() {
