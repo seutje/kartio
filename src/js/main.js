@@ -3,14 +3,8 @@ let gameEngine;
 async function init() {
     gameEngine = new GameEngine();
     await gameEngine.initialize();
-
     await gameEngine.startAutoplay();
-    
-    const startScreen = document.getElementById('startScreen');
-    startScreen.addEventListener('click', () => {
-        gameEngine.startGame();
-    });
-    
+
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();

@@ -56,6 +56,30 @@ class GameEngine {
     async initialize() {
         if (DEBUG_GameEngine) console.log('GameEngine: Initializing tracks...');
         await this.setupTracks();
+        const trackSelector = document.getElementById('trackSelector');
+        if (trackSelector) {
+            await this.selectTrack(trackSelector.value);
+        } else {
+            // Fallback if the selector is not found
+            await this.selectTrack('circuit');
+        }
+    }
+
+    async selectTrack(trackType) {
+        if (DEBUG_GameEngine) console.log(`GameEngine: Selecting track ${trackType}`);
+        if (this.currentTrack && this.currentTrack.trackGroup) {
+            this.currentTrack.clearTrackGroup(); // Clear all meshes from the previous track group
+            this.scene.remove(this.currentTrack.trackGroup);
+        }
+
+        const selectedTrack = this.tracks.find(track => track.type === trackType);
+        if (selectedTrack) {
+            this.currentTrack = selectedTrack;
+            await this.currentTrack.loadTrackData();
+            this.scene.add(this.currentTrack.trackGroup);
+        } else {
+            console.error(`Track ${trackType} not found!`);
+        }
     }
     
     setupRenderer() {
@@ -110,6 +134,22 @@ class GameEngine {
         window.addEventListener('resize', () => this.onWindowResize());
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
         document.addEventListener('keyup', (e) => this.onKeyUp(e));
+
+        const startGameButton = document.getElementById('startGameButton');
+        if (startGameButton) {
+            startGameButton.addEventListener('click', () => this.startGame());
+        }
+
+        const trackSelector = document.getElementById('trackSelector');
+        if (trackSelector) {
+            trackSelector.addEventListener('change', async (event) => {
+                await this.selectTrack(event.target.value);
+                if (this.isAutoplay) {
+                    this.stop();
+                    this.startAutoplay();
+                }
+            });
+        }
     }
     
     async setupTracks() {
@@ -119,9 +159,6 @@ class GameEngine {
             new Track('desert', this.scene),
             new Track('snow', this.scene)
         ];
-
-        this.currentTrack = this.tracks[0];
-        await this.currentTrack.loadTrackData();
     }
     
     async startGame() {

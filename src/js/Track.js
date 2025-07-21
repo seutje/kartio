@@ -5,6 +5,7 @@ class Track {
         if (DEBUG_Track) console.log(`Track: Creating track of type ${type}`);
         this.type = type;
         this.scene = scene;
+        this.trackGroup = new THREE.Group(); // Create a group for all track elements
         this.checkpoints = [];
         this.obstacles = [];
         this.powerups = [];
@@ -51,7 +52,7 @@ class Track {
             const ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
             ground.receiveShadow = true;
-            this.scene.add(ground);
+            this.trackGroup.add(ground);
         }
 
         obstacles.forEach(obstacleData => {
@@ -65,7 +66,7 @@ class Track {
                 }
                 barrier.castShadow = true;
                 if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
-                    this.scene.add(barrier);
+                    this.trackGroup.add(barrier);
                 }
                 this.obstacles.push(barrier);
             } else if (obstacleData.type === 'sand_dune') {
@@ -78,7 +79,7 @@ class Track {
                 }
                 dune.castShadow = true;
                 if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
-                    this.scene.add(dune);
+                    this.trackGroup.add(dune);
                 }
                 this.obstacles.push(dune);
             }
@@ -92,7 +93,7 @@ class Track {
                     const marking = new THREE.Mesh(markingGeometry, markingMaterial);
                     marking.rotation.x = -Math.PI / 2;
                     marking.position.set(decorationData.x, decorationData.y, decorationData.z);
-                    this.scene.add(marking);
+                    this.trackGroup.add(marking);
                 }
             });
         }
@@ -121,12 +122,12 @@ class Track {
                 mesh.rotation.x = -Math.PI / 2;
                 mesh.position.copy(checkpoint.position);
                 mesh.position.y += 0.1;
-                this.scene.add(mesh);
+                this.trackGroup.add(mesh);
 
                 const label = this.createCheckpointLabel(index + 1);
                 label.position.copy(checkpoint.position);
                 label.position.y += cp.radius + 2;
-                this.scene.add(label);
+                this.trackGroup.add(label);
                 this.checkpointLabels.push(label);
             }
         });
@@ -137,7 +138,7 @@ class Track {
         const powerupTypes = ['boost', 'missile', 'mine'];
         this.trackData.powerupSpawns.forEach(spawn => {
             const type = spawn.type;
-            const powerup = new Powerup(type, new THREE.Vector3(spawn.x, spawn.y, spawn.z), this.scene);
+            const powerup = new Powerup(type, new THREE.Vector3(spawn.x, spawn.y, spawn.z), this.trackGroup);
             this.powerups.push(powerup);
         });
     }
@@ -149,6 +150,26 @@ class Track {
     
     getStartPositions() {
         return this.startPositions;
+    }
+
+    clearTrackGroup() {
+        while (this.trackGroup.children.length > 0) {
+            const object = this.trackGroup.children[0];
+            this.trackGroup.remove(object);
+            if (object.geometry) {
+                object.geometry.dispose();
+            }
+            if (object.material) {
+                if (Array.isArray(object.material)) {
+                    object.material.forEach(material => material.dispose());
+                } else {
+                    object.material.dispose();
+                }
+            }
+            if (object.texture) {
+                object.texture.dispose();
+            }
+        }
     }
 
     createCheckpointLabel(number) {
