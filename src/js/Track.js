@@ -68,6 +68,19 @@ class Track {
                     this.scene.add(barrier);
                 }
                 this.obstacles.push(barrier);
+            } else if (obstacleData.type === 'sand_dune') {
+                const duneGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
+                const duneMaterial = new THREE.MeshLambertMaterial({ color: 0xC15A1A });
+                const dune = new THREE.Mesh(duneGeometry, duneMaterial);
+                dune.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
+                if (typeof obstacleData.rotation !== 'undefined') {
+                    dune.rotation.y = THREE.MathUtils.degToRad(obstacleData.rotation);
+                }
+                dune.castShadow = true;
+                if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+                    this.scene.add(dune);
+                }
+                this.obstacles.push(dune);
             }
         });
 
