@@ -19,6 +19,8 @@ class SimpleTrackEditor extends GameEngine {
         this.mouse = new THREE.Vector2()
         this.track = null
         this.trackData = null
+        this.dragging = false
+        this.plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0)
         this.animate = this.animate.bind(this)
         this.animate()
     }
@@ -35,7 +37,7 @@ class SimpleTrackEditor extends GameEngine {
         this.camera.updateProjectionMatrix()
     }
 
-    handleClick(e, propertyWindow) {
+    handleMouseDown(e, propertyWindow) {
         if (!this.track) return
         const rect = this.canvas.getBoundingClientRect()
         this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
@@ -44,9 +46,11 @@ class SimpleTrackEditor extends GameEngine {
         const hit = this.raycaster.intersectObjects(this.track.obstacles)[0]
         if (hit) {
             this.selected = hit.object
+            this.dragging = true
             const idx = this.track.obstacles.indexOf(this.selected)
             propertyWindow.classList.remove('hidden')
             propertyWindow.dataset.index = idx
+            document.getElementById('obstacleIndex').textContent = `Obstacle #${idx}`
             const data = this.trackData.obstacles[idx]
             ;['x','y','z','width','height','depth','rotation'].forEach(k => {
                 document.getElementById('prop_' + k).value = data[k] || 0
@@ -55,6 +59,33 @@ class SimpleTrackEditor extends GameEngine {
             this.selected = null
             propertyWindow.classList.add('hidden')
         }
+    }
+
+    handleMouseMove(e) {
+        if (!this.dragging || !this.selected) return
+
+        const rect = this.canvas.getBoundingClientRect()
+        this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+        this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1
+        this.raycaster.setFromCamera(this.mouse, this.camera)
+
+        const intersection = new THREE.Vector3()
+        this.raycaster.ray.intersectPlane(this.plane, intersection)
+
+        this.selected.position.x = intersection.x
+        this.selected.position.z = intersection.z
+
+        const idx = this.track.obstacles.indexOf(this.selected)
+        const data = this.trackData.obstacles[idx]
+        data.x = intersection.x
+        data.z = intersection.z
+
+        document.getElementById('prop_x').value = data.x
+        document.getElementById('prop_z').value = data.z
+    }
+
+    handleMouseUp() {
+        this.dragging = false
     }
 
     applyChanges(propertyWindow) {
@@ -95,7 +126,9 @@ const applyBtn = document.getElementById('applyBtn')
 
 const editor = new SimpleTrackEditor(canvas)
 
-canvas.addEventListener('click', e => editor.handleClick(e, propertyWindow))
+canvas.addEventListener('mousedown', e => editor.handleMouseDown(e, propertyWindow))
+canvas.addEventListener('mousemove', e => editor.handleMouseMove(e))
+canvas.addEventListener('mouseup', () => editor.handleMouseUp())
 applyBtn.addEventListener('click', () => editor.applyChanges(propertyWindow))
 importBtn.addEventListener('click', () => editor.loadTrack(trackSelect.value))
 exportBtn.addEventListener('click', () => {
