@@ -82,6 +82,19 @@ class Track {
                     this.trackGroup.add(dune);
                 }
                 this.obstacles.push(dune);
+            } else if (obstacleData.type === 'snow_bank') {
+                const snowBankGeometry = new THREE.BoxGeometry(obstacleData.width, obstacleData.height, obstacleData.depth);
+                const snowBankMaterial = new THREE.MeshLambertMaterial({ color: 0xDDDDDD }); // White color for snow bank
+                const snowBank = new THREE.Mesh(snowBankGeometry, snowBankMaterial);
+                snowBank.position.set(obstacleData.x, obstacleData.y, obstacleData.z);
+                if (typeof obstacleData.rotation !== 'undefined') {
+                    snowBank.rotation.y = THREE.MathUtils.degToRad(obstacleData.rotation);
+                }
+                snowBank.castShadow = true;
+                if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
+                    this.trackGroup.add(snowBank);
+                }
+                this.obstacles.push(snowBank);
             }
         });
 
