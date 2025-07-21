@@ -46,7 +46,7 @@ class AIController {
         this.obstacles = [];
         
         this.fitness = 0;
-        this.lastCheckpoint = 0;
+        this.lastCheckpoint = this.track.checkpoints.length - 1;
         this.lastProgress = 0;
         this.stuckTimer = 0;
         this.timeElapsed = 0;
