@@ -53,6 +53,7 @@ class AIController {
         this.lastLap = 0;
         this.timeSinceLastCheckpoint = 0;
         this.finishBonusApplied = false;
+        this.powerupUsedThisFrame = false;
         
         this.sensors = {
             forward: 0,
@@ -198,6 +199,7 @@ class AIController {
 
         if (this.kart.currentPowerup && powerupOutput > 0.5) {
             this.kart.usePowerup();
+            this.powerupUsedThisFrame = true;
         }
     }
     
@@ -259,6 +261,11 @@ class AIController {
         if (this.kart.currentLap > 3 && !this.finishBonusApplied) {
             this.fitness += 2000;
             this.finishBonusApplied = true;
+        }
+
+        if (this.powerupUsedThisFrame) {
+            currentFitness += 500; // Bonus for using a powerup
+            this.powerupUsedThisFrame = false;
         }
 
         this.lastProgress = progress;
