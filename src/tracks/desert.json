@@ -1,7 +1,7 @@
 {
   "name": "Desert Figure 8",
   "type": "desert",
-  "description": "A figure 8 track in the desert, surrounded by barriers.",
+  "description": "A figure 8 track in the desert, surrounded by sand_dunes.",
   "difficulty": "hard",
   "lapCount": 3,
   "startPositions": [
@@ -92,13 +92,13 @@
     {
       "x": 0,
       "y": 1,
-      "z": 20,
+      "z": -10,
       "type": "random"
     },
     {
       "x": 0,
       "y": 1,
-      "z": -20,
+      "z": 10,
       "type": "random"
     }
   ],
@@ -116,7 +116,7 @@
   },
   "obstacles": [
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -9.5,
       "y": 1,
       "z": -28.3,
@@ -126,7 +126,7 @@
       "rotation": 146.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -20.5,
       "y": 1,
       "z": -11.7,
@@ -136,7 +136,7 @@
       "rotation": 146.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 9.5,
       "y": 1,
       "z": -28.3,
@@ -146,7 +146,7 @@
       "rotation": -146.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 20.5,
       "y": 1,
       "z": -11.7,
@@ -156,7 +156,7 @@
       "rotation": -146.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 48.3,
       "y": 1,
       "z": -20.5,
@@ -166,7 +166,7 @@
       "rotation": 123.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 31.7,
       "y": 1,
       "z": -9.5,
@@ -176,7 +176,7 @@
       "rotation": 123.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 48.3,
       "y": 1,
       "z": 20.5,
@@ -186,7 +186,7 @@
       "rotation": 56.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 31.7,
       "y": 1,
       "z": 9.5,
@@ -196,7 +196,7 @@
       "rotation": 56.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 9.5,
       "y": 1,
       "z": 28.3,
@@ -206,7 +206,7 @@
       "rotation": -33.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": 20.5,
       "y": 1,
       "z": 11.7,
@@ -216,7 +216,7 @@
       "rotation": -33.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -9.5,
       "y": 1,
       "z": 28.3,
@@ -226,7 +226,7 @@
       "rotation": 33.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -20.5,
       "y": 1,
       "z": 11.7,
@@ -236,7 +236,7 @@
       "rotation": 33.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -48.3,
       "y": 1,
       "z": 20.5,
@@ -246,7 +246,7 @@
       "rotation": -56.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -31.7,
       "y": 1,
       "z": 9.5,
@@ -256,7 +256,7 @@
       "rotation": -56.3
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -48.3,
       "y": 1,
       "z": -20.5,
@@ -266,7 +266,7 @@
       "rotation": -123.7
     },
     {
-      "type": "barrier",
+      "type": "sand_dune",
       "x": -31.7,
       "y": 1,
       "z": -9.5,
