@@ -1,4 +1,4 @@
-const DEBUG_Powerup = false;
+const DEBUG_Powerup = true;
 if (typeof module !== 'undefined' && module.exports) {
     ({ Explosion } = require('./Explosion'));
 }
@@ -11,7 +11,7 @@ class Powerup {
         this.scene = scene;
         this.collected = false;
 
-        if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
+        if (true || !(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.createMesh();
             this.addToScene();
         }
@@ -30,7 +30,6 @@ class Powerup {
         this.mesh = new THREE.Mesh(geometry, material);
         this.mesh.position.copy(this.position);
         this.mesh.position.y = 1;
-        this.scene.add(this.mesh);
     }
     
     addToScene() {
@@ -51,12 +50,13 @@ class Powerup {
 
         const distance = kart.position.distanceTo(this.position);
         if (distance < 2) {
+            console.log("collected")
             this.collected = true;
             this.scene.remove(this.mesh);
             setTimeout(() => {
                 this.collected = false;
                 if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
-                    this.scene.add(this.mesh);
+                    this.addToScene();
                 }
             }, 1000);
             return true;
