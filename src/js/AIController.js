@@ -261,7 +261,7 @@ class AIController {
         }
 
         if (this.powerupUsedThisFrame) {
-            currentFitness += 500; // Bonus for using a powerup
+            currentFitness += 1000; // Bonus for using a powerup
             this.powerupUsedThisFrame = false;
         }
 
