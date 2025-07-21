@@ -33,7 +33,7 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        this.network = new NeuralNetwork(10, 10, 3); // Initialize with a random brain
+        this.network = new NeuralNetwork(10, 12, 3); // Initialize with a random brain
 
         if (!isTraining) {
             this.loadBrain().then(network => {
