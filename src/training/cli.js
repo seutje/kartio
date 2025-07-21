@@ -63,8 +63,9 @@ if (typeof global.document === 'undefined') {
 }
 
 class TrainingEnvironment {
-    constructor(trackType) {
+    constructor(trackType, continueFlag = false) {
         this.trackType = trackType;
+        this.continueFlag = continueFlag;
         this.populationSize = 100;
         this.generations = parseInt(process.argv[2]) || 50;
         this.mutationRate = 0.2
@@ -155,13 +156,32 @@ class TrainingEnvironment {
     }
     
     initializePopulation() {
-        for (let i = 0; i < this.populationSize; i++) {
-            const network = new NeuralNetwork(9, 12, 3);
+        if (this.continueFlag) {
+            const bestPath = path.join(this.modelsDir, `${this.trackType}_best.json`)
+            if (fs.existsSync(bestPath)) {
+                try {
+                    const data = JSON.parse(fs.readFileSync(bestPath, 'utf8'))
+                    const network = NeuralNetwork.deserialize(JSON.parse(data.network))
+                    this.population.push({
+                        network,
+                        fitness: 0,
+                        isTraining: true
+                    })
+                } catch (error) {
+                    console.error('Failed to load best model:', error)
+                }
+            } else {
+                console.warn(`Best model not found at ${bestPath}. Starting fresh.`)
+            }
+        }
+
+        while (this.population.length < this.populationSize) {
+            const network = new NeuralNetwork(9, 12, 3)
             this.population.push({
-                network: network,
+                network,
                 fitness: 0,
                 isTraining: true
-            });
+            })
         }
     }
     
@@ -334,7 +354,8 @@ class TrainingEnvironment {
 
 async function main() {
     const trackType = process.argv[3] || 'circuit';
-    const trainer = new TrainingEnvironment(trackType);
+    const continueFlag = process.argv[4] === 'continue';
+    const trainer = new TrainingEnvironment(trackType, continueFlag);
     
     try {
         await trainer.init();
