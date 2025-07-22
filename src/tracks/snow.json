@@ -29,8 +29,8 @@
     "directionalLight": "0xffffff"
   },
   "trackGeometry": {
-    "width": 120,
-    "height": 120,
+    "width": 200,
+    "height": 200,
     "borderColor": "0xE0E0E0",
     "roadColor": "0xFFFFFF"
   },
