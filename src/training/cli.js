@@ -42,10 +42,37 @@ const { AIController } = require('../js/AIController')
 const DEBUG_Cli = false
 
 if (typeof global.window === 'undefined') {
+    const mockAudioContext = class {
+        constructor() {
+            this.currentTime = 0
+            this.destination = {}
+        }
+        resume() {}
+        createGain() {
+            return {
+                gain: {
+                    setTargetAtTime: () => {}
+                },
+                connect: () => {}
+            }
+        }
+        createAnalyser() {
+            return {
+                getFrequencyData: () => []
+            }
+        }
+        createBiquadFilter() {
+            return {
+                connect: () => {}
+            }
+        }
+    }
     global.window = {
         innerWidth: 800,
         innerHeight: 600,
-        addEventListener: () => {}
+        addEventListener: () => {},
+        AudioContext: mockAudioContext,
+        webkitAudioContext: mockAudioContext
     }
 }
 
