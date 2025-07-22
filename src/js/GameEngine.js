@@ -26,9 +26,12 @@ class GameEngine {
         this.countdownValue = 3;
         this.countdownTimer = null;
         
+        this.listener = new THREE.AudioListener()
+        this.camera.add(this.listener)
+
         this.karts = [];
         this.currentTrack = null;
-        this.audioManager = new AudioManager();
+        this.audioManager = new AudioManager(this.listener);
         
         this.stats = {
             fps: 0,
