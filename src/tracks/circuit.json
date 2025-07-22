@@ -64,6 +64,7 @@
     { "type": "barrier", "x": -11.843, "y": 1, "z": -28.597, "width": 26, "height": 2, "depth": 1, "rotation": 202.5 }
   ],
   "decorations": [
-    { "type": "marking", "x": -28, "y": 0.01, "z": -29, "width": 2, "height": 0.01, "depth": 10, "color": "0xffffff", "rotation": 45 }
+    { "type": "marking", "x": -28, "y": 0.01, "z": -29, "width": 2, "height": 0.01, "depth": 10, "color": "0xffffff", "rotation": 45 },
+    { "type": "house", "x": -25, "y": 0, "z": -28, "width": 4, "height": 3, "depth": 4, "roofHeight": 2 }
   ]
 }
