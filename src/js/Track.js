@@ -107,6 +107,13 @@ class Track {
                     marking.rotation.x = -Math.PI / 2;
                     marking.position.set(decorationData.x, decorationData.y, decorationData.z);
                     this.trackGroup.add(marking);
+                } else if (decorationData.type === 'cactus') {
+                    const cactusGeometry = new THREE.CylinderGeometry(decorationData.radius, decorationData.radius, decorationData.height, 6);
+                    const cactusMaterial = new THREE.MeshLambertMaterial({ color: 0x228b22 });
+                    const cactus = new THREE.Mesh(cactusGeometry, cactusMaterial);
+                    cactus.position.set(decorationData.x, decorationData.y, decorationData.z);
+                    cactus.castShadow = true;
+                    this.trackGroup.add(cactus);
                 }
             });
         }
