@@ -283,7 +283,8 @@
       "y": 1.5,
       "z": -20,
       "height": 3,
-      "radius": 0.5
+      "radius": 0.5,
+      "rotation": 90
     },
     {
       "type": "cactus",
@@ -291,7 +292,8 @@
       "y": 1.5,
       "z": 10,
       "height": 2.5,
-      "radius": 0.4
+      "radius": 0.4,
+      "rotation": -30
     },
     {
       "type": "cactus",
@@ -299,7 +301,8 @@
       "y": 1.5,
       "z": 30,
       "height": 3.5,
-      "radius": 0.6
+      "radius": 0.6,
+      "rotation": 45
     },
     {
       "type": "cactus",
@@ -307,7 +310,8 @@
       "y": 1.5,
       "z": -25,
       "height": 2.8,
-      "radius": 0.45
+      "radius": 0.45,
+      "rotation": 0
     },
     {
       "type": "rock",

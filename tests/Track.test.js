@@ -122,4 +122,22 @@ describe('Track decorations', () => {
         const hasCactus = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.CylinderGeometry)
         expect(hasCactus).toBe(true)
     })
+
+    test('rotation value is applied to cactus decoration', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'cactus', x: 0, y: 1.5, z: 0, height: 3, radius: 0.5, rotation: 90 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const cactus = track.trackGroup.children.find(obj => obj.geometry instanceof THREE.CylinderGeometry)
+        expect(cactus.rotation.y).toBeCloseTo(Math.PI / 2)
+    })
 })

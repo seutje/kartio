@@ -101,19 +101,25 @@ class Track {
         if (typeof global === 'undefined' || !global.NO_GRAPHICS) {
             decorations.forEach(decorationData => {
                 if (decorationData.type === 'marking') {
-                    const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth);
-                    const markingMaterial = new THREE.MeshLambertMaterial({ color: parseInt(decorationData.color) });
-                    const marking = new THREE.Mesh(markingGeometry, markingMaterial);
-                    marking.rotation.x = -Math.PI / 2;
-                    marking.position.set(decorationData.x, decorationData.y, decorationData.z);
-                    this.trackGroup.add(marking);
+                    const markingGeometry = new THREE.PlaneGeometry(decorationData.width, decorationData.depth)
+                    const markingMaterial = new THREE.MeshLambertMaterial({ color: parseInt(decorationData.color) })
+                    const marking = new THREE.Mesh(markingGeometry, markingMaterial)
+                    marking.rotation.x = -Math.PI / 2
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        marking.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    marking.position.set(decorationData.x, decorationData.y, decorationData.z)
+                    this.trackGroup.add(marking)
                 } else if (decorationData.type === 'cactus') {
-                    const cactusGeometry = new THREE.CylinderGeometry(decorationData.radius, decorationData.radius, decorationData.height, 6);
-                    const cactusMaterial = new THREE.MeshLambertMaterial({ color: 0x228b22 });
-                    const cactus = new THREE.Mesh(cactusGeometry, cactusMaterial);
-                    cactus.position.set(decorationData.x, decorationData.y, decorationData.z);
-                    cactus.castShadow = true;
-                    this.trackGroup.add(cactus);
+                    const cactusGeometry = new THREE.CylinderGeometry(decorationData.radius, decorationData.radius, decorationData.height, 6)
+                    const cactusMaterial = new THREE.MeshLambertMaterial({ color: 0x228b22 })
+                    const cactus = new THREE.Mesh(cactusGeometry, cactusMaterial)
+                    cactus.position.set(decorationData.x, decorationData.y, decorationData.z)
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        cactus.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    cactus.castShadow = true
+                    this.trackGroup.add(cactus)
                 }
             });
         }
