@@ -51,6 +51,30 @@ class Kart extends THREE.Group {
 
         if (!(typeof global !== 'undefined' && global.NO_GRAPHICS)) {
             this.addToScene();
+
+            if (this.audioManager && this.audioManager.listener && this.audioManager.buffers && this.audioManager.buffers.engine) {
+                this.engineSound = new THREE.PositionalAudio(this.audioManager.listener)
+                this.engineSound.setBuffer(this.audioManager.buffers.engine)
+                this.engineSound.setLoop(true)
+
+                this.engineSound.panner.panningModel = 'HRTF'
+                this.engineSound.panner.distanceModel = 'inverse'
+                this.engineSound.panner.refDistance = 1
+                this.engineSound.panner.maxDistance = 10000
+                this.engineSound.panner.rolloffFactor = 1
+                this.engineSound.panner.coneInnerAngle = 360
+                this.engineSound.panner.coneOuterAngle = 0
+                this.engineSound.panner.coneOuterGain = 0
+
+                this.engineSound.gain.disconnect()
+                if (this.audioManager.sfxGain) {
+                    this.engineSound.gain.connect(this.audioManager.sfxGain)
+                }
+
+                this.add(this.engineSound)
+            }
+        } else {
+            this.engineSound = null
         }
     }
     
@@ -107,10 +131,13 @@ class Kart extends THREE.Group {
         this.updateProgress();
         this.updateVisuals(deltaTime);
 
-        if (this.isPlayer && (this.isAccelerating || this.isBraking)) {
-            this.audioManager.playSound('engine', true, this.position.x, this.position.y, this.position.z);
-        } else {
-            this.audioManager.stopSound('engine');
+        if (this.engineSound) {
+            const moving = this.velocity.length() > 1 || this.isAccelerating || this.isBraking
+            if (moving && !this.engineSound.isPlaying) {
+                this.engineSound.play()
+            } else if (!moving && this.engineSound.isPlaying) {
+                this.engineSound.stop()
+            }
         }
     }
     

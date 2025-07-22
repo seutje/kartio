@@ -34,7 +34,7 @@ class AudioManager {
             this.sfxCompressor.connect(destination)
             
             this.musicGain.gain.value = 0.3;
-            this.sfxGain.gain.value = 20;
+            this.sfxGain.gain.value = 2;
             
             await this.loadSounds();
             this.initialized = true;
