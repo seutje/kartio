@@ -105,7 +105,7 @@
     { "type": "pine_tree", "x": -15, "y": 0, "z": 20, "height": 7, "trunkHeight": 3.5, "leavesHeight": 3.5 },
     { "type": "pine_tree", "x": 20, "y": 0, "z": 15, "height": 9, "trunkHeight": 4.5, "leavesHeight": 4.5 },
     { "type": "pine_tree", "x": -30, "y": 0, "z": 0, "height": 12, "trunkHeight": 6, "leavesHeight": 6 },
-    { "type": "snowman", "x": 10, "y": 1, "z": -10, "height": 3, "radius": 1 },
-    { "type": "icicle", "x": -10, "y": 2, "z": -5, "height": 2, "width": 0.5 }
+    { "type": "snowman", "x": 10, "y": 0, "z": -10, "height": 3, "radius": 1 },
+    { "type": "icicle", "x": -20.5, "y": 4, "z": -15.5, "height": 2, "width": 0.5 }
   ]
 }
