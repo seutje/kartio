@@ -232,4 +232,24 @@ describe('Track decorations', () => {
         const hasCone = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.ConeGeometry)
         expect(hasCone).toBe(true)
     })
+
+    test('house decoration is added to trackGroup', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'house', x: 0, y: 0, z: 0, width: 2, height: 2, depth: 2, roofHeight: 1 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const hasBox = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.BoxGeometry)
+        const hasConeRoof = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.ConeGeometry)
+        expect(hasBox).toBe(true)
+        expect(hasConeRoof).toBe(true)
+    })
 })

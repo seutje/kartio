@@ -174,6 +174,24 @@ class Track {
                     }
                     icicle.castShadow = true
                     this.trackGroup.add(icicle)
+                } else if (decorationData.type === 'house') {
+                    const baseGeometry = new THREE.BoxGeometry(decorationData.width, decorationData.height, decorationData.depth)
+                    const baseMaterial = new THREE.MeshLambertMaterial({ color: 0x8b4513 })
+                    const base = new THREE.Mesh(baseGeometry, baseMaterial)
+                    const decorationRotation = decorationData.rotation || 0
+                    base.position.set(decorationData.x, decorationData.y + decorationData.height / 2, decorationData.z)
+                    base.rotation.y = THREE.MathUtils.degToRad(decorationRotation)
+                    base.castShadow = true
+                    this.trackGroup.add(base)
+
+                    const roofRadius = Math.max(decorationData.width, decorationData.depth)
+                    const roofGeometry = new THREE.ConeGeometry(roofRadius, decorationData.roofHeight, 4)
+                    const roofMaterial = new THREE.MeshLambertMaterial({ color: 0x8b0000 })
+                    const roof = new THREE.Mesh(roofGeometry, roofMaterial)
+                    roof.position.set(decorationData.x, decorationData.y + decorationData.height + decorationData.roofHeight / 2, decorationData.z)
+                    roof.rotation.y = THREE.MathUtils.degToRad(decorationRotation + 45)
+                    roof.castShadow = true
+                    this.trackGroup.add(roof)
                 }
             });
         }
