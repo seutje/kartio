@@ -184,6 +184,14 @@ class Track {
                     base.castShadow = true
                     this.trackGroup.add(base)
 
+                    const doorHeight = decorationData.height * 0.75
+                    const doorGeometry = new THREE.BoxGeometry(decorationData.width / 2, doorHeight, 0.1)
+                    const doorMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 })
+                    const door = new THREE.Mesh(doorGeometry, doorMaterial)
+                    door.position.set(0, doorHeight / 2 - decorationData.height / 2, decorationData.depth / 2 + 0.05)
+                    door.castShadow = true
+                    base.add(door)
+
                     const roofRadius = Math.max(decorationData.width, decorationData.depth)
                     const roofGeometry = new THREE.ConeGeometry(roofRadius, decorationData.roofHeight, 4)
                     const roofMaterial = new THREE.MeshLambertMaterial({ color: 0x8b0000 })
