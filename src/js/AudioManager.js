@@ -9,7 +9,7 @@ class AudioManager {
         this.sounds = {};
         this.musicGain = null;
         this.sfxGain = null;
-        this.panner = null; // Add panner node
+        // No global panner; PositionalAudio handles spatialization
         this.initialized = false;
         this.musicOscillators = [];
         this.musicLoopTimeout = null;
@@ -26,13 +26,11 @@ class AudioManager {
 
             this.musicGain = this.audioContext.createGain()
             this.sfxGain = this.audioContext.createGain()
-            this.panner = this.audioContext.createPanner() // Initialize panner
             this.sfxCompressor = this.audioContext.createDynamicsCompressor()
 
             const destination = this.listener ? this.listener.getInput() : this.audioContext.destination
             this.musicGain.connect(destination)
-            this.sfxGain.connect(this.panner) // Connect sfxGain to panner
-            this.panner.connect(this.sfxCompressor) // Connect panner to compressor
+            this.sfxGain.connect(this.sfxCompressor)
             this.sfxCompressor.connect(destination)
             
             this.musicGain.gain.value = 0.3;
@@ -231,33 +229,29 @@ class AudioManager {
     playSound(name, loop = false, x = 0, y = 0, z = 0) {
         if (DEBUG_AudioManager) console.log(`AudioManager: Playing sound ${name} at (${x}, ${y}, ${z}).`);
         if (!this.initialized || !this.buffers[name]) return;
-        
-        const source = this.audioContext.createBufferSource();
-        source.buffer = this.buffers[name];
-        source.loop = loop;
-        
-        const panner = this.audioContext.createPanner();
-        panner.panningModel = 'HRTF';
-        panner.distanceModel = 'inverse';
-        panner.refDistance = 1;
-        panner.maxDistance = 10000;
-        panner.rolloffFactor = 1;
-        panner.coneInnerAngle = 360;
-        panner.coneOuterAngle = 0;
-        panner.coneOuterGain = 0;
-        if (panner.positionX) {
-            panner.positionX.setValueAtTime(x, this.audioContext.currentTime);
-            panner.positionY.setValueAtTime(y, this.audioContext.currentTime);
-            panner.positionZ.setValueAtTime(z, this.audioContext.currentTime);
-        } else {
-            panner.setPosition(x, y, z);
-        }
 
-        source.connect(panner);
-        panner.connect(this.sfxGain);
-        source.start();
-        
-        this.sounds[name] = source;
+        const sound = new THREE.PositionalAudio(this.listener);
+        sound.setBuffer(this.buffers[name]);
+        sound.setLoop(loop);
+
+        sound.panner.panningModel = 'HRTF';
+        sound.panner.distanceModel = 'inverse';
+        sound.panner.refDistance = 1;
+        sound.panner.maxDistance = 10000;
+        sound.panner.rolloffFactor = 1;
+        sound.panner.coneInnerAngle = 360;
+        sound.panner.coneOuterAngle = 0;
+        sound.panner.coneOuterGain = 0;
+
+        sound.position.set(x, y, z);
+
+        // Route audio through the sfx chain instead of directly to the listener
+        sound.gain.disconnect();
+        sound.gain.connect(this.sfxGain);
+
+        sound.play();
+
+        this.sounds[name] = sound;
     }
     
     stopSound(name) {
