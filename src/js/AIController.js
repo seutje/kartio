@@ -218,7 +218,7 @@ class AIController {
             // Penalty for not reaching a new checkpoint within a certain time
             this.timeSinceLastCheckpoint += deltaTime;
             if (this.timeSinceLastCheckpoint > 20) {
-                currentFitness -= 200;
+                currentFitness -= 2000;
             }
         }
 
