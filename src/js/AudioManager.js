@@ -1,9 +1,10 @@
 const DEBUG_AudioManager = false;
 
 class AudioManager {
-    constructor() {
+    constructor(listener = null) {
         if (DEBUG_AudioManager) console.log('AudioManager: Initializing...');
-        this.audioContext = null;
+        this.listener = listener;
+        this.audioContext = listener ? listener.context : null;
         this.buffers = {};
         this.sounds = {};
         this.musicGain = null;
@@ -19,16 +20,20 @@ class AudioManager {
         if (this.initialized) return;
         
         try {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            this.musicGain = this.audioContext.createGain();
-            this.sfxGain = this.audioContext.createGain();
-            this.panner = this.audioContext.createPanner(); // Initialize panner
-            this.sfxCompressor = this.audioContext.createDynamicsCompressor();
-            
-            this.musicGain.connect(this.audioContext.destination);
-            this.sfxGain.connect(this.panner); // Connect sfxGain to panner
-            this.panner.connect(this.sfxCompressor); // Connect panner to compressor
-            this.sfxCompressor.connect(this.audioContext.destination);
+            if (!this.audioContext) {
+                this.audioContext = this.listener ? this.listener.context : new (window.AudioContext || window.webkitAudioContext)()
+            }
+
+            this.musicGain = this.audioContext.createGain()
+            this.sfxGain = this.audioContext.createGain()
+            this.panner = this.audioContext.createPanner() // Initialize panner
+            this.sfxCompressor = this.audioContext.createDynamicsCompressor()
+
+            const destination = this.listener ? this.listener.getInput() : this.audioContext.destination
+            this.musicGain.connect(destination)
+            this.sfxGain.connect(this.panner) // Connect sfxGain to panner
+            this.panner.connect(this.sfxCompressor) // Connect panner to compressor
+            this.sfxCompressor.connect(destination)
             
             this.musicGain.gain.value = 0.3;
             this.sfxGain.gain.value = 20;
@@ -266,12 +271,14 @@ class AudioManager {
     setListenerPosition(x, y, z) {
         if (!this.initialized) return;
         if (DEBUG_AudioManager) console.log(`AudioManager: Setting listener position to (${x}, ${y}, ${z}).`);
-        if (this.audioContext.listener.positionX) {
-            this.audioContext.listener.positionX.setValueAtTime(x, this.audioContext.currentTime);
-            this.audioContext.listener.positionY.setValueAtTime(y, this.audioContext.currentTime);
-            this.audioContext.listener.positionZ.setValueAtTime(z, this.audioContext.currentTime);
+        if (this.listener) {
+            this.listener.position.set(x, y, z)
+        } else if (this.audioContext.listener.positionX) {
+            this.audioContext.listener.positionX.setValueAtTime(x, this.audioContext.currentTime)
+            this.audioContext.listener.positionY.setValueAtTime(y, this.audioContext.currentTime)
+            this.audioContext.listener.positionZ.setValueAtTime(z, this.audioContext.currentTime)
         } else {
-            this.audioContext.listener.setPosition(x, y, z);
+            this.audioContext.listener.setPosition(x, y, z)
         }
     }
     
