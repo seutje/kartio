@@ -248,12 +248,15 @@ class GameEngine {
 
         if (this.checkpointMarker) {
             this.scene.remove(this.checkpointMarker)
+            this.checkpointMarker = null
         }
-        const markerGeometry = new THREE.SphereGeometry(1, 16, 16)
-        const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-        this.checkpointMarker = new THREE.Mesh(markerGeometry, markerMaterial)
-        this.scene.add(this.checkpointMarker)
-        this.updateCheckpointMarker()
+        if (!autoplay) {
+            const markerGeometry = new THREE.SphereGeometry(1, 16, 16)
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+            this.checkpointMarker = new THREE.Mesh(markerGeometry, markerMaterial)
+            this.scene.add(this.checkpointMarker)
+            this.updateCheckpointMarker()
+        }
 
         if (autoplay) {
             this.camera.position.set(0, 60, 0)

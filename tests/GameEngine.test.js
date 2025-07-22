@@ -68,6 +68,31 @@ describe('GameEngine autoplay', () => {
         delete global.AIController
     })
 
+    test('checkpoint marker hidden during autoplay', async () => {
+        class DummyAIController {
+            static preloadBrain() { return Promise.resolve() }
+        }
+        global.AIController = DummyAIController
+        const { Kart } = require('../src/js/Kart')
+        global.Kart = Kart
+        const engine = new GameEngine()
+        const track = {
+            type: 'test',
+            mines: [],
+            missiles: [],
+            getStartPositions: () => [new THREE.Vector3(0, 0, 0)],
+            checkpoints: [{ position: new THREE.Vector3() }]
+        }
+        engine.currentTrack = track
+        engine.start = jest.fn()
+
+        await engine.startAutoplay()
+
+        expect(engine.checkpointMarker).toBeNull()
+        delete global.Kart
+        delete global.AIController
+    })
+
     test('stop cancels animation frame', () => {
         const engine = new GameEngine()
         const mockRAF = jest.fn(() => 42)
