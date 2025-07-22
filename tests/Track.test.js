@@ -140,4 +140,40 @@ describe('Track decorations', () => {
         const cactus = track.trackGroup.children.find(obj => obj.geometry instanceof THREE.CylinderGeometry)
         expect(cactus.rotation.y).toBeCloseTo(Math.PI / 2)
     })
+
+    test('rock decoration is added to trackGroup', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'rock', x: 0, y: 0.5, z: 0, width: 2, height: 1, depth: 2 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const hasRock = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.BoxGeometry)
+        expect(hasRock).toBe(true)
+    })
+
+    test('rotation value is applied to rock decoration', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'rock', x: 0, y: 0.5, z: 0, width: 2, height: 1, depth: 2, rotation: 45 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const rock = track.trackGroup.children.find(obj => obj.geometry instanceof THREE.BoxGeometry)
+        expect(rock.rotation.y).toBeCloseTo(Math.PI / 4)
+    })
 })
