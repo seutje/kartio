@@ -279,57 +279,129 @@
   "decorations": [
     {
       "type": "cactus",
-      "x": 15,
+      "x": 55,
       "y": 1.5,
-      "z": -20,
+      "z": -32,
       "height": 3,
       "radius": 0.5,
       "rotation": 90
     },
     {
       "type": "cactus",
-      "x": -30,
+      "x": -55,
       "y": 1.5,
-      "z": 10,
+      "z": 32,
       "height": 2.5,
       "radius": 0.4,
       "rotation": -30
     },
     {
       "type": "cactus",
-      "x": 20,
+      "x": 60,
       "y": 1.5,
-      "z": 30,
+      "z": 28,
       "height": 3.5,
       "radius": 0.6,
       "rotation": 45
     },
     {
       "type": "cactus",
-      "x": -15,
+      "x": -60,
       "y": 1.5,
-      "z": -25,
+      "z": -28,
       "height": 2.8,
       "radius": 0.45,
       "rotation": 0
     },
     {
       "type": "rock",
-      "x": 10,
+      "x": 52,
       "y": 0.5,
-      "z": -15,
+      "z": -40,
       "width": 2,
       "height": 1,
       "depth": 2
     },
     {
       "type": "rock",
-      "x": -20,
+      "x": -52,
       "y": 0.5,
-      "z": 15,
+      "z": 40,
       "width": 1.5,
       "height": 0.8,
       "depth": 1.5
+    },
+    {
+      "type": "cactus",
+      "x": 57,
+      "y": 1.5,
+      "z": -35,
+      "height": 3.2,
+      "radius": 0.55,
+      "rotation": 15
+    },
+    {
+      "type": "cactus",
+      "x": -57,
+      "y": 1.5,
+      "z": 35,
+      "height": 2.9,
+      "radius": 0.5,
+      "rotation": -45
+    },
+    {
+      "type": "rock",
+      "x": 60,
+      "y": 0.5,
+      "z": 33,
+      "width": 2,
+      "height": 1,
+      "depth": 2
+    },
+    {
+      "type": "rock",
+      "x": -60,
+      "y": 0.5,
+      "z": -33,
+      "width": 1.8,
+      "height": 0.9,
+      "depth": 1.8
+    },
+    {
+      "type": "cactus",
+      "x": 70,
+      "y": 1.5,
+      "z": 0,
+      "height": 3.1,
+      "radius": 0.5,
+      "rotation": 5
+    },
+    {
+      "type": "cactus",
+      "x": -70,
+      "y": 1.5,
+      "z": 0,
+      "height": 3.1,
+      "radius": 0.5,
+      "rotation": -5
+    },
+    {
+      "type": "rock",
+      "x": 65,
+      "y": 0.5,
+      "z": -60,
+      "width": 2,
+      "height": 1,
+      "depth": 2
+    },
+    {
+      "type": "rock",
+      "x": -65,
+      "y": 0.5,
+      "z": 60,
+      "width": 2,
+      "height": 1,
+      "depth": 2
     }
   ]
 }
