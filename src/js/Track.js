@@ -120,6 +120,16 @@ class Track {
                     }
                     cactus.castShadow = true
                     this.trackGroup.add(cactus)
+                } else if (decorationData.type === 'rock') {
+                    const rockGeometry = new THREE.BoxGeometry(decorationData.width, decorationData.height, decorationData.depth)
+                    const rockMaterial = new THREE.MeshLambertMaterial({ color: 0x808080 })
+                    const rock = new THREE.Mesh(rockGeometry, rockMaterial)
+                    rock.position.set(decorationData.x, decorationData.y, decorationData.z)
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        rock.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    rock.castShadow = true
+                    this.trackGroup.add(rock)
                 }
             });
         }
