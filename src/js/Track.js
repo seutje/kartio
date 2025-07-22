@@ -130,6 +130,50 @@ class Track {
                     }
                     rock.castShadow = true
                     this.trackGroup.add(rock)
+                } else if (decorationData.type === 'pine_tree') {
+                    const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, decorationData.trunkHeight, 8)
+                    const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8b4513 })
+                    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial)
+                    trunk.position.set(decorationData.x, decorationData.y + decorationData.trunkHeight / 2, decorationData.z)
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        trunk.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    trunk.castShadow = true
+                    this.trackGroup.add(trunk)
+
+                    const leavesGeometry = new THREE.ConeGeometry(decorationData.leavesHeight / 2, decorationData.leavesHeight, 8)
+                    const leavesMaterial = new THREE.MeshLambertMaterial({ color: 0x228b22 })
+                    const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial)
+                    leaves.position.set(decorationData.x, decorationData.y + decorationData.trunkHeight + decorationData.leavesHeight / 2, decorationData.z)
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        leaves.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    leaves.castShadow = true
+                    this.trackGroup.add(leaves)
+                } else if (decorationData.type === 'snowman') {
+                    const bottomGeometry = new THREE.SphereGeometry(decorationData.radius, 8, 8)
+                    const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
+                    const bottom = new THREE.Mesh(bottomGeometry, sphereMaterial)
+                    bottom.position.set(decorationData.x, decorationData.y + decorationData.radius, decorationData.z)
+                    bottom.castShadow = true
+                    this.trackGroup.add(bottom)
+
+                    const topGeometry = new THREE.SphereGeometry(decorationData.radius * 0.7, 8, 8)
+                    const top = new THREE.Mesh(topGeometry, sphereMaterial)
+                    top.position.set(decorationData.x, decorationData.y + decorationData.radius * 2, decorationData.z)
+                    top.castShadow = true
+                    this.trackGroup.add(top)
+                } else if (decorationData.type === 'icicle') {
+                    const icicleGeometry = new THREE.ConeGeometry(decorationData.width, decorationData.height, 8)
+                    const icicleMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff })
+                    const icicle = new THREE.Mesh(icicleGeometry, icicleMaterial)
+                    icicle.position.set(decorationData.x, decorationData.y - decorationData.height / 2, decorationData.z)
+                    icicle.rotation.x = Math.PI
+                    if (typeof decorationData.rotation !== 'undefined') {
+                        icicle.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                    }
+                    icicle.castShadow = true
+                    this.trackGroup.add(icicle)
                 }
             });
         }

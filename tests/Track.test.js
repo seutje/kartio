@@ -176,4 +176,60 @@ describe('Track decorations', () => {
         const rock = track.trackGroup.children.find(obj => obj.geometry instanceof THREE.BoxGeometry)
         expect(rock.rotation.y).toBeCloseTo(Math.PI / 4)
     })
+
+    test('pine tree decoration is added to trackGroup', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'pine_tree', x: 0, y: 0, z: 0, trunkHeight: 2, leavesHeight: 3 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const hasCylinder = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.CylinderGeometry)
+        const hasCone = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.ConeGeometry)
+        expect(hasCylinder).toBe(true)
+        expect(hasCone).toBe(true)
+    })
+
+    test('snowman decoration is added to trackGroup', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'snowman', x: 0, y: 0, z: 0, radius: 1 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const sphereCount = track.trackGroup.children.filter(obj => obj.geometry instanceof THREE.SphereGeometry).length
+        expect(sphereCount).toBeGreaterThanOrEqual(2)
+    })
+
+    test('icicle decoration is added to trackGroup', () => {
+        const scene = { add: jest.fn(), remove: jest.fn() }
+        const track = new Track('test', scene)
+        track.trackData = {
+            trackGeometry: { width: 100, height: 100, borderColor: '0xff0000', roadColor: '0x333333' },
+            environment: { skyColor: '0x000000', groundColor: '0x000000', ambientLight: '0x000000', directionalLight: '0x000000' },
+            obstacles: [],
+            decorations: [
+                { type: 'icicle', x: 0, y: 2, z: 0, height: 1, width: 0.5 }
+            ]
+        }
+        global.NO_GRAPHICS = false
+        track.createTrack()
+        global.NO_GRAPHICS = true
+        const hasCone = track.trackGroup.children.some(obj => obj.geometry instanceof THREE.ConeGeometry)
+        expect(hasCone).toBe(true)
+    })
 })
