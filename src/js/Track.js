@@ -106,7 +106,7 @@ class Track {
                     const marking = new THREE.Mesh(markingGeometry, markingMaterial)
                     marking.rotation.x = -Math.PI / 2
                     if (typeof decorationData.rotation !== 'undefined') {
-                        marking.rotation.y = THREE.MathUtils.degToRad(decorationData.rotation)
+                        marking.rotation.z = THREE.MathUtils.degToRad(decorationData.rotation)
                     }
                     marking.position.set(decorationData.x, decorationData.y, decorationData.z)
                     this.trackGroup.add(marking)
