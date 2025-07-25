@@ -110,13 +110,17 @@ describe('NeuralNetwork', () => {
     })
 
     test('should mutate correctly', () => {
-        const originalWeights = JSON.parse(JSON.stringify(network.weights1))
+        const originalWeights = network.model.getWeights().map(w => w.arraySync())
         network.mutate(0.5)
 
+        const mutatedWeights = network.model.getWeights().map(w => w.arraySync())
         let changed = false
-        for (let i = 0; i < network.weights1.length; i++) {
-            for (let j = 0; j < network.weights1[i].length; j++) {
-                if (network.weights1[i][j] !== originalWeights[i][j]) {
+
+        for (let i = 0; i < originalWeights.length; i++) {
+            const flatOrig = originalWeights[i].flat(Infinity)
+            const flatMut = mutatedWeights[i].flat(Infinity)
+            for (let j = 0; j < flatOrig.length; j++) {
+                if (flatOrig[j] !== flatMut[j]) {
                     changed = true
                     break
                 }
@@ -134,8 +138,9 @@ describe('NeuralNetwork', () => {
         expect(copy.hiddenSize).toBe(network.hiddenSize)
         expect(copy.outputSize).toBe(network.outputSize)
 
-        expect(copy.weights1).toEqual(network.weights1)
-        expect(copy.weights2).toEqual(network.weights2)
+        const origWeights = network.model.getWeights().map(w => w.arraySync())
+        const copyWeights = copy.model.getWeights().map(w => w.arraySync())
+        expect(copyWeights).toEqual(origWeights)
     })
 })
 

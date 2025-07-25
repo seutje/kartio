@@ -33,7 +33,8 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        this.network = new NeuralNetwork(9, 12, 3); // Initialize with a random brain
+        this.network = new NeuralNetwork(9, 12, 3) // Initialize with a random brain
+        this.epsilon = isTraining ? 1 : 0
 
         if (!isTraining) {
             this.loadBrain().then(network => {
@@ -105,7 +106,10 @@ class AIController {
         }
         this.updateSensors(karts);
         const inputs = this.getInputs();
-        const outputs = this.network.forward(inputs);
+        let outputs = this.network.forward(inputs)
+        if (Math.random() < this.epsilon) {
+            outputs = outputs.map(() => Math.random() * 2 - 1)
+        }
         
         this.applyOutputs(outputs, deltaTime);
         this.timeElapsed += deltaTime;
@@ -306,6 +310,14 @@ class AIController {
         const controller = new AIController(kart, track, trackName, isTraining);
         controller.network = NeuralNetwork.deserialize(data);
         return controller;
+    }
+
+    setEpsilon(value) {
+        this.epsilon = value
+    }
+
+    decayEpsilon(rate) {
+        this.epsilon = Math.max(0.01, this.epsilon * rate)
     }
 }
 
