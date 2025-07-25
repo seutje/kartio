@@ -204,7 +204,7 @@ class TrainingEnvironment {
         }
 
         while (this.population.length < this.populationSize) {
-            const network = new NeuralNetwork(9, 12, 3)
+            const network = new NeuralNetwork(10, 12, 3)
             this.population.push({
                 network,
                 fitness: 0,
@@ -310,7 +310,7 @@ class TrainingEnvironment {
         while (newPopulation.length < this.populationSize) {
             if (Math.random() < this.newBloodRate) {
                 newPopulation.push({
-                    network: new NeuralNetwork(9, 12, 3),
+                    network: new NeuralNetwork(10, 12, 3),
                     fitness: 0,
                     isTraining: true
                 })

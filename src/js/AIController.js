@@ -33,7 +33,7 @@ class AIController {
         this.track = track;
         this.trackName = trackName;
 
-        this.network = new NeuralNetwork(9, 12, 3); // Initialize with a random brain
+        this.network = new NeuralNetwork(10, 12, 3); // Initialize with a random brain
 
         if (!isTraining) {
             this.loadBrain().then(network => {
@@ -64,6 +64,7 @@ class AIController {
             checkpoint: 0,
             velocity: 0,
             angle: 0,
+            nextAngle: 0,
             powerup: 0
         };
     }
@@ -130,6 +131,13 @@ class AIController {
             this.sensors.checkpoint = nextCheckpoint.position.distanceTo(this.kart.position) / 50;
             const toCheckpoint = nextCheckpoint.position.clone().sub(this.kart.position).normalize();
             this.sensors.angle = forward.dot(toCheckpoint);
+
+            const afterNextIndex = (this.kart.nextCheckpoint + 1) % this.track.checkpoints.length;
+            const afterNext = this.track.checkpoints[afterNextIndex];
+            if (afterNext) {
+                const toAfterNext = afterNext.position.clone().sub(this.kart.position).normalize();
+                this.sensors.nextAngle = forward.dot(toAfterNext);
+            }
         }
         
         this.sensors.velocity = this.kart.velocity.length() / this.kart.maxSpeed;
@@ -169,6 +177,7 @@ class AIController {
             this.sensors.checkpoint,
             this.sensors.velocity,
             this.sensors.angle,
+            this.sensors.nextAngle,
             this.sensors.powerup
         ];
     }
