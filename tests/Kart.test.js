@@ -142,6 +142,25 @@ describe('NeuralNetwork', () => {
         const copyWeights = copy.model.getWeights().map(w => w.arraySync())
         expect(copyWeights).toEqual(origWeights)
     })
+
+    test('should crossover correctly', () => {
+        const parent1 = new NeuralNetwork(3, 5, 2)
+        const parent2 = new NeuralNetwork(3, 5, 2)
+        const child = NeuralNetwork.crossover(parent1, parent2)
+
+        const w1 = parent1.model.getWeights().map(w => w.arraySync())
+        const w2 = parent2.model.getWeights().map(w => w.arraySync())
+        const cw = child.model.getWeights().map(w => w.arraySync())
+
+        for (let i = 0; i < cw.length; i++) {
+            const flatChild = cw[i].flat(Infinity)
+            const flat1 = w1[i].flat(Infinity)
+            const flat2 = w2[i].flat(Infinity)
+            for (let j = 0; j < flatChild.length; j++) {
+                expect(flatChild[j] === flat1[j] || flatChild[j] === flat2[j]).toBe(true)
+            }
+        }
+    })
 })
 
 describe('Powerup', () => {

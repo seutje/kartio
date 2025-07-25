@@ -77,6 +77,21 @@ class NeuralNetwork {
         return clone
     }
 
+    static crossover(parent1, parent2) {
+        const child = new NeuralNetwork(parent1.inputSize, parent1.hiddenSize, parent1.outputSize)
+        const weights1 = parent1.model.getWeights()
+        const weights2 = parent2.model.getWeights()
+        const newWeights = []
+        for (let i = 0; i < weights1.length; i++) {
+            const arr1 = weights1[i].arraySync()
+            const arr2 = weights2[i].arraySync()
+            const mixed = deepCrossover(arr1, arr2)
+            newWeights.push(tf.tensor(mixed, weights1[i].shape))
+        }
+        child.model.setWeights(newWeights)
+        return child
+    }
+
     serialize() {
         const weightData = this.model.getWeights().map(w => w.arraySync())
         return JSON.stringify({
@@ -100,6 +115,13 @@ function deepMap(arr, fn) {
         return arr.map(item => deepMap(item, fn))
     }
     return fn(arr)
+}
+
+function deepCrossover(arr1, arr2) {
+    if (Array.isArray(arr1) && Array.isArray(arr2)) {
+        return arr1.map((v, i) => deepCrossover(v, arr2[i]))
+    }
+    return Math.random() < 0.5 ? arr1 : arr2
 }
 
 if (typeof module !== 'undefined') {
